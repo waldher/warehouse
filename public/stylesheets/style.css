@@ -1,0 +1,61 @@
+#wrapper {
+  width: 1024px;
+  margin: 0 auto;
+
+  border-left: 1px solid #000000;
+  border-right: 1px solid #000000;
+}
+
+#content {
+  padding: 0px 10px;
+}
+
+h1 {
+  font-size: 3.5em;
+  text-align: center;
+}
+
+/*
+ * Generic form
+ */
+form {
+  padding-top: 2em;
+}
+
+label, input, textarea {
+  font-size: 1.5em;
+}
+
+label {
+  font-weight: bold;
+}
+
+input, textarea {
+  border: 1px solid #000000;
+  border-radius:1ex;
+  -webkit-border-radius:1ex;
+  -moz-border-radius:1ex;
+}
+
+input {
+  height: 2.5em;
+}
+
+textarea {
+  width: 100%;
+  height: 15em;
+  padding-top: 14px;
+}
+
+/*
+ * Dealer Info
+ */
+#citystatezip label, #citystatezip input {
+  width: 300px;
+  float: left;
+  margin-right: 30px;
+}
+
+#dealer_info_address {
+  width: 100%;
+}

@@ -1,0 +1,115 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Dealer:</b>
+  <%= @dealer_info.dealer_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @dealer_info.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @dealer_info.description %>
+</p>
+
+<p>
+  <b>Address:</b>
+  <%= @dealer_info.address %>
+</p>
+
+<p>
+  <b>City:</b>
+  <%= @dealer_info.city %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%= @dealer_info.state %>
+</p>
+
+<p>
+  <b>Zip:</b>
+  <%= @dealer_info.zip %>
+</p>
+
+<p>
+  <b>Phone:</b>
+  <%= @dealer_info.phone %>
+</p>
+
+<p>
+  <b>Email:</b>
+  <%= @dealer_info.email %>
+</p>
+
+<p>
+  <b>Display website:</b>
+  <%= @dealer_info.display_website %>
+</p>
+
+<p>
+  <b>Time zone:</b>
+  <%= @dealer_info.time_zone %>
+</p>
+
+<p>
+  <b>Craigslist location:</b>
+  <%= @dealer_info.craigslist_location %>
+</p>
+
+<p>
+  <b>Craigslist sublocation:</b>
+  <%= @dealer_info.craigslist_sublocation %>
+</p>
+
+<p>
+  <b>Location string:</b>
+  <%= @dealer_info.location_string %>
+</p>
+
+<p>
+  <b>Start time:</b>
+  <%= @dealer_info.start_time %>
+</p>
+
+<p>
+  <b>End time:</b>
+  <%= @dealer_info.end_time %>
+</p>
+
+<p>
+  <b>Hide price:</b>
+  <%= @dealer_info.hide_price %>
+</p>
+
+<p>
+  <b>Hide mileage:</b>
+  <%= @dealer_info.hide_mileage %>
+</p>
+
+<p>
+  <b>Metric:</b>
+  <%= @dealer_info.metric %>
+</p>
+
+<p>
+  <b>Use landing pages:</b>
+  <%= @dealer_info.use_landing_pages %>
+</p>
+
+<p>
+  <b>Destination website:</b>
+  <%= @dealer_info.destination_website %>
+</p>
+
+<p>
+  <b>Crm email:</b>
+  <%= @dealer_info.crm_email %>
+</p>
+
+
+<%= link_to 'Edit', edit_dealer_info_path(@dealer_info) %> |
+<%= link_to 'Back', dealer_infos_path %>

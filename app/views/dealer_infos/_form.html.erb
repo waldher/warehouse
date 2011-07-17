@@ -1,0 +1,103 @@
+<div>The following information will be used in your Craigslist advertisements for your dealership. <b>This information will be copied directly into your Craigslist advertisements.</b>
+  Please ensure that this information is accurate. Use proper spelling and grammar, and double check all fields for correctness.</div>
+
+<%= form_for(@dealer_info) do |f| %>
+  <% if @dealer_info.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@dealer_info.errors.count, "error") %> prohibited this dealer_info from being saved:</h2>
+
+      <ul>
+      <% @dealer_info.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <%= f.hidden_field :dealer_id %>
+  
+  <div class="field">
+    <%= f.label :name, "Dealer Name" %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :description, "Dealer Description" %><br />
+    <%= f.text_area :description %>
+  </div>
+  <div class="field">
+    <%= f.label :address %><br />
+    <%= f.text_field :address %>
+  </div>
+  <div id="citystatezip">
+    <%= f.label :city %>
+    <%= f.label :state %>
+    <%= f.label :zip %>
+
+    <%= f.text_field :city %>
+    <%= f.text_field :state %>
+    <%= f.text_field :zip %>
+  </div>
+  <div class="field">
+    <%= f.label :phone %><br />
+    <%= f.text_field :phone %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :display_website %><br />
+    <%= f.text_field :display_website %>
+  </div>
+  <div class="field">
+    <%= f.label :time_zone %><br />
+    <%= f.text_field :time_zone %>
+  </div>
+  <div class="field">
+    <%= f.label :craigslist_location %><br />
+    <%= f.text_field :craigslist_location %>
+  </div>
+  <div class="field">
+    <%= f.label :craigslist_sublocation %><br />
+    <%= f.text_field :craigslist_sublocation %>
+  </div>
+  <div class="field">
+    <%= f.label :location_string %><br />
+    <%= f.text_field :location_string %>
+  </div>
+  <div class="field">
+    <%= f.label :start_time %><br />
+    <%= f.time_select :start_time %>
+  </div>
+  <div class="field">
+    <%= f.label :end_time %><br />
+    <%= f.time_select :end_time %>
+  </div>
+  <div class="field">
+    <%= f.label :hide_price %><br />
+    <%= f.check_box :hide_price %>
+  </div>
+  <div class="field">
+    <%= f.label :hide_mileage %><br />
+    <%= f.check_box :hide_mileage %>
+  </div>
+  <div class="field">
+    <%= f.label :metric %><br />
+    <%= f.check_box :metric %>
+  </div>
+  <div class="field">
+    <%= f.label :use_landing_pages %><br />
+    <%= f.check_box :use_landing_pages %>
+  </div>
+  <div class="field">
+    <%= f.label :destination_website %><br />
+    <%= f.text_area :destination_website %>
+  </div>
+  <div class="field">
+    <%= f.label :crm_email %><br />
+    <%= f.text_field :crm_email %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Submit Dealer Info" %>
+  </div>
+<% end %>
