@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(:version => 20110712060003) do
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
 
   create_table "dealer_infos", :force => true do |t|
-    t.integer  "dealer_id"
+    t.integer  "dealer_id",              :default => 1,                     :null => false
     t.string   "name"
     t.text     "description"
     t.text     "address"
@@ -45,8 +45,8 @@ ActiveRecord::Schema.define(:version => 20110712060003) do
     t.string   "craigslist_location"
     t.string   "craigslist_sublocation"
     t.string   "location_string"
-    t.time     "start_time"
-    t.time     "end_time"
+    t.time     "start_time",             :default => '2000-01-01 09:00:00', :null => false
+    t.time     "end_time",               :default => '2000-01-01 09:00:00', :null => false
     t.boolean  "hide_price"
     t.boolean  "hide_mileage"
     t.boolean  "metric"

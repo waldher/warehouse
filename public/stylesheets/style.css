@@ -22,8 +22,12 @@ form {
   padding-top: 2em;
 }
 
-label, input, textarea {
-  font-size: 1.5em;
+div.field {
+  padding-top: 10px;
+}
+
+label, input, textarea, select {
+  font-size: 22px;
 }
 
 label {
@@ -38,7 +42,7 @@ input, textarea {
 }
 
 input {
-  height: 2.5em;
+  height: 45px;
 }
 
 textarea {
@@ -47,15 +51,47 @@ textarea {
   padding-top: 14px;
 }
 
+.fieldinfo {
+  display: inline-block;
+  font-size: 12px;
+  width: 500px;
+}
+
+span.spacer {
+  display: inline-block;
+  width: 200px;
+}
+
 /*
  * Dealer Info
  */
 #citystatezip label, #citystatezip input {
-  width: 300px;
-  float: left;
-  margin-right: 30px;
+  width: 329px;
+  display: inline-block;
 }
 
 #dealer_info_address {
   width: 100%;
+}
+
+.phone div.number {
+  display: inline-block;
+  font-size: 24px;
+}
+
+.phone input {
+  width: 2em;
+}
+
+.phone input.four {
+  width: 3em;
+}
+
+.phone div.fieldinfo {
+  width: 620px;
+}
+
+.time label {
+  display: inline-block;
+  width: 200px;
 }

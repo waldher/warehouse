@@ -1,7 +1,7 @@
 class CreateDealerInfos < ActiveRecord::Migration
   def self.up
     create_table :dealer_infos do |t|
-      t.integer :dealer_id
+      t.integer :dealer_id, :null => false, :default => 1
       t.string :name
       t.text :description
       t.text :address
@@ -15,8 +15,8 @@ class CreateDealerInfos < ActiveRecord::Migration
       t.string :craigslist_location
       t.string :craigslist_sublocation
       t.string :location_string
-      t.time :start_time
-      t.time :end_time
+      t.time :start_time, :null => false, :default => '09:00'
+      t.time :end_time, :null => false, :default => '09:00'
       t.boolean :hide_price
       t.boolean :hide_mileage
       t.boolean :metric
