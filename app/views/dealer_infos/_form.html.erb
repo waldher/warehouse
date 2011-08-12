@@ -89,9 +89,10 @@
     <%= f.hidden_field :craigslist_location %>
     <%= f.hidden_field :craigslist_sublocation %>
     <select id="dealer_select_location">
+      <option disabled></option>
       <% for location in [["seattle", "Seattle"]] %>
-        <option disabled><%= location.last %></option>
-          <% for sublocation in [["see", "seattle"], ["est", "eastside"], ["sno", "snohomish co"], ["kit", "kitsap co"], ["tac", "tacoma"], ["oly", "olympia"], ["skc", "south king"]] %>
+         <option disabled><%= location.last %></option>
+         <% for sublocation in [["see", "seattle"], ["est", "eastside"], ["sno", "snohomish co"], ["kit", "kitsap co"], ["tac", "tacoma"], ["oly", "olympia"], ["skc", "south king"]] %>
             <option value="<%= sublocation.first %>"<%= @dealer and @dealer.craigslist_sublocation == sublocation.first ? " selected" : "" %>>&nbsp;&nbsp;&nbsp;&nbsp;<%= sublocation.last %></option>
           <% end %>
       <% end %>
