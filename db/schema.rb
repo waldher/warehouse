@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110810005747) do
+ActiveRecord::Schema.define(:version => 20110813063517) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -76,5 +76,42 @@ ActiveRecord::Schema.define(:version => 20110810005747) do
   add_index "dealers", ["dealer_key"], :name => "index_dealers_on_dealer_key", :unique => true
   add_index "dealers", ["email"], :name => "index_dealers_on_email", :unique => true
   add_index "dealers", ["reset_password_token"], :name => "index_dealers_on_reset_password_token", :unique => true
+
+  create_table "real_estate_images", :force => true do |t|
+    t.string   "name"
+    t.integer  "imageable_id"
+    t.string   "imageable_type"
+    t.string   "photo_file_name"
+    t.string   "photo_content_type"
+    t.integer  "photo_file_size"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "real_estates", :force => true do |t|
+    t.integer  "realtor_id",                        :null => false
+    t.text     "ad_title",                          :null => false
+    t.text     "ad_description"
+    t.integer  "bedrooms"
+    t.integer  "price"
+    t.boolean  "cats",           :default => false, :null => false
+    t.boolean  "dogs",           :default => false, :null => false
+    t.boolean  "active",         :default => true,  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "real_estates", ["realtor_id"], :name => "index_real_estates_on_realtor_id"
+
+  create_table "realtors", :force => true do |t|
+    t.string   "name",            :null => false
+    t.string   "email",           :null => false
+    t.integer  "realtor_key",     :null => false
+    t.string   "contact_name"
+    t.text     "contact_address"
+    t.string   "contact_phone"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

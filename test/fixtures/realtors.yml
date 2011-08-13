@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  email: MyString
+  realtor_key: 1
+  contact_name: MyString
+  contact_address: MyText
+  contact_phone: MyString
+
+two:
+  name: MyString
+  email: MyString
+  realtor_key: 1
+  contact_name: MyString
+  contact_address: MyText
+  contact_phone: MyString
