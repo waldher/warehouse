@@ -2,6 +2,9 @@
 
 <table>
   <tr>
+    <th> Contact Name:-</th>
+    <th> Contact Address:-</th>
+    <th>Contact Phone</th>
     <th></th>
     <th></th>
     <th></th>
@@ -9,9 +12,12 @@
 
 <% @realators.each do |realator| %>
   <tr>
-    <td><%= link_to 'Show', realator %></td>
+    <td><%=realator.contact_name%></td>
+    <td><%=realator.contact_address%></td>
+    <td><%=realator.contact_phone%></td>
+    <td><%= link_to 'Show', realator_path(realator.id) %></td>
     <td><%= link_to 'Edit', edit_realator_path(realator) %></td>
-    <td><%= link_to 'Destroy', realator, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%#= link_to 'Destroy', realator, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
