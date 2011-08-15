@@ -5,7 +5,8 @@ Marsala::Application.routes.draw do
   match 'dealer_infos' => 'dealer_infos#create', :via => :post
   match 'dealer_infos/thank_you' => 'dealer_infos#thank_you'
 
-  
+  root :to => 'home#index'
+
   devise_for :dealers
 
   devise_for :admins
