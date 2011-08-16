@@ -1,0 +1,21 @@
+<h1>Listing realestates</h1>
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @realestates.each do |realestate| %>
+  <tr>
+    <td><%= link_to 'Show', realestate %></td>
+    <td><%= link_to 'Edit', edit_realestate_path(realestate) %></td>
+    <td><%= link_to 'Destroy', realestate, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Realestate', new_realestate_path %>
