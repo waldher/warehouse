@@ -29,13 +29,8 @@ GEM
       activesupport (= 3.0.9)
     activesupport (3.0.9)
     arel (2.0.10)
-    aws-s3 (0.6.2)
-      builder
-      mime-types
-      xml-simple
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
-    cocaine (0.1.0)
     devise (1.4.2)
       bcrypt-ruby (~> 2.1.2)
       orm_adapter (~> 0.0.3)
@@ -82,14 +77,11 @@ GEM
     tzinfo (0.3.29)
     warden (1.0.4)
       rack (>= 1.0)
-    xml-simple (1.0.12)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-s3
-  cocaine
   devise
   jquery-rails
   rails (= 3.0.9)

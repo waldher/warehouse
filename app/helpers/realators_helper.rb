@@ -1,2 +1,0 @@
-module RealatorsHelper
-end
