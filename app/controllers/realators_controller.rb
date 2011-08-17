@@ -43,7 +43,14 @@ class RealatorsController < ApplicationController
     @realator = Realtor.new(params[:realtor])
     @realator.realtor_key = params[:realtor][:name]
     @realator.save!
-    
+    @real_estate = @realator.real_estates.new(params[:real_estate])
+    @real_estate.price = params[:real_estate][:price].to_i
+    @real_estate.bedrooms = params[:real_estate][:bedrooms].to_i
+    @real_estate.ad_title = params["real_estate"]["ad_title"].to_s
+    @real_estate.save!
+    grant = AWS::S3::ACL::Grant.new
+    grant.permission = 'FULL_CONTROL'
+    @real_estate.real_estate_images.create(:photo =>  params[:real_estate_image][:photo])
 
     respond_to do |format|
       if @real_estate.save

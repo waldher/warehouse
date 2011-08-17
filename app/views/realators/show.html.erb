@@ -1,39 +1,5 @@
 <p id="notice"><%= notice %></p>
 
 
-<div>Real Estate Details</div>
-
-<p>
-  <b>Real Estate Title:</b>
-  <%= @realator.real_estates.first.ad_title %>
-</p>
-
-<p>
-  <b>Real Estate Description:</b>
-  <%=@realator.real_estates.first.ad_description %>
-</p>
-
-<p>
-  <b>Bedrooms:</b>
-  <%= @realator.real_estates.first.bedrooms %>
-</p>
-
-<p>
-  <b>Price:</b>
-  <%= @realator.real_estates.first.price %>
-</p>
-
-<p>
-  <b>Active:</b>
-  <%= @realator.real_estates.first.active %>
-</p>
-
-<p>
-  <% unless @realator.real_estates.first.real_estate_images.empty? || @realator.real_estates.first.real_estate_images.first.nil? || @realator.real_estates.first.real_estate_images.first.photo.nil?  %>
-  <b>Images:</b>
-  <%=  @realator.real_estates.first.real_estate_images.first.photo  %>
-  <% end %>
-</p>
-
 <%= link_to 'Edit', edit_realator_path(@realator) %> |
 <%= link_to 'Back', realators_path %>
