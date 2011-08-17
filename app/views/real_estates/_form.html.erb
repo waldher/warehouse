@@ -1,0 +1,52 @@
+<%= form_for(@real_estate, :html => {:multipart => true}) do |f| %>
+  <% if @real_estate.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@real_estate.errors.count, "error") %> prohibited this real_estate from being saved:</h2>
+
+      <ul>
+      <% @real_estate.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="field">
+    <%= f.label :ad_title %><br />
+    <%= f.text_area :ad_title %>
+  </div>
+  <div class="field">
+    <%= f.label :ad_description %><br />
+    <%= f.text_area :ad_description %>
+  </div>
+  <div class="field">
+    <%= f.label :bedrooms %><br />
+    <%= f.select :bedrooms, 0..8 %>
+  </div>
+  <div class="field">
+    <%= f.label :price %><br />
+    <%= f.text_field :price %>
+  </div>
+  <div class="field">
+    <%= f.label :cats, "Cats OK?" %><br />
+    <%= f.check_box :cats %>
+  </div>
+  <div class="field">
+    <%= f.label :dogs, "Dogs OK?" %><br />
+    <%= f.check_box :dogs %>
+  </div>
+  <div class="field">
+    <%= f.label :active %><br />
+    <%= f.check_box :active %>
+  </div>
+
+  <label>Upload Images</label><br />
+  <% f.fields_for :real_estate_images do |builder| %>
+    <%= builder.file_field :image %>
+  <% end %>
+
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

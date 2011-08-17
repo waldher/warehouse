@@ -1,0 +1,13 @@
+<h1>Editing Real Estate</h1>
+
+<%= render 'form' %>
+
+<br />
+<div>
+  <label>Current Photos</label><br />
+  <% for image in @real_estate.real_estate_images %>
+    <img src="<%= image.image.url %>" />
+  <% end %>
+</div>
+
+<%= link_to 'Back', real_estates_path %>

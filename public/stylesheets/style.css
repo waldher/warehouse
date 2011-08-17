@@ -16,7 +16,7 @@ h1 {
 }
 
 /*
- * Generic form
+ * Generic Form
  */
 form {
   padding-top: 2em;
@@ -60,6 +60,18 @@ textarea {
 span.spacer {
   display: inline-block;
   width: 200px;
+}
+
+/*
+ * Table Info
+ */
+
+.postedRed {
+	background-color: #FFAAAA;
+}
+
+.postedGreen {
+	background-color: #AAFFAA;
 }
 
 /*

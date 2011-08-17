@@ -1,12 +1,12 @@
 development:
   bucket: marsala_test
-  access_key_id: AKIAIZKCYKP7EC7TNX6A
-  secret_access_key: 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
+  access_key_id: AKIAIZM4UXBWSTZ5FEPA
+  secret_access_key: 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
 test:
   bucket: bucket-test
   access_key_id: xxx
   secret_access_key: xxx
 production:
-  bucket: marsala_test
-  access_key_id: AKIAIZKCYKP7EC7TNX6A
-  secret_access_key: 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
+  bucket: marsala_uploads
+  access_key_id: AKIAIZM4UXBWSTZ5FEPA
+  secret_access_key: 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
