@@ -11,5 +11,9 @@ Marsala::Application.routes.draw do
 
   devise_for :dealers
 
+  resources :dealers do
+    get 'dealer_infos'
+  end
+
   devise_for :admins
 end
