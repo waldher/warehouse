@@ -2,16 +2,16 @@ class DealerInfosController < ApplicationController
   # GET /dealer_infos/new
   # GET /dealer_infos/new.xml
   def new 
-    @last_dealer_info = DealerInfo.where(:dealer_id => current_dealer.id).order(:created_at).last
+#    @last_dealer_info = DealerInfo.where(:dealer_id => current_dealer.id).order(:created_at).last
 
-    if @last_dealer_info.nil?
+#    if @last_dealer_info.nil?
       @dealer_info = DealerInfo.new
       @dealer_info.start_time = "0001-01-01 09:00".to_time
       @dealer_info.end_time = "0001-01-01 21:00".to_time
       @dealer_info.destination_website = "http://"
-    else
-      @dealer_info
-    end
+#    else
+#      @dealer_info
+#    end
 
     respond_to do |format|
       format.html # new.html.erb
