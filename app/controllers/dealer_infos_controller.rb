@@ -3,8 +3,8 @@ class DealerInfosController < ApplicationController
   # GET /dealer_infos/new.xml
   def new
     @dealer_info = DealerInfo.new
-    @dealer_info.start_time = "01-01-0000 09:00".to_time
-    @dealer_info.end_time = "01-01-0000 21:00".to_time
+    @dealer_info.start_time = "0001-01-01 09:00".to_time
+    @dealer_info.end_time = "0001-01-01 21:00".to_time
     @dealer_info.destination_website = "http://"
 
     respond_to do |format|
