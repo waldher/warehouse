@@ -51,7 +51,7 @@ class RealEstatesController < ApplicationController
     respond_to do |format|
       if @real_estate.save
 
-        format.html { redirect_to(@real_estate, :notice => 'Real estate was successfully created.') }
+        format.html { redirect_to(real_estates_url) }
         format.xml  { render :xml => @real_estate, :status => :created, :location => @real_estate }
       else
         format.html { render :action => "new" }
@@ -67,7 +67,7 @@ class RealEstatesController < ApplicationController
 
     respond_to do |format|
       if @real_estate.update_attributes(params[:real_estate])
-        format.html { redirect_to(@real_estate, :notice => 'Real estate was successfully updated.') }
+        format.html { redirect_to(real_estates_url) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

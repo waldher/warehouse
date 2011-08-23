@@ -2,7 +2,7 @@ class DealersController < ApplicationController
 
   def show
     @dealer = Dealer.find(params[:id])
-    url = URI.parse("http://palermo.blinkonlinemarketing.com/posts/dealers/#{dealer.dealer_key}")
+    #url = URI.parse("http://palermo.blinkonlinemarketing.com/posts/dealers/#{dealer.dealer_key}")
     #url = URI.parse("http://palermo.blinkonlinemarketing.com/locations/1/hosts/")
     req = Net::HTTP::Get.new(url.path)
     req.basic_auth 'support@blinkonlinemarketing.com', 'popsicles'

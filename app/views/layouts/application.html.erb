@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Marsala</title>
+  <title>Leadadvo Portal</title>
   <%= stylesheet_link_tag :all %>
-  <%= stylesheet_link_tag 'themes/base/jquery.ui.all.min.css' %>
-  <%= javascript_include_tag :defaults, 'ui/jquery-ui.min.js', 'jquery.dataTables.min.js' %>
+  <%= stylesheet_link_tag 'themes/redmond/jquery-ui-1.8.16.custom.css' %>
+  <%= stylesheet_link_tag 'demo_table_jui.css' %>
+  <%= javascript_include_tag :defaults, 'ui/jquery-ui.min.js', 'jquery.dataTables.min.js', 'tiny_mce/jquery.tinymce.js' %>
   <%= csrf_meta_tag %>
 </head>
 <body>
 
 <div id="wrapper">
   <div id="header">
-    <img src="/images/RedCloud.png" />
+    <img class="logo" src="/images/leadadvo.png" />
   </div>
   <div id="content">
     <%= yield %>
