@@ -38,6 +38,7 @@ class RealEstatesController < ApplicationController
   # GET /real_estates/1/edit
   def edit
     @real_estate = RealEstate.find(params[:id])
+    6.times { @real_estate.real_estate_images.build }
   end
 
   # POST /real_estates
