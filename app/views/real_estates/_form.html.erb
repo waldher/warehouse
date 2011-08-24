@@ -66,7 +66,8 @@
   <% f.fields_for :real_estate_images do |builder| %>
     <div class="image_upload">
       <%= builder.file_field :image %>
-      <%= builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
+      <%# radio_button_tag builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
+
     </div>
   <% end %>
 
