@@ -1,5 +1,7 @@
 Marsala::Application.routes.draw do
-  resources :real_estates
+  resources :real_estates do
+    get 'json', :on => :collection
+  end
 
   devise_for :realtors, :controllers => { :registrations => 'realtors/registrations' }
 

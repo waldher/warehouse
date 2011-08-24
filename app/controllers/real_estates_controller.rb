@@ -1,5 +1,5 @@
 class RealEstatesController < ApplicationController
-  before_filter :authenticate_realtor!
+  before_filter :authenticate_realtor!, :except => :json
 
   # GET /real_estates
   # GET /real_estates.xml
@@ -10,6 +10,12 @@ class RealEstatesController < ApplicationController
       format.html # index.html.erb
       format.xml  { render :xml => @real_estates }
     end
+  end
+
+  def json
+    @real_estates = RealEstate.all
+    
+    render :json => @real_estates.to_json(:include => {:realtor => {:only => :realtor_key}}, :methods => :image_urls)
   end
 
   # GET /real_estates/1
