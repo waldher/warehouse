@@ -1,15 +1,12 @@
-<h1>Listing Real Estates</h1>
+<h1>Listing Index</h1>
 
 <table class="dataTable" style="width: 100%;">
   <thead>
     <tr>
-      <th>Ad title</th>
+      <th style="width: 50em;">Ad title</th>
       <th>Bedrooms</th>
       <th>Price</th>
-      <th>Cats</th>
-      <th>Dogs</th>
       <th>Images</th>
-      <th>Active</th>
       <th></th>
       <th></th>
     </tr>
@@ -21,12 +18,9 @@
     <td><%= real_estate.ad_title %></td>
     <td><%= real_estate.bedrooms %></td>
     <td><%= real_estate.price %></td>
-    <td><%= real_estate.cats %></td>
-    <td><%= real_estate.dogs %></td>
     <td><%= real_estate.real_estate_images.count %></td>
-    <td class="<%= real_estate.active ? "postedGreen" : "postedRed" %>"><%= real_estate.active %></td>
     <td><%= link_to 'Edit', edit_real_estate_path(real_estate) %></td>
-    <td><%= link_to (real_estate.active ? 'Disable' : 'Enable'), real_estate, :method => :delete %></td>
+    <td class="<%= real_estate.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= link_to (real_estate.active ? 'Disable' : 'Enable'), real_estate, :method => :delete, :confirm => "Are you sure you want to #{real_estate.active ? "stop" : "start"} posting this ad?" %></td>
   </tr>
 <% end %>
   </tbody>
@@ -34,7 +28,9 @@
 
 <br />
 
-<%= link_to 'New Real Estate', new_real_estate_path, :style => "font-size: 22px;" %>
+<div style="text-align: center;">
+  <%= link_to 'Add A Listing', new_real_estate_path, :style => "font-size: 40px; text-align: center;" %>
+</div>
 
 <script type="text/javascript">
   $(document).ready(function(){

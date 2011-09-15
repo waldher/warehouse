@@ -1,5 +1,5 @@
 class RealEstatesController < ApplicationController
-  before_filter :authenticate_realtor!
+  before_filter :authenticate_realtor!, :except => :json
 
   # GET /real_estates
   # GET /real_estates.xml
@@ -10,6 +10,12 @@ class RealEstatesController < ApplicationController
       format.html # index.html.erb
       format.xml  { render :xml => @real_estates }
     end
+  end
+
+  def json
+    @real_estates = RealEstate.all
+    
+    render :json => @real_estates.to_json(:include => {:realtor => {:only => :realtor_key}}, :methods => :image_urls)
   end
 
   # GET /real_estates/1
@@ -38,6 +44,7 @@ class RealEstatesController < ApplicationController
   # GET /real_estates/1/edit
   def edit
     @real_estate = RealEstate.find(params[:id])
+    6.times { @real_estate.real_estate_images.build }
   end
 
   # POST /real_estates
@@ -51,7 +58,7 @@ class RealEstatesController < ApplicationController
     respond_to do |format|
       if @real_estate.save
 
-        format.html { redirect_to(@real_estate, :notice => 'Real estate was successfully created.') }
+        format.html { redirect_to(real_estates_url) }
         format.xml  { render :xml => @real_estate, :status => :created, :location => @real_estate }
       else
         format.html { render :action => "new" }
@@ -67,7 +74,7 @@ class RealEstatesController < ApplicationController
 
     respond_to do |format|
       if @real_estate.update_attributes(params[:real_estate])
-        format.html { redirect_to(@real_estate, :notice => 'Real estate was successfully updated.') }
+        format.html { redirect_to(real_estates_url) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

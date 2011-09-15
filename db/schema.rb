@@ -111,6 +111,8 @@ ActiveRecord::Schema.define(:version => 20110906093048) do
     t.boolean  "active",         :default => true,  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "ad_location"
+    t.string   "ad_keywords",    :default => "",    :null => false
   end
 
   create_table "realtors", :force => true do |t|

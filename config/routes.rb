@@ -7,6 +7,9 @@ Marsala::Application.routes.draw do
   resources :dealer_infos
   match "first_login/:key" => "customers#first_login", :as => "first_login"
   match "login" => "customers#login", :as => "login"
+  resources :real_estates do
+    get 'json', :on => :collection
+  end
 
   devise_for :realtors, :controllers => { :registrations => 'realtors/registrations' }
 
