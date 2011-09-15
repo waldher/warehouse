@@ -1,11 +1,13 @@
 class DealerInfosController < ApplicationController
+
+  before_filter :authenticated?
   # GET /dealer_infos/new
   # GET /dealer_infos/new.xml
   def new 
 #    @last_dealer_info = DealerInfo.where(:dealer_id => current_dealer.id).order(:created_at).last
 
 #    if @last_dealer_info.nil?
-      @dealer_info = DealerInfo.new
+      @dealer_info = @current_user.dealer_infos.build
       @dealer_info.start_time = "0001-01-01 09:00".to_time
       @dealer_info.end_time = "0001-01-01 21:00".to_time
       @dealer_info.destination_website = "http://"
@@ -19,10 +21,34 @@ class DealerInfosController < ApplicationController
     end
   end
 
+  def show
+    @dealer_info = @current_user.dealer_infos.last
+  end
+
+  def edit
+      @dealer_info = @current_user.dealer_infos.last
+      redirect_to new_dealer_info_url and return unless @dealer_info
+      render :new
+  end
+
+  def update
+    @dealer_info = @current_user.dealer_infos.build(params[:dealer_info])
+    respond_to do |format|
+      if @dealer_info.save
+        format.html { redirect_to(thank_you_url, :notice => 'Dealer info was successfully created.') }
+        format.xml  { render :xml => @dealer_info, :status => :created, :location => @dealer_info }
+      else
+        @dealer_info = @current_user.dealer_infos.find(params[:id])
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @dealer_info.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
   # POST /dealer_infos
   # POST /dealer_infos.xml
   def create
-    @dealer_info = DealerInfo.new(params[:dealer_info])
+    @dealer_info = @current_user.dealer_infos.build(params[:dealer_info])
 
     respond_to do |format|
       if @dealer_info.save
@@ -33,5 +59,5 @@ class DealerInfosController < ApplicationController
         format.xml  { render :xml => @dealer_info.errors, :status => :unprocessable_entity }
       end
     end
-  end
+  end 
 end

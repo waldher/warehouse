@@ -1,0 +1,19 @@
+<%= link_to "<< Back", admin_index_url %>
+<table class="dataTable" style="width: 100%">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Key</th>
+      <th>link</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @dealers.each do |dealer| %>
+    <tr>
+      <td><%= link_to dealer.email_address, edit_customer_url(dealer) %></td>
+      <td><%= dealer.key %></td>
+      <td><%= raw(auto_link("http://#{request.host_with_port}/first_login/#{dealer.key}")) if dealer.key.present? %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

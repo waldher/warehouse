@@ -1,5 +1,11 @@
 class DealersController < ApplicationController
 
+
+  def index
+    @dealers = Customer.dealers
+  end
+
+
   def show
     @dealer = Dealer.find(params[:id])
     url = URI.parse("http://palermo.blinkonlinemarketing.com/posts/dealers/#{dealer.dealer_key}")

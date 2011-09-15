@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110817125537) do
+ActiveRecord::Schema.define(:version => 20110906093048) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -29,6 +29,19 @@ ActiveRecord::Schema.define(:version => 20110817125537) do
 
   add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
+
+  create_table "customers", :force => true do |t|
+    t.string   "email_address"
+    t.string   "hashed_password"
+    t.string   "salt"
+    t.string   "key"
+    t.integer  "role_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "customers", ["key"], :name => "index_customers_on_key"
+  add_index "customers", ["role_id"], :name => "index_customers_on_role_id"
 
   create_table "dealer_infos", :force => true do |t|
     t.integer  "dealer_id",              :default => 1,                     :null => false
@@ -120,5 +133,9 @@ ActiveRecord::Schema.define(:version => 20110817125537) do
   add_index "realtors", ["email"], :name => "index_realtors_on_email", :unique => true
   add_index "realtors", ["realtor_key"], :name => "index_realtors_on_realtor_key", :unique => true
   add_index "realtors", ["reset_password_token"], :name => "index_realtors_on_reset_password_token", :unique => true
+
+  create_table "roles", :force => true do |t|
+    t.string "name"
+  end
 
 end
