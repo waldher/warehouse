@@ -19,7 +19,7 @@
   <p>
   <% disabled = @customer.new_record? ? false : true %>
     <%= f.label :Role %><br />
-    <%= select_tag :role_id, options_from_collection_for_select(@roles, :id, :name, @customer.role_id), :disabled => disabled %>
+    <%= select_tag :role_id, options_from_collection_for_select(@roles, :id, :name, @customer.role_id.to_i), :disabled => disabled %>
   </p>
   <p>
     <%= f.submit %>

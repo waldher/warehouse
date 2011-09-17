@@ -90,6 +90,13 @@ ActiveRecord::Schema.define(:version => 20110906093048) do
   add_index "dealers", ["email"], :name => "index_dealers_on_email", :unique => true
   add_index "dealers", ["reset_password_token"], :name => "index_dealers_on_reset_password_token", :unique => true
 
+  create_table "employee", :force => true do |t|
+    t.string "first_name", :limit => 40, :null => false
+    t.string "last_name",  :limit => 40, :null => false
+    t.string "email",      :limit => 80, :null => false
+    t.string "phone",      :limit => 25, :null => false
+  end
+
   create_table "real_estate_images", :force => true do |t|
     t.integer  "real_estate_id",     :null => false
     t.string   "image_file_name"
