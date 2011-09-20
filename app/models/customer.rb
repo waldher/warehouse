@@ -52,7 +52,7 @@ class Customer < ActiveRecord::Base
   end
 
   def create_key
-    if key.blank? && !key.nil?
+    if key.blank? && !name.nil?
       self.key = name.nil? ? " " : name.gsub(/ /, "_").downcase
       unless(key.match(/^([a-z_]+)$/))
         self.errors.add(:base, "Name is invalid. use alphabets")

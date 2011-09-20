@@ -80,7 +80,7 @@ class CustomersController < ApplicationController
   def update
     @customer = Customer.find(params[:id])
     url = admin_index_url
-    if @customer.update_attributes(params[:customer])
+    if @customer.update_attributes!(params[:customer])
       title = (@customer.role_id == 1) ? "Dealer" : "Realtor"
       url = send("#{title.downcase.pluralize}_url")
       flash.notice = "#{title} updated successfully"
