@@ -22,12 +22,14 @@ class Customer < ActiveRecord::Base
 
   before_save :create_hashed_password
 
+  before_save :update_key
+
   AVAILABLE_CRAIGSLIST_TYPES = {
     'Apartments / Housing' => 'apa',
     'Cars & Trucks - By Dealer' => 'ctd'
   }
 
-  def before_save
+  def update_key
     if self.key_changed?
       self.key = self.key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
     end
