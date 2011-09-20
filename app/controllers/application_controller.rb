@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   def authenticated?
     unless current_user
+      session[:last_url] = request.url
       redirect_to login_url, :notice => "Please sign in."
       return
     end

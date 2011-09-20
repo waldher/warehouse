@@ -1,4 +1,5 @@
 class SessionController < ApplicationController
+
   def first_login
     @customer = Customer.where(:setup_nonce => params[:setup_nonce]).first
     redirect_to(login_url, :notice => "That URL is invalid.") and return if @customer.nil?
@@ -12,6 +13,7 @@ class SessionController < ApplicationController
   end
 
   def login
+    redirect_to customer_infos_url, :notice => "You have already logged in"  and return if current_user
     if request.post?
       @customer = Customer.authenticate(params['email'], params['password'])
       if @customer.present?
