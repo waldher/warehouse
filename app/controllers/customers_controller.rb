@@ -33,10 +33,10 @@ class CustomersController < ApplicationController
       @customer = Customer.authenticate(params['email'], params['password'])
       if @customer.present?
         url = ""
-        if(@customer.role_id == 1 && @customer.dealer_infos.empty?) 
-          url = new_dealer_info_url 
-        elsif(@customer.role_id == 1 && @customer.dealer_infos.present?)
-          url = edit_dealer_info_url(@customer.id)
+        if(@customer.role_id == 1 && @customer.customer_infos.empty?) 
+          url = new_customer_infos_url 
+        elsif(@customer.role_id == 1 && @customer.customer_infos.present?)
+          url = edit_customer_infos_url
         elsif(@customer.id == 2) 
           url = root_url # this need to change
         end

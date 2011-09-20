@@ -1,0 +1,8 @@
+<% for info in @latest_infos %>
+  <%= div_for(info) do %>
+    <%= content_tag :b, info.key %>: 
+    <%= info.value %>
+  <% end %>
+<% end %>
+
+<%= link_to "Edit", edit_customer_infos_url %>

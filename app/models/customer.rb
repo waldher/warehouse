@@ -1,7 +1,15 @@
 class Customer < ActiveRecord::Base
   belongs_to :role
   has_many :real_estates, :foreign_key => :realtor_id
-  has_many :dealer_infos, :foreign_key => :dealer_id
+  has_many :customer_infos
+  has_many :latest_infos, :class_name => 'CustomerInfo',:dependent => :delete_all, :conditions => proc {
+    last_version = CustomerInfo.where(:customer_id => id).map(&:version).last # find last version of information
+    ["version = ?", last_version] if last_version # if new record, 'ver' will be null 
+  }
+
+  accepts_nested_attributes_for :latest_infos, :allow_destroy => true, :reject_if => proc { |attr|
+    attr['key'].blank? || attr['value'].blank?
+  }
 
   validates :email_address, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create }
   validates :email_address, :uniqueness => { :scope => :role_id }
@@ -11,6 +19,7 @@ class Customer < ActiveRecord::Base
 
   validates :password, :confirmation => true, :on => :update
 
+  before_save :increment_version
 
   before_save :create_hashed_password
   before_validation :create_key
@@ -18,8 +27,32 @@ class Customer < ActiveRecord::Base
   scope :dealers, where(:role_id => 1)
   scope :realtors, where(:role_id => 2)
 
+
+
+  def increment_version
+    last_info = self.customer_infos.last # get last customer_info so we can get version
+    new_version = last_info.nil?  ? 1 : last_info.version + 1 # if found increment by 1 else set it to 1
+    self.latest_infos.each { |info| info.version = new_version } # set each new info version 
+  end
+
+  def maintain_history(attr = {})
+    # TODO: have to handle deletion of field
+    last_info = self.latest_infos.last # get last history record 
+    new_version = last_info.nil? ? 1 : last_info.version + 1 # if have last record increment to new value
+    attr.each do |k, v|
+      remove_it = v.delete(:_destroy)
+      if remove_it == "1"
+        self.latest_infos.delete(self.latest_infos.find(v['id']))
+        next
+      end
+      v.delete(:id) if v[:id] # delete id so it is saved as new record instead updating
+      v[:version] = new_version # set the new version of record
+      self.latest_infos.create(v) 
+    end
+  end
+
   def create_key
-    if key.blank?
+    if key.blank? && !key.nil?
       self.key = name.nil? ? " " : name.gsub(/ /, "_").downcase
       unless(key.match(/^([a-z_]+)$/))
         self.errors.add(:base, "Name is invalid. use alphabets")

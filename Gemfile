@@ -12,4 +12,4 @@ gem 'paperclip', '~> 2.3'
 gem 'jquery-rails'
 
 gem 'devise'
-
+gem 'ruby-debug19'

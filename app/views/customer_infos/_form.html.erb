@@ -1,0 +1,12 @@
+<%= form_for @current_user, :url => url, :html => {:method => method} do |f| %>
+  <%= f.fields_for :latest_infos do |info| %>
+    <%= render 'latest_info_fields', :f => info %>
+  <% end %>
+  <div>
+    <%= link_to_add_fields("Add", f, :latest_infos) %>
+  </div>
+  <%= f.hidden_field :key, :value => nil %>
+  <br />
+  <%= f.submit "Update Information" %> 
+  <%= link_to "Cancel", customer_infos_url %>
+<% end %>
