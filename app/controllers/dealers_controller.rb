@@ -1,5 +1,6 @@
 class DealersController < ApplicationController
 
+  before_filter :authenticated?, :only => :index
 
   def index
     @dealers = Customer.dealers
