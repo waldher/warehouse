@@ -1,0 +1,21 @@
+<%= form_for @customer, :url => first_login_path(params[:key]) do |f| %>
+  <% if @customer.errors.any? %>
+    <%= pluralize(@customer.errors.count, "error") + " prohibiting record from being saved" %>
+    <ul>
+      <% @customer.errors.full_messages.each do |msg| %>
+        <%= content_tag :li, msg %>
+      <% end %>
+    </ul>
+  <% end %>
+  <p>
+    <%= f.label :password %><br />
+    <%= f.password_field :password %>
+  </p>
+  <p>
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation %>
+  </p>
+  <p>
+    <%= f.submit "Save Password" %>
+  </p>
+<% end %>

@@ -7,14 +7,14 @@ class Customer < ActiveRecord::Base
   }
 
   accepts_nested_attributes_for :latest_infos, :allow_destroy => true, :reject_if => proc { |attr|
-    attr['key'].blank? || attr['value'].blank?
+    attr['key'].blank? && attr['value'].blank?
   }
 
   validates :email_address, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create }
   validates_uniqueness_of :email_address
 
   attr_accessor :password
-  attr_accessible :email_address, :password, :password_confirmation, :key
+  attr_accessible :email_address, :password, :password_confirmation, :key, :craigslist_type
 
   validates :password, :confirmation => true, :on => :update
 
@@ -30,7 +30,7 @@ class Customer < ActiveRecord::Base
   }
 
   def update_key
-    if self.key_changed?
+    if self.key_changed? && !self.key.nil?
       self.key = self.key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
     end
   end

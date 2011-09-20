@@ -4,8 +4,9 @@ Marsala::Application.routes.draw do
   resource :customer_infos
   resources :real_estates
   resources :realtors, :only => :index 
-  match "first_login/:key" => "customers#first_login", :as => "first_login"
-  match "login" => "customers#login", :as => "login"
+  match "first_login/:key" => "session#first_login", :as => "first_login"
+  match "login" => "session#login", :as => "login"
+  match 'logout' => "session#logout", :as => "logout"
 
   resources :real_estates do
     get 'json', :on => :collection

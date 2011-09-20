@@ -1,7 +1,6 @@
 <div class="fields">
-  <%= f.label :key %>
-  <%= f.text_field :key %>
-  <%= f.label :value %>
+  <%= f.hidden_field :key %>
+  <%= f.object.key %><br />
   <%= f.text_field :value %>
-  <%= link_to_remove_fields("remove", f) %>
+  <% link_to_remove_fields("remove", f) %>
 </div>
