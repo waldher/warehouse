@@ -21,6 +21,7 @@ class CustomersController < ApplicationController
 
     if request.put?
       if @customer.update_attributes(params[:customer])
+        session[:user_id] = @customer.id
         redirect_to login_url, :notice => "password successfully changed"
       else 
         render :first_login
