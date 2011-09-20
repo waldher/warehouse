@@ -1,8 +1,7 @@
 <%= content_tag :h1, "Admin Area" %>
 <%= link_to "Logout", destroy_admin_session_path, :method => :delete %>
 <ul>
-  <%= content_tag :li, (link_to "Manage Dealers", dealers_path) %>
-  <%= content_tag :li, (link_to "Manage Realtors", realtors_path) %>
+  <%= content_tag :li, (link_to "Manage Customers", customers_path) %>
 </ul>
 
-<%= link_to "Add Realtors/Dealers", new_customer_path %>
+<%= link_to "Add Customers", new_customer_path %>

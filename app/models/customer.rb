@@ -1,5 +1,4 @@
 class Customer < ActiveRecord::Base
-  belongs_to :role
   has_many :real_estates, :foreign_key => :realtor_id
   has_many :customer_infos
   has_many :latest_infos, :class_name => 'CustomerInfo',:dependent => :delete_all, :conditions => proc {
@@ -12,22 +11,27 @@ class Customer < ActiveRecord::Base
   }
 
   validates :email_address, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create }
-  validates :email_address, :uniqueness => { :scope => :role_id }
+  validates_uniqueness_of :email_address
 
-  attr_accessor :password, :name
-  attr_accessible :email_address, :password, :name, :password_confirmation
+  attr_accessor :password
+  attr_accessible :email_address, :password, :password_confirmation
 
   validates :password, :confirmation => true, :on => :update
 
   before_save :increment_version
 
   before_save :create_hashed_password
-  before_validation :create_key
 
-  scope :dealers, where(:role_id => 1)
-  scope :realtors, where(:role_id => 2)
+  AVAILABLE_CRAIGSLIST_TYPES = {
+    'Apartments / Housing' => 'apa',
+    'Cars & Trucks - By Dealer' => 'ctd'
+  }
 
-
+  def before_save
+    if key_changed?
+      key = key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
+    end
+  end
 
   def increment_version
     last_info = self.customer_infos.last # get last customer_info so we can get version
@@ -48,15 +52,6 @@ class Customer < ActiveRecord::Base
       v.delete(:id) if v[:id] # delete id so it is saved as new record instead updating
       v[:version] = new_version # set the new version of record
       self.latest_infos.create(v) 
-    end
-  end
-
-  def create_key
-    if key.blank? && !name.nil?
-      self.key = name.nil? ? " " : name.gsub(/ /, "_").downcase
-      unless(key.match(/^([a-z_]+)$/))
-        self.errors.add(:base, "Name is invalid. use alphabets")
-      end
     end
   end
 

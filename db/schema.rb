@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110920062805) do
+ActiveRecord::Schema.define(:version => 20110920105121) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 20110920062805) do
     t.integer  "role_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "craigslist_type", :default => "apa", :null => false
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"
@@ -144,9 +145,5 @@ ActiveRecord::Schema.define(:version => 20110920062805) do
   add_index "realtors", ["email"], :name => "index_realtors_on_email", :unique => true
   add_index "realtors", ["realtor_key"], :name => "index_realtors_on_realtor_key", :unique => true
   add_index "realtors", ["reset_password_token"], :name => "index_realtors_on_reset_password_token", :unique => true
-
-  create_table "roles", :force => true do |t|
-    t.string "name"
-  end
 
 end

@@ -11,7 +11,6 @@ class CustomersController < ApplicationController
   end
 
   def new
-    @roles = Role.select([:id, :name])
     respond_with(@customer = Customer.new)
   end
 
@@ -59,35 +58,27 @@ class CustomersController < ApplicationController
   end
 
   def create
-    @role = Role.find(params[:role_id])
-    url = admin_index_url
-    @customer = @role.customers.build(params[:customer])
+    @customer = Customer.new(params[:customer])
+
     if @customer.save
-      title = (@role.id == 1) ? "Dealer" : "Realtor"
-      url = send("#{title.downcase.pluralize}_url")
-      flash.notice = "#{title} created successfully"
-    else
-      @roles = Role.select([:id, :name])
+      flash.notice = "Customer created successfully"
     end
-    respond_with(@customer, :location => url)
+
+    redirect_to(@customer)
   end
 
   def edit
     @customer = Customer.find(params[:id])
-    @roles = Role.select([:id, :name])
   end
 
   def update
     @customer = Customer.find(params[:id])
-    url = admin_index_url
+
     if @customer.update_attributes!(params[:customer])
-      title = (@customer.role_id == 1) ? "Dealer" : "Realtor"
-      url = send("#{title.downcase.pluralize}_url")
-      flash.notice = "#{title} updated successfully"
-    else
-      @roles = Role.select([:id, :name])
+      flash.notice = "Customer updated successfully"
     end
-    respond_with(@customer, :location => url)
+
+    redirect_to(@customer)
   end
 
 end
