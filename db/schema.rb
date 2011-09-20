@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110920105121) do
+ActiveRecord::Schema.define(:version => 20110920114221) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -48,10 +48,12 @@ ActiveRecord::Schema.define(:version => 20110920105121) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "craigslist_type", :default => "apa", :null => false
+    t.string   "setup_nonce"
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"
   add_index "customers", ["role_id"], :name => "index_customers_on_role_id"
+  add_index "customers", ["setup_nonce"], :name => "index_customers_on_setup_nonce", :unique => true
 
   create_table "dealer_infos", :force => true do |t|
     t.integer  "dealer_id",              :default => 1,                     :null => false

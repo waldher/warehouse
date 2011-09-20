@@ -24,10 +24,16 @@ class Customer < ActiveRecord::Base
 
   before_save :update_key
 
+  before_create :set_setup_nonce
+
   AVAILABLE_CRAIGSLIST_TYPES = {
     'Apartments / Housing' => 'apa',
     'Cars & Trucks - By Dealer' => 'ctd'
   }
+
+  def set_setup_nonce
+    self.setup_nonce = (0...8).map{97.+(rand(25)).chr}.join
+  end
 
   def update_key
     if self.key_changed?
@@ -64,6 +70,7 @@ class Customer < ActiveRecord::Base
 
   def create_hashed_password
     unless password.nil? 
+      self.setup_nonce = nil
       self.salt = Customer.create_salt(email_address) if salt.nil?
       self.hashed_password = Customer.password_with_salt(password, salt)
     end

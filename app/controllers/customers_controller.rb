@@ -15,11 +15,12 @@ class CustomersController < ApplicationController
   end
 
   def first_login
-    @customer = Customer.where(:key => params[:key]).first
-    redirect_to(login_url, :notice => "Sorry key is expired") and return if @customer.nil?
+    @customer = Customer.where(:setup_nonce => params[:setup_nonce]).first
+
+    redirect_to(login_url, :notice => "That URL is invalid.") and return if @customer.nil?
+
     if request.put?
       if @customer.update_attributes(params[:customer])
-        @customer.update_attribute(:key, nil)
         redirect_to login_url, :notice => "password successfully changed"
       else 
         render :first_login
