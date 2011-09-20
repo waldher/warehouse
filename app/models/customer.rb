@@ -14,7 +14,7 @@ class Customer < ActiveRecord::Base
   validates_uniqueness_of :email_address
 
   attr_accessor :password
-  attr_accessible :email_address, :password, :password_confirmation
+  attr_accessible :email_address, :password, :password_confirmation, :key
 
   validates :password, :confirmation => true, :on => :update
 
@@ -28,8 +28,8 @@ class Customer < ActiveRecord::Base
   }
 
   def before_save
-    if key_changed?
-      key = key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
+    if self.key_changed?
+      self.key = self.key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
     end
   end
 

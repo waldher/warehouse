@@ -1,7 +1,22 @@
 <%= content_tag :h1, "Admin Area" %>
 <%= link_to "Logout", destroy_admin_session_path, :method => :delete %>
-<ul>
-  <%= content_tag :li, (link_to "Manage Customers", customers_path) %>
-</ul>
+<table class="dataTable" style="width: 100%">
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Key</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @customers.each do |customer| %>
+    <tr>
+      <td><%= link_to customer.email_address, edit_customer_url(customer) %></td>
+      <td><%= customer.key %></td>
+      <td><%= raw(auto_link("http://#{request.host_with_port}/first_login/#{customer.key}")) if customer.key.present? %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
 
 <%= link_to "Add Customers", new_customer_path %>
