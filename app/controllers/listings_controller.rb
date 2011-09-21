@@ -4,11 +4,10 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.xml
   def index
-    @listings = Listing.where(:customer_id => params[:customer_id]).all
+    @listings = Listing.where(:customer_id => @customer.id).includes(:listing_infos)
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @listings }
     end
   end
 

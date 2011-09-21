@@ -45,7 +45,7 @@
       </span>
       <span class="field">
         <%= infos.label :bedrooms %><br />
-        <%= infos.select :bedrooms, 0..8, :value => @listing.infos[:bedrooms] %>
+        <%= infos.select :bedrooms, 0..8, :selected => @listing.infos[:bedrooms] %>
       </span>
     </div>
     <div class="field">
@@ -58,12 +58,14 @@
     </div>
     <div>
       <span class="field">
+        <% checked = @listing.infos[:cats] == "1" ? true : false %>
         <%= infos.label :cats, "Cats" %> 
-        <%= infos.check_box :cats, { :value => @listing.infos[:cats] } %>
+        <%= infos.check_box :cats, { :checked => checked } %>
       </span>
       <span class="field">
+        <% checked = @listing.infos[:dogs] == "1" ? true : false %>
         <%= infos.label :dogs, "Dogs" %>
-        <%= infos.check_box :dogs, { :value => @listing.infos[:dogs] } %>
+        <%= infos.check_box :dogs, { :checked => checked } %>
       </span>
     </div>
 
