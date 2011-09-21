@@ -19,7 +19,7 @@ class CustomersController < ApplicationController
     if @customer.save
       flash.notice = "Customer created successfully"
     end
-    redirect_to(@customer)
+    redirect_to(admin_index_path)
   end
 
   def edit
@@ -29,7 +29,7 @@ class CustomersController < ApplicationController
   def update
     @customer = Customer.find(params[:id])
     flash.notice = "Customer updated successfully" if @customer.update_attributes!(params[:customer])
-    redirect_to(@customer)
+    redirect_to(admin_index_path)
   end
 
 end
