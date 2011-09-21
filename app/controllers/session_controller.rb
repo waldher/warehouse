@@ -33,7 +33,7 @@ class SessionController < ApplicationController
   end
 
   def logout
-    if @current_user.present?
+    if current_user
       @current_user = nil
       session[:user_id] = nil
       flash.notice = "You have successfully logged out"
