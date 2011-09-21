@@ -33,16 +33,9 @@ class CustomersController < ApplicationController
     if request.post?
       @customer = Customer.authenticate(params['email'], params['password'])
       if @customer.present?
-        url = ""
-        if(@customer.role_id == 1 && @customer.customer_infos.empty?) 
-          url = new_customer_infos_url 
-        elsif(@customer.role_id == 1 && @customer.customer_infos.present?)
-          url = edit_customer_infos_url
-        elsif(@customer.id == 2) 
-          url = root_url # this need to change
-        end
+        
         session[:user_id] = @customer.id
-        redirect_to url, :notice => "You have successfully logged in."
+        redirect_to customer_listings_path(@customer), :notice => "You have successfully logged in."
       else
         flash.now[:notice] = "email/password combination wrong. please try again"
         render :login

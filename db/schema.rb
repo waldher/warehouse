@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110920114221) do
+ActiveRecord::Schema.define(:version => 20110920122743) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -101,6 +101,15 @@ ActiveRecord::Schema.define(:version => 20110920114221) do
   add_index "dealers", ["dealer_key"], :name => "index_dealers_on_dealer_key", :unique => true
   add_index "dealers", ["email"], :name => "index_dealers_on_email", :unique => true
   add_index "dealers", ["reset_password_token"], :name => "index_dealers_on_reset_password_token", :unique => true
+
+  create_table "listings", :force => true do |t|
+    t.integer  "customer_id",                   :null => false
+    t.boolean  "active",      :default => true, :null => false
+    t.integer  "price"
+    t.text     "keywords",    :default => "",   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "real_estate_images", :force => true do |t|
     t.integer  "real_estate_id",     :null => false
