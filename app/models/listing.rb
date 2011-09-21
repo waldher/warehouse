@@ -28,7 +28,7 @@ class Listing < ActiveRecord::Base
       if !@infos.include?(listing_info.key)
         listing_info.delete
       else
-        listing_info.update_attribute(:value => @infos[listing_info.key])
+        listing_info.update_attributes(:value => @infos[listing_info.key])
         updated << listing_info.key
       end
     end

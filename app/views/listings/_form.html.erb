@@ -31,11 +31,11 @@
     <div>
       <span class="field">
         <%= infos.label :ad_title, "Ad Title" %><br />
-        <%= infos.text_field :ad_title, :maxlength => 70, :size => 70 %>
+        <%= infos.text_field :ad_title, :maxlength => 70, :size => 70, :value => @listing.infos[:ad_title] %>
       </span>
       <span class="field">
         <%= infos.label :ad_location, "Ad Location" %><br />
-        <%= infos.text_field :ad_location %>
+        <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location] %>
       </span>
     </div>
     <div>
@@ -45,12 +45,12 @@
       </span>
       <span class="field">
         <%= infos.label :bedrooms %><br />
-        <%= infos.select :bedrooms, 0..8 %>
+        <%= infos.select :bedrooms, 0..8, :value => @listing.infos[:bedrooms] %>
       </span>
     </div>
     <div class="field">
       <%= infos.label :ad_description, "Ad Description" %><br />
-      <%= infos.text_area :ad_description %>
+      <%= infos.text_area :ad_description, :value => @listing.infos[:ad_description] %>
     </div>
     <div class="field">
       <%= f.label :keywords, "Keywords" %><br />
@@ -59,11 +59,11 @@
     <div>
       <span class="field">
         <%= infos.label :cats, "Cats" %> 
-        <%= infos.check_box :cats %>
+        <%= infos.check_box :cats, { :value => @listing.infos[:cats] } %>
       </span>
       <span class="field">
         <%= infos.label :dogs, "Dogs" %>
-        <%= infos.check_box :dogs %>
+        <%= infos.check_box :dogs, { :value => @listing.infos[:dogs] } %>
       </span>
     </div>
 
@@ -75,7 +75,6 @@
 
       </div>
     <% end %>
-
 
     <div class="field">
       <%= f.label :active, "Activate this listing" %>
