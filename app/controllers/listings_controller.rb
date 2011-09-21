@@ -47,7 +47,7 @@ class ListingsController < ApplicationController
 
     respond_to do |format|
       if @listing.save
-        format.html { redirect_to([@customer, @listing], :notice => 'Listing was successfully created.') }
+        format.html { redirect_to(customer_listings_path, :notice => 'Listing was successfully created.') }
         format.xml  { render :xml => @listing, :status => :created, :location => @listing }
       else
         format.html { render :action => "new" }
@@ -64,7 +64,7 @@ class ListingsController < ApplicationController
 
     respond_to do |format|
       if @listing.update_attributes(params[:listing])
-        format.html { redirect_to([@customer, @listing], :notice => 'Listing was successfully updated.') }
+        format.html { redirect_to(customer_listings_path, :notice => 'Listing was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
