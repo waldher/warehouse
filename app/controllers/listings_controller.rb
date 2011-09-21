@@ -45,6 +45,8 @@ class ListingsController < ApplicationController
     @listing = Listing.new(params[:listing])
     @listing.customer_id = @customer.id
 
+    @listing.infos = params[:listing][:infos]
+
     respond_to do |format|
       if @listing.save
         format.html { redirect_to(customer_listings_path, :notice => 'Listing was successfully created.') }
