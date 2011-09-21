@@ -3,7 +3,7 @@
     <%= render 'latest_info_fields', :f => info %>
   <% end %>
   <div>
-    <%= link_to_add_fields("Add", f, :latest_infos) %>
+    <% link_to_add_fields("Add", f, :latest_infos) %>
   </div>
   <%= f.hidden_field :key, :value => nil %>
   <br />
