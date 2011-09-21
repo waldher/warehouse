@@ -15,7 +15,7 @@
       <tr>
         <td><%= listing.title %></td>
         <td><%= listing.price %></td>
-        <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= link_to (listing.active ? 'Inactive' : 'Active'), [@customer, listing], :method => :, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
+        <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= link_to (listing.active ? 'Inactive' : 'Active'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
         <td><%= link_to 'Edit', edit_customer_listing_path(@customer, listing) %></td>
      </tr>
     <% end %>
