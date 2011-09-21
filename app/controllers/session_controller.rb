@@ -2,9 +2,12 @@ class SessionController < ApplicationController
 
   def first_login
     @customer = Customer.where(:setup_nonce => params[:setup_nonce]).first
+
     redirect_to(login_url, :notice => "That URL is invalid.") and return if @customer.nil?
+
     if request.put?
       if @customer.update_attributes(params[:customer])
+        session[:user_id] = @customer.id
         redirect_to login_url, :notice => "password successfully changed"
       else 
         render :first_login
@@ -13,18 +16,12 @@ class SessionController < ApplicationController
   end
 
   def login
-    redirect_to customer_infos_url, :notice => "You have already logged in"  and return if current_user
     if request.post?
       @customer = Customer.authenticate(params['email'], params['password'])
       if @customer.present?
-        url = ""
-        if(@customer.customer_infos.empty?) 
-          url = new_customer_infos_url 
-        elsif(@customer.customer_infos.present?)
-          url = edit_customer_infos_url
-        end
+        
         session[:user_id] = @customer.id
-        redirect_to url, :notice => "You have successfully logged in."
+        redirect_to customer_listings_path(@customer), :notice => "You have successfully logged in."
       else
         flash.now[:notice] = "email/password combination wrong. please try again"
         render :login
@@ -38,6 +35,6 @@ class SessionController < ApplicationController
       session[:user_id] = nil
       flash.notice = "You have successfully logged out"
     end
-    redirect_to login_url
+      redirect_to login_url
   end
 end

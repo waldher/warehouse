@@ -1,0 +1,88 @@
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#real_estate_ad_description').tinymce({
+      script_url: '<%= javascript_path("tiny_mce/tiny_mce.js") %>',
+      theme: 'advanced',
+      theme_advanced_toolbar_location : "top",
+      theme_advanced_toolbar_align : "left",
+      plugins : "autolink,lists,spellchecker,pagebreak,style,layer,table,save,advhr,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+      theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+      theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+      theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,advhr,|,print,|,ltr,rtl,|,fullscreen",
+      theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,blockquote,pagebreak"
+    });
+  });
+</script>
+
+<%= form_for([@customer, @listing]) do |f| %>
+  <% f.fields_for :infos do |infos| %>
+    <% if @listing.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
+
+        <ul>
+        <% @listing.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <span class="field">
+        <%= infos.label :ad_title, "Ad Title" %><br />
+        <%= infos.text_field :ad_title, :maxlength => 70, :size => 70 %>
+      </span>
+      <span class="field">
+        <%= infos.label :ad_location, "Ad Location" %><br />
+        <%= infos.text_field :ad_location %>
+      </span>
+    </div>
+    <div>
+      <span class="field">
+        <%= f.label :price %><br />
+        <%= f.text_field :price, :maxlength => 7, :size => 7 %>
+      </span>
+      <span class="field">
+        <%= infos.label :bedrooms %><br />
+        <%= infos.select :bedrooms, 0..8 %>
+      </span>
+    </div>
+    <div class="field">
+      <%= infos.label :ad_description, "Ad Description" %><br />
+      <%= infos.text_area :ad_description %>
+    </div>
+    <div class="field">
+      <%= f.label :keywords, "Keywords" %><br />
+      <%= f.text_field :keywords, :maxlength => '100' %>
+    </div>
+    <div>
+      <span class="field">
+        <%= infos.label :cats, "Cats" %> 
+        <%= infos.check_box :cats %>
+      </span>
+      <span class="field">
+        <%= infos.label :dogs, "Dogs" %>
+        <%= infos.check_box :dogs %>
+      </span>
+    </div>
+
+    <label>Images</label><br />
+    <% f.fields_for :real_estate_images do |builder| %>
+      <div class="image_upload">
+        <%= builder.file_field :image %>
+        <%# radio_button_tag builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
+
+      </div>
+    <% end %>
+
+
+    <div class="field">
+      <%= f.label :active, "Activate this listing" %>
+      <%= f.check_box :active %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+  <% end %>
+<% end %>

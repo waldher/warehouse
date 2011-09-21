@@ -1,9 +1,17 @@
 Marsala::Application.routes.draw do
+
   resources :admin, :controller => :admin
-  resources :customers 
+  
+  resources :customers do
+    resources :listings
+  end
+
   resource :customer_infos
+  
   resources :real_estates
+  
   resources :realtors, :only => :index 
+
   match "first_login/:setup_nonce" => "session#first_login", :as => "first_login"
   match "login" => "session#login", :as => "login"
   match 'logout' => "session#logout", :as => "logout"
