@@ -4,7 +4,7 @@ class ListingsController < ApplicationController
   # GET /listings
   # GET /listings.xml
   def index
-    @listings = Listing.all
+    @listings = Listing.where(:customer_id => params[:id]).scoped
 
     respond_to do |format|
       format.html # index.html.erb
