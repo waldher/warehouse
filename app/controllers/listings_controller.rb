@@ -77,10 +77,10 @@ class ListingsController < ApplicationController
   # DELETE /listings/1.xml
   def destroy
     @listing = Listing.find(params[:id])
-    @listing.destroy
+    @listing.update_attributes(:active => !@listing.active)
 
     respond_to do |format|
-      format.html { redirect_to(listings_url) }
+      format.html { redirect_to(customer_listings_url(@customer)) }
       format.xml  { head :ok }
     end
   end
