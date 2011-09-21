@@ -43,6 +43,7 @@ class ListingsController < ApplicationController
   # POST /listings.xml
   def create
     @listing = Listing.new(params[:listing])
+    @listing.customer_id = @customer.id
 
     respond_to do |format|
       if @listing.save
@@ -59,6 +60,7 @@ class ListingsController < ApplicationController
   # PUT /listings/1.xml
   def update
     @listing = Listing.find(params[:id])
+    @listing.customer_id = @customer.id
 
     respond_to do |format|
       if @listing.update_attributes(params[:listing])

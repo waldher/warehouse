@@ -11,7 +11,7 @@
   <tbody>
   <% @customers.each do |customer| %>
     <tr>
-      <td><%= link_to customer.email_address, edit_customer_url(customer) %></td>
+      <td><%= link_to customer.email_address, customer_listings_path(customer) %></td>
       <td><%= customer.key %></td>
       <td><%= raw(auto_link("http://#{request.host_with_port}/first_login/#{customer.setup_nonce}")) if customer.setup_nonce.present? %></td>
     </tr>
