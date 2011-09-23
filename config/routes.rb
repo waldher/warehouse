@@ -21,7 +21,5 @@ Marsala::Application.routes.draw do
   end
 
   root :to => 'home#index'
-  resources :dealers
-
   devise_for :admins
 end
