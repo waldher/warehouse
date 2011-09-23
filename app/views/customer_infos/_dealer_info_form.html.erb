@@ -1,0 +1,150 @@
+<%= form_for @current_user, :url => url, :html => {:method => method} do |f| %>
+
+  <div class="field">
+    <%= f.label :name, "Dealer Name" %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][0][key]", "Name" %>
+    <%= text_field_tag "customer[latest_infos_attributes][0][value]", @infos[:name] %>
+  </div>
+  <div class="field">
+    <%= f.label :description, "Dealer Description" %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][1][key]", "Description" %>
+    <%= text_area_tag "customer[latest_infos_attributes][1][value]", @infos[:description] %>
+  </div>
+  <div class="field">
+    <%= f.label :address %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][2][key]", "Address" %>
+    <%= text_field_tag "customer[latest_infos_attributes][2][value]", @infos[:address] %>
+  </div>
+  <div id="citystatezip" class="field">
+    <%= f.label :city %>
+    <%= f.label :state %>
+    <%= f.label :zip %>
+    <br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][3][key]", "city" %>
+    <%= hidden_field_tag "customer[latest_infos_attributes][4][key]", "state" %>
+    <%= hidden_field_tag "customer[latest_infos_attributes][5][key]", "zip" %>
+    <%= text_field_tag "customer[latest_infos_attributes][3][value]", @infos[:city] %>
+    <%= text_field_tag "customer[latest_infos_attributes][4][value]", @infos[:state] %>
+    <%= text_field_tag "customer[latest_infos_attributes][5][value]", @infos[:zip] %>
+  </div>
+  <div class="field phone">
+    <%= f.label :Phone %>
+    <br />
+    <div class="number">
+    <% values = yaml_data(@infos[:phone]) %>
+      <%= hidden_field_tag "customer[latest_infos_attributes][6][key]", "Phone", :maxlength => 3, :size => 3 %>
+      1-<%= text_field_tag "customer[latest_infos_attributes[6][value](1i)]", parts(values, 0), :maxlength => 3, :size => 3 %>
+      -<%= text_field_tag "customer[latest_infos_attributes[6][value](2i)]", parts(values, 1), :maxlength => 3, :size => 3 %>
+      -<%= text_field_tag "customer[latest_infos_attributes[6][value](3i)]", parts(values, 2), :maxlength => 4, :size => 4, :class => "four" %>
+    </div>
+    <div class="fieldinfo">
+      This phone number will be displayed prominently and in large letters on all of your ads.<br />
+      For tracking purposes, we may issue this number to you. Please contact us for info.
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][7][key]", "email" %>
+    <%= text_field_tag "customer[latest_infos_attributes][7][value]", @infos[:email] %>
+    <div class="fieldinfo">
+      This email is displayed in all of your ads.
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :crm_email, "CRM Email" %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][8][key]", "crm_email" %>
+    <%= text_field_tag "customer[latest_infos_attributes][8][value]", @infos[:crm_email] %>
+    <div class="fieldinfo">
+     This email is where contact form submissions will be sent. 
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :display_website, "Display website" %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][9][key]", "display_website" %>
+    <%= text_field_tag "customer[latest_infos_attributes][9][value]", @infos[:display_website] || "http://" %>
+    <div class="fieldinfo">
+      This website is displayed to users and is NOT linked to.<br />
+      Do not include http://. 
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :use_landing_page %><br />
+    <span class="spacer">
+      <%= hidden_field_tag "customer[latest_infos_attributes][10][key]", "use_landing_page" %>
+      <% value = @infos[:use_landing_page] %>
+      <%= check_box_tag "customer[latest_infos_attributes][10][value]", value, checked?(value) %>
+    </span>
+  </div>
+  <div class="field">
+    <%= f.label :destination_website %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][11][key]", "destination_website" %>
+    <%= text_field_tag "customer[latest_infos_attributes][11][value]", @infos[:destination_website] || "http://" %>
+    <div class="fieldinfo">
+      This website is not displayed, but any link that a user clicks on use this.<br />
+      This field is not used if the "use landing pages" option above is checked.
+    </div>
+  </div>
+  <div class="field">
+    <%= f.label :time_zone %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][12][key]", "time_zone" %>
+    <%= time_zone_select "customer", "latest_infos_attributes[12][value]", ActiveSupport::TimeZone.us_zones, :default => @infos[:time_zone] %>
+  </div>
+  <div class="field">
+    <%= f.label :craigslist_location %><br />
+    <% grouped_options = {"Seatle" => {"see" => "seattle", "est" => "eastside", "sno" => "snohomish co", "kit" => "kitsap co", "tac" => "tacoma", "oly" => "olympia", "skc" => "south king"}.invert  } %>
+    <%= hidden_field_tag "customer[latest_infos_attributes][19][key]", "craigslist_location" %>
+    <%= select_tag "customer[latest_infos_attributes][19][value]", grouped_options_for_select(grouped_options, @infos[:craigslist_location]) %>
+  </div>
+  <div class="field">
+    <%= f.label :location_string %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][13][key]", "location_string" %>
+    <%= text_field_tag "customer[latest_infos_attributes][13][value]", @infos[:location_string] %>
+    <div class="fieldinfo">
+      This is displayed next to the ad title on both the search pages and the top of the advertisements.
+      May be used as a tagline.
+    </div>
+  </div>
+
+  <div class="time field">
+    <%= f.label :start_time %>
+    <%= f.label :end_time %><br />
+    <span class="spacer">
+      <%= hidden_field_tag "customer[latest_infos_attributes][14][key]", "start_time" %>
+      <%= time_select "customer", "latest_infos_attributes[14][value]", :default => return_time(@infos[:start_time]) %>
+    </span>
+    <span class="spacer">
+      <%= hidden_field_tag "customer[latest_infos_attributes][15][key]", "end_time" %>
+      <%= time_select "customer", "latest_infos_attributes[15][value]", :default => return_time(@infos[:end_time]) %>
+    </span>
+  </div>
+  <div class="field">
+    <%= f.label :hide_price %><br />
+    <span class="spacer">
+      <%= hidden_field_tag "customer[latest_infos_attributes][16][key]", "hide_price" %>
+      <% value = @infos[:hide_price] %>
+      <%= check_box_tag "customer[latest_infos_attributes][16][value]", value, checked?(value) %>
+    </span>
+  </div>
+  <div class="field">
+    <%= f.label :hide_mileage %><br />
+    <span class="spacer">
+      <%= hidden_field_tag "customer[latest_infos_attributes][17][key]", "hide_mileage" %>
+      <% value = @infos[:hide_mileage] %>
+      <%= check_box_tag "customer[latest_infos_attributes][17][value]", value, checked?(value) %>
+    </span>
+  </div>
+  <div class="field">
+    <%= f.label :metric %><br />
+    <span class="spacer">
+      <%= hidden_field_tag "customer[latest_infos_attributes][18][key]", "metric" %>
+      <% value = @infos[:metric] %>
+      <%= check_box_tag "customer[latest_infos_attributes][18][value]", value, checked?(value) %>
+    </span>
+    <div class="fieldinfo">
+      Check this option to display kilometers instead of miles.
+    </div>
+  </div>
+
+  <%= f.submit "Update Information" %> 
+  <%= link_to "Cancel", customer_infos_url %>
+<% end %>

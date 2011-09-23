@@ -12,4 +12,22 @@ module ApplicationHelper
     link_to_function(name, raw("add_fields(this, '#{association}', '#{escape_javascript(fields)}')") )
   end
 
+
+  def checked?(value) 
+    (value == 1 || value == 'on') ? true : false
+  end
+
+  def parts(values, idx)
+    return values.values[idx] rescue nil
+  end
+
+  def yaml_data(yaml_string)
+    YAML::load(yaml_string) rescue {}
+  end
+
+  def return_time(value)
+    result = yaml_data(value).values
+    Time.new(result[0], result[1], result[2], result[3], result[4]) rescue Time.now
+  end
+
 end

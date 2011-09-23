@@ -1,7 +1,13 @@
 <% for info in @latest_infos %>
   <%= div_for(info) do %>
-    <%= content_tag :b, info.key %>: 
-    <%= info.value %>
+    <%= content_tag :b, info.key %>:
+    <% if info.key.downcase == 'start_time' || info.key.downcase == 'end_time' %>
+      <%= return_time(info.value).to_s(:short) %>
+    <% elsif info.key.downcase == 'phone' %>
+      <%= yaml_data(info.value).values.join('-') %>
+    <% else %>
+      <%= info.value %>
+    <% end %>
   <% end %>
 <% end %>
 

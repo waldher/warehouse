@@ -1,4 +1,8 @@
 <h1>CustomerInfos#edit</h1>
 <% url = "/customer_infos" %>
 <% method = "put" %>
-<%= render 'form', {:url => url, :method => method} %>
+<% if @current_user.craigslist_type == 'ctd' %>
+  <%= render 'dealer_info_form', {:url => url, :method => method} %>
+<% else %>
+  <%= render 'form', {:url => url, :method => method} %>
+<% end %>

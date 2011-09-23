@@ -7,6 +7,7 @@ class CustomerInfosController < ApplicationController
   end
 
   def new
+    @infos = {}
     redirect_to customer_infos_url and return if @current_user.latest_infos.present?
     # TODO: for handling different type of users if can be use 
     fields = []
@@ -22,17 +23,21 @@ class CustomerInfosController < ApplicationController
   end
 
   def create
-    redirect_to customer_infos_url and return if @current_user.latest_infos.present?
+    #redirect_to customer_infos_url and return if @current_user.latest_infos.present?
     begin 
       @current_user.latest_infos_attributes=(params[:customer][:latest_infos_attributes])
       @current_user.save!
       redirect_to customer_infos_url, :notice => "You are coming back from create action"
     rescue Exception => e
+      @infos = {}
       redirect_to edit_customer_infos_url, :notice => "There was an error while saving the record please try again"
     end
   end
 
   def edit
+    info = {}
+    @infos = @current_user.latest_infos.map {|i| info[i.key.downcase.to_sym] = i.value }
+    @infos = info
   end
 
   def update
