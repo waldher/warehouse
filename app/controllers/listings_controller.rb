@@ -26,6 +26,7 @@ class ListingsController < ApplicationController
   # GET /listings/new.xml
   def new
     @listing = Listing.new
+    @listing.listing_images.build
 
     respond_to do |format|
       format.html # new.html.erb

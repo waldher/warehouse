@@ -1,0 +1,9 @@
+<div class="fields">
+  <% if f.object.new_record? %>
+    <%= f.file_field :image %>
+  <% else %>
+    <%= image_tag(f.object.image.url) %>
+    <%= link_to_remove_fields("remove", f) %>
+  <% end %>
+
+</div>
