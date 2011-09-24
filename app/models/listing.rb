@@ -3,6 +3,10 @@ class Listing < ActiveRecord::Base
 
   has_many :listing_infos
 
+  has_many :listing_images
+
+  accepts_nested_attributes_for :listing_images
+
   attr_accessor :infos
   after_initialize :init_infos
   before_save :update_infos

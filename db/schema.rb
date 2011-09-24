@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110921101156) do
+ActiveRecord::Schema.define(:version => 20110924051232) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -54,6 +54,16 @@ ActiveRecord::Schema.define(:version => 20110921101156) do
   add_index "customers", ["key"], :name => "index_customers_on_key"
   add_index "customers", ["role_id"], :name => "index_customers_on_role_id"
   add_index "customers", ["setup_nonce"], :name => "index_customers_on_setup_nonce", :unique => true
+
+  create_table "listing_images", :force => true do |t|
+    t.integer  "listing_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+  end
 
   create_table "listing_infos", :force => true do |t|
     t.integer  "listing_id", :null => false
