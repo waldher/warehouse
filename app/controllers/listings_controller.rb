@@ -8,6 +8,11 @@ class ListingsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
+      format.json { 
+        render :json => @listings.to_json(
+          :include => {:listing_images => {:methods => :image_url, :only => :none },
+          :listing_infos => {:except => [:created_at, :updated_at]}})
+      }
     end
   end
 
