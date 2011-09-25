@@ -1,9 +1,11 @@
-<div class="fields">
   <% if f.object.new_record? %>
-    <%= f.file_field :image %>
+    <div class="fields">
+      <%= f.file_field :image %>
+    </div>
   <% else %>
-    <%= image_tag(f.object.image.url(:thumbnail)) %>
-    <%= link_to_remove_fields("remove", f) %>
+    <span class="fields" style="display: inline-block; width: 300px; height: 400px;">
+      <%= link_to(image_tag(f.object.image.url(:thumbnail)), "javascript:void(0)", "data-url" => f.object.image.url) %>
+      <%= link_to_remove_fields("remove", f) %>
+    </span>
   <% end %>
 
-</div>
