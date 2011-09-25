@@ -4,7 +4,9 @@
     </div>
   <% else %>
     <span class="fields" style="display: inline-block; width: 300px; height: 400px;">
-      <%= link_to(image_tag(f.object.image.url(:thumbnail)), "javascript:void(0)", "data-url" => f.object.image.url) %>
+      <a href="<%= f.object.image.url %>" class="thumb">
+        <img src="<%= f.object.image.url(:thumbnail) %>" />
+      </a>
       <%= link_to_remove_fields("remove", f) %>
     </span>
   <% end %>

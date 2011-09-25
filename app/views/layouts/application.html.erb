@@ -8,6 +8,12 @@
   <%= javascript_include_tag :defaults, 'ui/jquery-ui.min.js', 'jquery.dataTables.min.js', 'tiny_mce/jquery.tinymce.js' %>
   <%= javascript_include_tag "jquery.fancybox-1.3.4" %>
   <%= csrf_meta_tag %>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('a.thumb').fancybox();
+    });
+  </script>
 </head>
 <body>
 
