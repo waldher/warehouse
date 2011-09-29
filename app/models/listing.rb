@@ -15,7 +15,17 @@ class Listing < ActiveRecord::Base
     return infos[:ad_title]
   end
 
+  def postable
+    # Return false if no images?
+
+    return true
+  end
+
   after_create :create_infos
+
+  def ad_image_urls
+    return listing_images.collect{|li| li.image_url}
+  end
 
   protected
 

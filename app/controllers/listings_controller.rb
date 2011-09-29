@@ -8,12 +8,15 @@ class ListingsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { 
-        render :json => @listings.to_json(
-          :include => {:listing_images => {:methods => :image_url, :only => :none },
-          :listing_infos => {:except => [:created_at, :updated_at]}})
-      }
     end
+  end
+
+  def sync
+    @listings = Listing.where(:customer_id => @customer.id).includes(:listing_infos)
+
+    render :json => @listings.to_json(
+      :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
+      :methods => :ad_image_urls )
   end
 
   # GET /listings/1
@@ -95,6 +98,10 @@ class ListingsController < ApplicationController
   private
 
   def get_customer
-    @customer = Customer.find(params[:customer_id])
+    if params[:customer_id]
+      @customer = Customer.find(params[:customer_id])
+    elsif params[:key]
+      @customer = Customer.find_by_key(params[:key])
+    end
   end
 end

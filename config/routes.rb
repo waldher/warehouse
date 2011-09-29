@@ -2,6 +2,7 @@ Marsala::Application.routes.draw do
 
   resources :admin, :controller => :admin
   
+  get '/customers/:key/listings/sync' => 'listings#sync'
   resources :customers do
     resources :listings
   end
