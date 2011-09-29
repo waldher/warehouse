@@ -87,8 +87,4 @@ class Customer < ActiveRecord::Base
   def self.password_with_salt(password, salt) 
     Digest::SHA2.hexdigest("Put #{salt} on the #{password}")
   end
-
-  def to_param
-    return key
-  end
 end
