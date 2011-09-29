@@ -12,11 +12,15 @@ class ListingsController < ApplicationController
   end
 
   def sync
-    @listings = Listing.where(:customer_id => @customer.id).includes(:listing_infos)
+    if @customer
+      @listings = Listing.where(:customer_id => @customer.id).includes(:listing_infos)
 
-    render :json => @listings.to_json(
-      :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
-      :methods => :ad_image_urls )
+      render :json => @listings.to_json(
+        :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
+        :methods => :ad_image_urls )
+    else
+      render :json => []
+    end
   end
 
   # GET /listings/1
