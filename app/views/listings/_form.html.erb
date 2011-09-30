@@ -41,7 +41,7 @@
     <div>
       <span class="field">
         <%= infos.label :ad_price %><br />
-        <%= infos.text_field :ad_price, :maxlength => 7, :size => 7 %>
+        <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos[:ad_price] %>
       </span>
       <span class="field">
         <%= infos.label :ad_bedrooms %><br />
@@ -54,7 +54,7 @@
     </div>
     <div class="field">
       <%= infos.label :ad_keywords, "Keywords" %><br />
-      <%= infos.text_field :ad_keywords, :maxlength => '100' %>
+      <%= infos.text_field :ad_keywords, :maxlength => '100', :value => @listing.infos[:ad_keywords] %>
     </div>
     <div>
       <span class="field">
