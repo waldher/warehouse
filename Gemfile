@@ -13,3 +13,5 @@ gem 'jquery-rails'
 
 gem 'devise'
 gem 'ruby-debug19'
+
+gem 'mechanize'
