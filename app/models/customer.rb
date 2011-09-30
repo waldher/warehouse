@@ -6,6 +6,8 @@ class Customer < ActiveRecord::Base
     ["version = ?", last_version] if last_version # if new record, 'ver' will be null 
   }
 
+  has_and_belongs_to_many :capabilities
+
   accepts_nested_attributes_for :latest_infos, :allow_destroy => true, :reject_if => proc { |attr|
     attr['key'].blank? && attr['value'].blank?
   }
@@ -86,5 +88,15 @@ class Customer < ActiveRecord::Base
 
   def self.password_with_salt(password, salt) 
     Digest::SHA2.hexdigest("Put #{salt} on the #{password}")
+  end
+
+  def has_capability?(name)
+    for capability in capabilities
+      if capability.name == name
+        return true
+      end
+    end
+
+    return false
   end
 end

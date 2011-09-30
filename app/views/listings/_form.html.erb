@@ -40,13 +40,31 @@
     </div>
     <div>
       <span class="field">
-        <%= infos.label :ad_price %><br />
+        <%= infos.label :ad_price, "Price" %><br />
         <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos[:ad_price] %>
       </span>
       <span class="field">
-        <%= infos.label :ad_bedrooms %><br />
+        <%= infos.label :ad_bedrooms, "Bedrooms" %><br />
         <%= infos.select :ad_bedrooms, 0..8, :selected => @listing.infos[:ad_bedrooms] %>
       </span>
+      <% if @customer.has_capability?("bathrooms") %>
+        <span class="field">
+          <%= infos.label :ad_bathrooms, "Bathrooms" %><br />
+          <%= infos.select :ad_bathrooms, 0..8, :selected => @listing.infos[:ad_bathrooms] %>
+        </span>
+      <% end %>
+      <% if @customer.has_capability?("sqft") %>
+        <span class="field">
+          <%= infos.label :ad_sqft, "Square Feet" %><br />
+          <%= infos.text_field :ad_sqft, :value => @listing.infos[:ad_sqft], :size => 5 %>
+        </span>
+      <% end %>
+      <% if @customer.has_capability?("style") %>
+        <span class="field">
+          <%= infos.label :ad_style, "Style" %><br />
+          <%= infos.text_field :ad_style, :value => @listing.infos[:ad_style] %>
+        </span>
+      <% end %>
     </div>
     <div class="field">
       <%= infos.label :ad_description, "Ad Description" %><br />
@@ -58,12 +76,12 @@
     </div>
     <div>
       <span class="field">
-        <% checked = @listing.infos[:cats] == "1" ? true : false %>
+        <% checked = @listing.infos[:ad_cats] == "1" ? true : false %>
         <%= infos.label :ad_cats, "Cats" %> 
         <%= infos.check_box :ad_cats, { :checked => checked } %>
       </span>
       <span class="field">
-        <% checked = @listing.infos[:dogs] == "1" ? true : false %>
+        <% checked = @listing.infos[:ad_dogs] == "1" ? true : false %>
         <%= infos.label :ad_dogs, "Dogs" %>
         <%= infos.check_box :ad_dogs, { :checked => checked } %>
       </span>
