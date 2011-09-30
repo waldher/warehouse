@@ -50,7 +50,7 @@
       <% if @customer.has_capability?("bathrooms") %>
         <span class="field">
           <%= infos.label :ad_bathrooms, "Bathrooms" %><br />
-          <%= infos.select :ad_bathrooms, 0..8, :selected => @listing.infos[:ad_bathrooms] %>
+          <%= infos.select :ad_bathrooms, (0..16).collect{|n| n/2.0}, :selected => @listing.infos[:ad_bathrooms] %>
         </span>
       <% end %>
       <% if @customer.has_capability?("sqft") %>
