@@ -70,6 +70,9 @@
     </div>
 
     <label>Images</label><br />
+    <div>
+      <%= link_to_add_fields("Add Image", f, :listing_images) %>
+    </div>
     <% f.fields_for :listing_images do |builder| %>
       <div class="image_upload">
         <%= render 'listing_image_fields', :f => builder %>
@@ -77,7 +80,7 @@
       </div>
     <% end %>
     <div>
-      <%= link_to_add_fields("add", f, :listing_images) %>
+      <%= link_to_add_fields("Add Image", f, :listing_images) %>
     </div>
 
     <div class="field">
