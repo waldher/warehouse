@@ -1,13 +1,14 @@
   <% if f.object.new_record? %>
-    <div class="fields">
+    <span class="fields">
       <%= f.file_field :image %>
-    </div>
+    </span>
   <% else %>
     <span class="fields" style="display: inline-block; width: 300px; height: 400px;">
       <a href="<%= f.object.image.url %>" class="thumb">
         <img src="<%= f.object.image.url(:thumbnail) %>" />
       </a>
-      <%= link_to_remove_fields("remove", f) %>
+      <br />
+      <%= link_to_remove_fields("Remove Image", f) %>
     </span>
   <% end %>
 

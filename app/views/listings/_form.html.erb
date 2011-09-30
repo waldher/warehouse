@@ -93,10 +93,10 @@
     </div>
     <div id="listing_images_id">
       <% f.fields_for :listing_images do |builder| %>
-        <div class="image_upload">
+        <span class="image_upload">
           <%= render 'listing_image_fields', :f => builder %>
           <%# radio_button_tag builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
-        </div>
+        </span>
       <% end %>
     </div>
     <div>
