@@ -10,16 +10,6 @@
   <%= @listing.active %>
 </p>
 
-<p>
-  <b>Price:</b>
-  <%= @listing.price %>
-</p>
-
-<p>
-  <b>Keywords:</b>
-  <%= @listing.keywords %>
-</p>
-
 
 <%= link_to 'Edit', edit_customer_listing_path(@customer, @listing) %> |
 <%= link_to 'Back', customer_listings_path(@customer) %>
