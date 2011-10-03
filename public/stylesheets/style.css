@@ -107,13 +107,19 @@ span.spacer {
  * Table Info
  */
 
+.postedBlue {
+        background-color: #AAAAFF !important;
+        text-align: center;
+}
+
 .postedRed {
-	background-color: #FFAAAA;
+        background-color: #FFAAAA !important;
 }
 
 .postedGreen {
-	background-color: #AAFFAA;
+        background-color: #AAFFAA !important;
 }
+
 
 /*
  * Dealer Info
