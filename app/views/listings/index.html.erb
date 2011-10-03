@@ -22,10 +22,6 @@
 
 <br />
 
-<script type="text/javascript">
-  sorting = [[1, 'desc']];
-</script>
-
 <div style="text-align: center;">
   <%= link_to 'New Listing', new_customer_listing_path(@customer), :style => "font-size: 40px; text-align: center;" %>
 </div>
@@ -34,7 +30,8 @@
   $(document).ready(function(){
     $(".dataTable").dataTable({
       "bJQueryUI": true,
-      "iDisplayLength": 50
+      "iDisplayLength": 50,
+      "aaSorting" : [[1, 'desc']]
     });
   });
 </script>
