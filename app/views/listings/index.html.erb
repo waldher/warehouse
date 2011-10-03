@@ -13,7 +13,7 @@
     <% @listings.each do |listing| %>
       <tr>
         <td><%= listing.title %></td>
-        <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= link_to (listing.active ? 'Disable' : 'Enable'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
+        <td sorting_1 class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= link_to (listing.active ? 'Disable' : 'Enable'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
         <td><%= link_to 'Edit', edit_customer_listing_path(@customer, listing) %></td>
      </tr>
     <% end %>
@@ -21,6 +21,10 @@
 </table>
 
 <br />
+
+<script type="text/javascript">
+  sorting = [[1, 'desc']];
+</script>
 
 <div style="text-align: center;">
   <%= link_to 'New Listing', new_customer_listing_path(@customer), :style => "font-size: 40px; text-align: center;" %>
