@@ -19,7 +19,7 @@
         <td><%= listing.title %></td>
        <!--<td><%= listing.infos[:ad_address] %></td>-->
         <td><%= listing.infos[:ad_price] %></td>
-        <td><%= listing.updated_at %></td>
+        <td><%= listing.updated_at.strftime("%m/%d %I:%M:%p") %></td>
         <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.active ? 'Active' : 'Inactive' %></td>
         <td sorting_1><%= link_to (listing.active ? 'Deactivate' : 'Activate'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
         <td><%= link_to 'Edit', edit_customer_listing_path(@customer, listing) %></td>
