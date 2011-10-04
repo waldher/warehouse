@@ -68,7 +68,7 @@
       <% if @customer.has_capability?("style") %>
         <span class="field">
           <%= infos.label :ad_style, "Style" %><br />
-          <%= infos.text_field :ad_style, :value => @listing.infos[:ad_style] %>
+          <%= infos.text_field :ad_style, :value => (@listing.infos[:ad_style] or "Condominium") %>
         </span>
       <% end %>
     </div>
