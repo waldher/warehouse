@@ -40,6 +40,12 @@
     </div>
     <div>
       <span class="field">
+        <%= infos.label :ad_address, "Address" %>
+        <%= infos.text_field :ad_address, :value => @listing.infos[:ad_address]  %>
+      </span>
+    </div>
+    <div>
+      <span class="field">
         <%= infos.label :ad_price, "Price" %><br />
         <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos[:ad_price] %>
       </span>
