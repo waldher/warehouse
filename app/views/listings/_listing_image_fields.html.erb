@@ -1,7 +1,7 @@
   <% if f.object.new_record? %>
-    <span class="fields">
+    <div class="fields">
       <%= f.file_field :image %>
-    </span>
+    </div>
   <% else %>
     <span class="fields image"  id="<%= "threading_#{f.object.threading}" %>" style="display: block;">
       <a href="<%= f.object.image.url %>" class="thumb">
