@@ -15,7 +15,7 @@
 </script>
 
 <%= form_for([@customer, @listing], :html => {:multipart => true}) do |f| %>
-  <% f.fields_for :infos do |infos| %>
+  <%= f.fields_for :infos do |infos| %>
     <% if @listing.errors.any? %>
       <div id="error_explanation">
         <h2><%= pluralize(@listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
@@ -97,14 +97,12 @@
     <div>
       <%= link_to_add_fields("Add Image", f, :listing_images) %>
     </div>
-    <div id="listing_images_id">
+    <div class="sortable" id="<%= params[:id]%>">
       <% f.fields_for :listing_images do |builder| %>
-        <span class="image_upload">
           <%= render 'listing_image_fields', :f => builder %>
           <%# radio_button_tag builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
-        </span>
-      <% end %>
-    </div>
+        <% end %>
+      </div>
     <div>
       <%= link_to_add_fields("Add Image", f, :listing_images) %>
     </div>

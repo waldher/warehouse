@@ -163,3 +163,40 @@ span.image_upload {
 	border: 1px solid #DDDDDD;
   vertical-align: top;
 }
+
+a.add_btn {
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 29px;
+  margin-bottom: 14px;
+  width: 191px;
+}
+
+a.rm_btn {
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 29px;
+  margin-bottom: 14px;
+  width: 191px;
+  position: relative;
+  bottom: 65px;
+}
+
+
+span.add {
+  background: url(/images/add.png) no-repeat;
+  text-indent: 35px;
+  display: inline-block;
+}
+
+span.remove {
+  background: url(/images/delete.png) no-repeat 0px;
+  text-indent: 50px;
+  display: inline-block;
+  float: right;
+}
+
+.image {
+  width: 500px;
+  min-height: 150px;
+}

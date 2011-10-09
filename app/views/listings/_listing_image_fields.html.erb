@@ -3,11 +3,10 @@
       <%= f.file_field :image %>
     </span>
   <% else %>
-    <span class="fields" style="display: inline-block; width: 300px; height: 400px;">
+    <span class="fields image"  id="<%= "threading_#{f.object.threading}" %>" style="display: block;">
       <a href="<%= f.object.image.url %>" class="thumb">
         <img src="<%= f.object.image.url(:thumbnail) %>" />
       </a>
-      <br />
       <%= link_to_remove_fields("Remove Image", f) %>
     </span>
   <% end %>
