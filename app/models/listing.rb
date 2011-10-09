@@ -9,7 +9,7 @@ class Listing < ActiveRecord::Base
 
   attr_accessor :infos
   after_initialize :init_infos
-  before_save :set_threading_number
+  before_create :set_threading_number
   before_save :update_infos
 
   def set_threading_number
