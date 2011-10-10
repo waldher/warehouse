@@ -4,6 +4,7 @@
     </div>
   <% else %>
     <span class="fields image"  id="<%= "threading_#{f.object.threading}" %>" style="display: block;">
+      <a href="#" id="sort-icon"><img src="/images/sort_neutral_green.png" /></a>
       <a href="<%= f.object.image.url %>" class="thumb">
         <img src="<%= f.object.image.url(:thumbnail) %>" />
       </a>

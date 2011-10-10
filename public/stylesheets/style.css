@@ -178,6 +178,9 @@ a.rm_btn {
   line-height: 29px;
   margin-bottom: 14px;
   width: 191px;
+  position: relative;
+  bottom: 150px;
+  left: 100px;
 }
 
 
@@ -191,7 +194,6 @@ span.remove {
   background: url(/images/delete.png) no-repeat 0px;
   text-indent: 50px;
   display: inline-block;
-  float: right;
 }
 
 span.remove:hover {
@@ -199,6 +201,12 @@ span.remove:hover {
 }
 
 span.image {
-  width: 500px;
+  width: 700px;
   height: 300px;
+}
+
+a#sort-icon {
+  position: relative;
+  bottom: 150px;
+  margin-right: 120px;
 }
