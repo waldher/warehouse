@@ -57,7 +57,7 @@ div.field, div.actions {
 }
 
 #header {
-	text-align: center;
+  text-align: center;
 }
 
 h1 {
@@ -67,8 +67,8 @@ h1 {
 /*
  * Generic Form
  */
-form {
-  padding-top: 2em;
+  form {
+    padding-top: 2em;
 }
 
 div.field {
@@ -76,8 +76,8 @@ div.field {
 }
 
 span.field {
-	display: inline-block;
-	padding: 5px 10px;
+  display: inline-block;
+  padding: 5px 10px;
 }
 
 form label {
@@ -107,26 +107,26 @@ span.spacer {
  * Table Info
  */
 
-.postedBlue {
-        background-color: #AAAAFF !important;
-        text-align: center;
+  .postedBlue {
+    background-color: #AAAAFF !important;
+    text-align: center;
 }
 
 .postedRed {
-        background-color: #FFAAAA !important;
+  background-color: #FFAAAA !important;
 }
 
 .postedGreen {
-        background-color: #AAFFAA !important;
+  background-color: #AAFFAA !important;
 }
 
 
 /*
  * Dealer Info
  */
-#citystatezip label, #citystatezip input {
-  width: 326px;
-  display: inline-block;
+  #citystatezip label, #citystatezip input {
+    width: 326px;
+    display: inline-block;
 }
 
 #dealer_info_address {
@@ -159,8 +159,8 @@ span.spacer {
  * Image Upload
  */
 span.image_upload {
-	display: inline-block;
-	border: 1px solid #DDDDDD;
+  display: inline-block;
+  border: 1px solid #DDDDDD;
   vertical-align: top;
 }
 
@@ -178,8 +178,6 @@ a.rm_btn {
   line-height: 29px;
   margin-bottom: 14px;
   width: 191px;
-  position: relative;
-  bottom: 65px;
 }
 
 
@@ -196,7 +194,11 @@ span.remove {
   float: right;
 }
 
-.image {
+span.remove:hover {
+  color: #000; background-color:#fff;
+}
+
+span.image {
   width: 500px;
-  min-height: 150px;
+  height: 300px;
 }

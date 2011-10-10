@@ -10,10 +10,25 @@ class Listing < ActiveRecord::Base
   attr_accessor :infos
   after_initialize :init_infos
   before_create :set_threading_number
+  before_update :new_images_threading_number
   before_save :update_infos
 
   def set_threading_number
     self.listing_images.each_with_index { |image, index|  image.threading = index + 1 }
+  end
+
+  def new_images_threading_number
+    logger.debug "------------------------------"
+    last_threading = self.listing_images.where(["threading != ?", 0]).last.threading rescue 0
+
+    self.listing_images.detect { |image| 
+     if image.new_record?
+       image.threading = last_threading + 1
+       last_threading += 1
+     end
+    }
+    logger.debug self.listing_images.detect { |image| image.new_record? }.inspect
+    logger.debug "------------------------------"
   end
 
   def title

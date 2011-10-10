@@ -98,7 +98,7 @@
       <%= link_to_add_fields("Add Image", f, :listing_images) %>
     </div>
     <div class="sortable" id="<%= params[:id]%>">
-      <% f.fields_for :listing_images do |builder| %>
+      <%= f.fields_for :listing_images do |builder| %>
           <%= render 'listing_image_fields', :f => builder %>
           <%# radio_button_tag builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
         <% end %>

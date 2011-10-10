@@ -26,7 +26,9 @@ class ListingsController < ApplicationController
   def image_update
     logger.debug params
     listing = Listing.find(params[:id])
+    logger.debug params[:threading]
     listing.listing_images.each_with_index do |item, index|
+      logger.debug "Replacing #{item.threading} with #{params[:threading][index]}"
       item.update_attribute(:threading, params[:threading][index])
     end
     render :text => params
