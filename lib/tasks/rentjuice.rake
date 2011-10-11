@@ -49,6 +49,8 @@ kangarent_listings.each { |kang|
     listing.infos[:ad_keywords] = (kang.features * ", ") || ""
     listing.infos[:ad_latitude] = kang.latitude || ""
     listing.infos[:ad_longitude] = kang.longitude || ""
+    listing.infos[:ad_neighborhoods] = kang.neighborhoods || ""
+    listing.infos[:ad_property_type] = kang.property_type || ""
     listing.save
     puts "Listing has Leadadvo ID #{listing.id}"
 
