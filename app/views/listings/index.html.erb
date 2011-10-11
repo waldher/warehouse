@@ -3,9 +3,9 @@
 <table class="dataTable" style="width: 100%;">
   <thead>
     <tr>
-      <th>Title</th>
-      <!--<th>Address</th>-->
+      <th>Address</th>
       <th>Price</th>
+      <th>Title</th>
       <th>Last Updated</th>
       <th>Status</th>
       <th>Enable/Disable</th>
@@ -16,9 +16,9 @@
   <tbody>
     <% @listings.each do |listing| %>
       <tr>
-        <td><%= listing.title %></td>
-       <!--<td><%= listing.infos[:ad_address] %></td>-->
+        <td><%= listing.infos[:ad_address] %></td>
         <td><%= listing.infos[:ad_price] %></td>
+        <td><%= listing.title %></td>
         <td><%= listing.updated_at.strftime("%m/%d %I:%M:%p") %></td>
         <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.active ? 'Active' : 'Inactive' %></td>
         <td><%= link_to (listing.active ? 'Deactivate' : 'Activate'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
@@ -39,7 +39,7 @@
     $(".dataTable").dataTable({
       "bJQueryUI": true,
       "iDisplayLength": 50,
-      "aaSorting" : [[3, 'asc']]
+      "aaSorting" : [[4, 'asc'],[3, 'desc']]
     });
   });
 </script>

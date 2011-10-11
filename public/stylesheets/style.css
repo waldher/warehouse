@@ -57,7 +57,7 @@ div.field, div.actions {
 }
 
 #header {
-	text-align: center;
+  text-align: center;
 }
 
 h1 {
@@ -67,8 +67,8 @@ h1 {
 /*
  * Generic Form
  */
-form {
-  padding-top: 2em;
+  form {
+    padding-top: 2em;
 }
 
 div.field {
@@ -76,8 +76,8 @@ div.field {
 }
 
 span.field {
-	display: inline-block;
-	padding: 5px 10px;
+  display: inline-block;
+  padding: 5px 10px;
 }
 
 form label {
@@ -107,26 +107,26 @@ span.spacer {
  * Table Info
  */
 
-.postedBlue {
-        background-color: #AAAAFF !important;
-        text-align: center;
+  .postedBlue {
+    background-color: #AAAAFF !important;
+    text-align: center;
 }
 
 .postedRed {
-        background-color: #FFAAAA !important;
+  background-color: #FFAAAA !important;
 }
 
 .postedGreen {
-        background-color: #AAFFAA !important;
+  background-color: #AAFFAA !important;
 }
 
 
 /*
  * Dealer Info
  */
-#citystatezip label, #citystatezip input {
-  width: 326px;
-  display: inline-block;
+  #citystatezip label, #citystatezip input {
+    width: 326px;
+    display: inline-block;
 }
 
 #dealer_info_address {
@@ -159,7 +159,54 @@ span.spacer {
  * Image Upload
  */
 span.image_upload {
-	display: inline-block;
-	border: 1px solid #DDDDDD;
+  display: inline-block;
+  border: 1px solid #DDDDDD;
   vertical-align: top;
+}
+
+a.add_btn {
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 29px;
+  margin-bottom: 14px;
+  width: 191px;
+}
+
+a.rm_btn {
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 29px;
+  margin-bottom: 14px;
+  width: 191px;
+  position: relative;
+  bottom: 150px;
+  left: 100px;
+}
+
+
+span.add {
+  background: url(/images/add.png) no-repeat;
+  text-indent: 35px;
+  display: inline-block;
+}
+
+span.remove {
+  background: url(/images/delete.png) no-repeat 0px;
+  text-indent: 50px;
+  display: inline-block;
+}
+
+span.remove:hover {
+  color: #000; background-color:#fff;
+}
+
+span.image {
+  width: 700px;
+  height: 300px;
+}
+
+a#sort-icon {
+  position: relative;
+  bottom: 150px;
+  margin-right: 120px;
 }

@@ -7,6 +7,8 @@ Marsala::Application.routes.draw do
     resources :listings
   end
 
+  match '/listings/image_update/:id' => "listings#image_update", :via => :post
+
   resource :customer_infos
   
   resources :real_estates

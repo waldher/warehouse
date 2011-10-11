@@ -15,7 +15,7 @@
 </script>
 
 <%= form_for([@customer, @listing], :html => {:multipart => true}) do |f| %>
-  <% f.fields_for :infos do |infos| %>
+  <%= f.fields_for :infos do |infos| %>
     <% if @listing.errors.any? %>
       <div id="error_explanation">
         <h2><%= pluralize(@listing.errors.count, "error") %> prohibited this listing from being saved:</h2>
@@ -36,6 +36,12 @@
       <span class="field">
         <%= infos.label :ad_location, "Ad Location" %><br />
         <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location] %>
+      </span>
+    </div>
+    <div>
+      <span class="field">
+        <%= infos.label :ad_address, "Address" %><br />
+        <%= infos.text_field :ad_address, :max_length => 70, :size => 70, :value => @listing.infos[:ad_address]  %>
       </span>
     </div>
     <div>
@@ -62,7 +68,7 @@
       <% if @customer.has_capability?("style") %>
         <span class="field">
           <%= infos.label :ad_style, "Style" %><br />
-          <%= infos.text_field :ad_style, :value => @listing.infos[:ad_style] %>
+          <%= infos.text_field :ad_style, :value => (@listing.infos[:ad_style] or "Condominium") %>
         </span>
       <% end %>
     </div>
@@ -91,14 +97,12 @@
     <div>
       <%= link_to_add_fields("Add Image", f, :listing_images) %>
     </div>
-    <div id="listing_images_id">
-      <% f.fields_for :listing_images do |builder| %>
-        <span class="image_upload">
+    <div class="sortable" id="<%= params[:id]%>">
+      <%= f.fields_for :listing_images do |builder| %>
           <%= render 'listing_image_fields', :f => builder %>
           <%# radio_button_tag builder.object_name.gsub(/.*\[/, '').gsub(/\]/, '') %>
-        </span>
-      <% end %>
-    </div>
+        <% end %>
+      </div>
     <div>
       <%= link_to_add_fields("Add Image", f, :listing_images) %>
     </div>

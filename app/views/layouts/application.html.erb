@@ -2,11 +2,11 @@
 <html>
 <head>
   <title>Leadadvo Portal</title>
-  <%= stylesheet_link_tag 'style.css'  %>
+  <%= stylesheet_link_tag "style", "jquery.fancybox-1.3.4.css"  %>
   <%= stylesheet_link_tag 'themes/redmond/jquery-ui-1.8.16.custom.css' %>
   <%= stylesheet_link_tag 'demo_table_jui.css' %>
-  <%= javascript_include_tag :defaults, 'ui/jquery-ui.min.js', 'jquery.dataTables.min.js', 'tiny_mce/jquery.tinymce.js' %>
-  <%= javascript_include_tag "jquery.fancybox-1.3.4" %>
+  <%= javascript_include_tag :defaults, "jquery.fancybox-1.3.4", 'ui/jquery-ui.min.js', 'jquery.dataTables.min.js', 'tiny_mce/jquery.tinymce.js' %>
+  <%= javascript_include_tag  %>
   <%= csrf_meta_tag %>
 
   <script type="text/javascript">

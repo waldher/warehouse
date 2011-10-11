@@ -22,6 +22,17 @@ class ListingsController < ApplicationController
       render :json => []
     end
   end
+  
+  def image_update
+    logger.debug params
+    listing = Listing.find(params[:id])
+    logger.debug params[:threading]
+    listing.listing_images.each_with_index do |item, index|
+      logger.debug "Replacing #{item.threading} with #{params[:threading][index]}"
+      item.update_attribute(:threading, params[:threading][index])
+    end
+    render :text => params
+  end
 
   # GET /listings/1
   # GET /listings/1.xml
@@ -58,6 +69,7 @@ class ListingsController < ApplicationController
     @listing.customer_id = @customer.id
 
     @listing.infos = params[:listing][:infos]
+
 
     respond_to do |format|
       if @listing.save
