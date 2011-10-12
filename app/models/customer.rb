@@ -30,7 +30,8 @@ class Customer < ActiveRecord::Base
 
   AVAILABLE_CRAIGSLIST_TYPES = {
     'Apartments / Housing' => 'apa',
-    'Cars & Trucks - By Dealer' => 'ctd'
+    'Cars & Trucks - By Dealer' => 'ctd',
+    'Gigs' => 'ggg'
   }
 
   def set_setup_nonce
