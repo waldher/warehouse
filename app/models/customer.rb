@@ -40,7 +40,7 @@ class Customer < ActiveRecord::Base
 
   def update_key
     if self.key_changed? && !self.key.nil?
-      self.key = self.key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
+      self.key = self.key.downcase.gsub(/[^a-z _]/, '').gsub(/  */, '_')
     end
   end
 
