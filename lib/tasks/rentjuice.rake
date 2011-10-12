@@ -37,8 +37,8 @@ kangarent_listings.each { |kang|
     end
  
     listing.infos[:ad_description] = kang.description || ""
+    next if !kang.description
     listing.infos[:ad_title] = kang.title || ""
-    next if !kang.title
     listing.infos[:ad_address] = kang.address || ""
     listing.infos[:ad_price] = kang.rent || ""
     puts "Price : #{kang.rent}"
@@ -51,7 +51,7 @@ kangarent_listings.each { |kang|
     listing.infos[:ad_longitude] = kang.longitude || ""
     listing.infos[:ad_neighborhoods] = kang.neighborhoods || ""
     listing.infos[:ad_property_type] = kang.property_type || ""
-    listing.save
+    listing.save if !kang.sorted_photos.empty?
     puts "Listing has Leadadvo ID #{listing.id}"
 
     for image in kang.sorted_photos
