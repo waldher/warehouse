@@ -3,8 +3,10 @@
 <table class="dataTable" style="width: 100%;">
   <thead>
     <tr>
-      <th>Address</th>
-      <th>Price</th>
+      <% if @customer.craigslist_type == "apa" %>
+        <th>Address</th>
+        <th>Price</th>
+      <% end %>
       <th>Title</th>
       <th>Last Updated</th>
       <th>Status</th>
@@ -16,8 +18,10 @@
   <tbody>
     <% @listings.each do |listing| %>
       <tr>
-        <td><%= listing.infos[:ad_address] %></td>
-        <td><%= listing.infos[:ad_price] %></td>
+        <% if @customer.craigslist_type == "apa" %>
+          <td><%= listing.infos[:ad_address] %></td>
+          <td><%= listing.infos[:ad_price] %></td>
+        <% end %>
         <td><%= listing.title %></td>
         <td><%= listing.updated_at.strftime("%m/%d %I:%M:%p") %></td>
         <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.active ? 'Active' : 'Inactive' %></td>
@@ -39,7 +43,11 @@
     $(".dataTable").dataTable({
       "bJQueryUI": true,
       "iDisplayLength": 50,
+      <% if @customer.craigslist_type == "apa" %>
       "aaSorting" : [[4, 'asc'],[3, 'desc']]
+      <% else %>
+      "aaSorting" : []
+      <% end %>
     });
   });
 </script>
