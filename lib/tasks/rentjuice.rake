@@ -15,19 +15,22 @@ namespace :rentjuicer do
     customer_listings = @listings.find_all
     puts "Downloaded Kangarent's Rentjuce listings (#{customer_listings.count} in total)"
 
+    key_map = {}
+    Listing.where("customer_id = ?", customer_id).each{ |listing|
+      key_map[listing.infos[:ad_foreign_id]] = listing.id
+    }
+    puts "Constructed foreign to local id/key map."
+
     customer_listings.each { |customer|
 
       old_listings = Listing.where("customer_id = ?", customer_id)
       puts "Identified Kangarent's Leadadvo listings (#{old_listings.count} in total)"
 
       new = true
-      for old_listing in old_listings
-        if old_listing.infos[:ad_foreign_id].to_i == customer.id
+      if key_map[customer.id.to_s]
           puts "Old Listing Found"
-          listing = old_listing
+          listing = Listing.find(key_map[customer.id.to_s])
           new = false
-          break
-        end
       end
       if new
         puts "New Listing Found, Rentjuce ID #{customer.id}"
