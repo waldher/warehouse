@@ -34,7 +34,6 @@ namespace :rentjuicer do
         listing = Listing.new
 
         listing.customer_id = customer_id
-        listing.active = false
         listing.infos[:ad_foreign_id] = customer.id
       end
   
