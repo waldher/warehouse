@@ -38,7 +38,19 @@ namespace :rentjuicer do
 
         listing.customer_id = customer_id
         listing.infos[:ad_foreign_id] = customer.id
-      end
+
+        #Stuff that should never change (Trying to help skipped listings run faster.)
+        listing.infos[:ad_city] = customer.city || ""
+        listing.infos[:ad_state] = customer.state || ""
+        listing.infos[:ad_zip_code] = customer.zip_code || ""
+        
+        address = "#{customer.street_number} #{customer.street}, #{customer.city}, #{customer.state} #{customer.zip_code}" 
+        json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+        parsed_json = ActiveSupport::JSON.decode(json_string)
+        location = parsed_json["results"].first["address_components"][2]["short_name"]
+        listing.infos[:ad_location] = location
+        puts "Detected location: #{location}"
+     end
   
       listing.active = true
       listing.infos[:ad_title] = customer.title || ""
@@ -48,26 +60,18 @@ namespace :rentjuicer do
       listing.infos[:ad_bedrooms] = customer.bedrooms || ""
       listing.infos[:ad_bathrooms] = customer.bathrooms || ""
       listing.infos[:ad_square_footage] = customer.square_footage || ""
-      listing.infos[:ad_keywords] = (customer.features * ", ") || ""
-      listing.infos[:ad_latitude] = customer.latitude || ""
-      listing.infos[:ad_longitude] = customer.longitude || ""
-      listing.infos[:ad_neighborhoods] = (customer.neighborhoods * ", ") || ""
       listing.infos[:ad_property_type] = customer.property_type || ""
       listing.infos[:ad_floor_number] = customer.floor_number || ""
       listing.infos[:ad_agent_name] = customer.agent_name || ""
       listing.infos[:ad_agent_email] = customer.agent_email || ""
       listing.infos[:ad_agent_phone] = customer.agent_phone || ""
+
+      listing.infos[:ad_keywords] = (customer.features * ", ") || ""
+      listing.infos[:ad_neighborhoods] = (customer.neighborhoods * ", ") || ""
       listing.infos[:ad_rental_terms] = (customer.rental_terms * ", ") || ""
-      listing.infos[:ad_city] = customer.city || ""
-      listing.infos[:ad_state] = customer.state || ""
-      listing.infos[:ad_zip_code] = customer.zip_code || ""
-      
-      address = "#{customer.street_number} #{customer.street}, #{customer.city}, #{customer.state} #{customer.zip_code}" 
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
-      parsed_json = ActiveSupport::JSON.decode(json_string)
-      location = parsed_json["results"].first["address_components"][2]["short_name"]
-      listing.infos[:ad_location] = location
-      puts "Detected location: #{location}"
+
+      listing.infos[:ad_latitude] = customer.latitude || ""
+      listing.infos[:ad_longitude] = customer.longitude || ""
 
       #If there are no images we don't want to save the listing.
       if customer.sorted_photos or customer.status != "active"
