@@ -15,9 +15,11 @@ namespace :rentjuicer do
     rentjuice_listings = @listings.find_all
     puts "Downloaded Kangarent's Rentjuce listings (#{rentjuice_listings.count} in total)"
 
+    #These keys hold the foregin keys.
+    #This way we don't have to iterate through all listings for every listing.
     key_map = {}
-    #This will hold keys. These keys will be deleted when an listing is active.
-    #That way at the end of the list we know what to disable
+    #These keys will be deleted when an listing is active.
+    #That way at the end of the import we know what listings to disable
     to_deactivate = {}
     Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
       key_map[listing.infos[:ad_foreign_id]] = listing.id
@@ -70,8 +72,11 @@ namespace :rentjuicer do
         end
       end
   
+      puts "Deleting from deactivation map"
       to_deactivate.delete(listing.id)
       listing.active = true
+
+      puts "Updating/ adding listing infos"
       listing.infos[:ad_title] = rentjuicer.title || ""
       listing.infos[:ad_description] = rentjuicer.description || ""
       listing.infos[:ad_address] = rentjuicer.address || ""
@@ -96,7 +101,9 @@ namespace :rentjuicer do
       if rentjuicer.sorted_photos or rentjuicer.status != "active"
         listing.active = false
       end
+      puts "Saving Listing"
       listing.save
+      puts "Adding to key_map"
       key_map[rentjuicer.id.to_s] = listing.id
 
       #Assumption being, images never change.
