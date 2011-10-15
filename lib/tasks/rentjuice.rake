@@ -28,9 +28,13 @@ namespace :rentjuicer do
     puts "Constructed foreign to local id/key map."
 
     rentjuice_listings.each { |rentjuicer|
+      
+      puts "RentJuice has #{rentjuice_listings.count()} listings for customer."
 
-      count = Listing.where("customer_id = ?", leadadvo_id).count()
-      puts "Identified Kangarent's Leadadvo listings (#{count} in total)"
+      active = 0
+      total = Listing.where("customer_id = ?", leadadvo_id).each{|l| active += 1 if l.active }.count()
+      puts "Leadadvo has #{total} listings for customer."
+      puts "Leadadvo has #{active} active listings for customer."
 
       new = true
       if key_map[rentjuicer.id.to_s]
