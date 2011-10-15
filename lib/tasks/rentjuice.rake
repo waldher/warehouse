@@ -29,13 +29,6 @@ namespace :rentjuicer do
 
     rentjuice_listings.each { |rentjuicer|
       
-      puts "RentJuice has #{rentjuice_listings.count()} listings for customer."
-
-      active = 0
-      total = Listing.where("customer_id = ?", leadadvo_id).each{|l| active += 1 if l.active }.count()
-      puts "Leadadvo has #{total} listings for customer."
-      puts "Leadadvo has #{active} active listings for customer."
-
       new = true
       if key_map[rentjuicer.id.to_s]
           puts "Old Listing Found"
@@ -76,10 +69,6 @@ namespace :rentjuicer do
         end
       end
   
-      puts "Deleting from deactivation map"
-      to_deactivate.delete(listing.id)
-      listing.active = true
-
       puts "Updating/ adding listing infos"
       listing.infos[:ad_title] = rentjuicer.title || ""
       listing.infos[:ad_description] = rentjuicer.description || ""
@@ -101,14 +90,23 @@ namespace :rentjuicer do
       listing.infos[:ad_latitude] = rentjuicer.latitude || ""
       listing.infos[:ad_longitude] = rentjuicer.longitude || ""
 
+      puts "Deleting from deactivation map"
+      to_deactivate.delete(listing.id)
+      listing.active = true
+
       #If there are no images we don't want to save the listing.
-      if rentjuicer.sorted_photos or rentjuicer.status != "active"
-        puts "Disabled for inactivity of photo status."
+      if !rentjuicer.sorted_photos
+        puts "Disabled due to photos"
+        listing.active = false
+      elsif rentjuicer.status != "active"
+        puts "Disabled due to status"
         listing.active = false
       end
+
       puts "Saving Listing"
       listing.save
-      puts "Adding to key_map"
+
+      puts "Updating key_map"
       key_map[rentjuicer.id.to_s] = listing.id
 
       #Assumption being, images never change.
