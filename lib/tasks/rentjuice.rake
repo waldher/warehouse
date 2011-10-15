@@ -37,7 +37,7 @@ namespace :rentjuicer do
           new = false
       end
       if new
-        puts "New Listing Found, Rentjuce ID #{rentjuicer.id}"
+        puts "#{c(green)}New Listing Found, Rentjuce ID #{rentjuicer.id}#{ec}"
         listing = Listing.new
 
         listing.customer_id = leadadvo_id
