@@ -3,6 +3,14 @@ require 'rentjuicer'
 namespace :rentjuicer do
   desc "Import from RentJuicer"
   task :import => :environment do
+    @running = true
+    Kernel.trap("INT"){
+      @running = false
+      print " *****************************\n"
+      print " * Gracefully killing import *\n"
+      print " *****************************\n"
+    }
+
     @rentjuicer = Rentjuicer::Client.new('3b97f4ec544152dd3a79ca0c19b32aab')
     puts "Rentjuice Client Created"
 
@@ -61,9 +69,12 @@ namespace :rentjuicer do
             listing.infos[:ad_location] = location
             puts "Detected location: #{location}"
             done = true
+            #0.1 is minimum but, with all the other code the total time between requests should be >> 0.1
             sleep(0.1)
           rescue => e
             puts "Error: #{c(red)}#{e.inspect}#{ec}"
+            #If for some reason the minimum is surpased. Make sure to wait a long time before trying again.
+            #(I have seen it border on black listing requests.)
             sleep(0.5)
           end
         end
@@ -128,6 +139,9 @@ namespace :rentjuicer do
 
       puts "Created/Updated new Listing. Leadadvo ID #{listing.id}"
       puts "-----------------------------------------"
+      if !@running
+        return
+      end
     }
 
     puts "Found #{to_deactivate.count} listing(s) that need(s) to be deactivated."
