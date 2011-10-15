@@ -65,7 +65,7 @@ namespace :rentjuicer do
             json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
             parsed_json = ActiveSupport::JSON.decode(json_string)
             location = parsed_json["results"].first["address_components"][2]["short_name"]
-            #listing.infos[:ad_location] = location
+            listing.infos[:ad_location] = location
             puts "Detected location: #{location}"
             done = true
             sleep(0.1)
