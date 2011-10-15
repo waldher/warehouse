@@ -70,7 +70,7 @@ namespace :rentjuicer do
         end
       end
   
-      to_deactiveate.delete(listing.id)
+      to_deactivate.delete(listing.id)
       listing.active = true
       listing.infos[:ad_title] = rentjuicer.title || ""
       listing.infos[:ad_description] = rentjuicer.description || ""
