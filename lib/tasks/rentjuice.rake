@@ -16,8 +16,12 @@ namespace :rentjuicer do
     puts "Downloaded Kangarent's Rentjuce listings (#{rentjuice_listings.count} in total)"
 
     key_map = {}
+    #This will hold keys. These keys will be deleted when an listing is active.
+    #That way at the end of the list we know what to disable
+    to_deactivate = {}
     Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
       key_map[listing.infos[:ad_foreign_id]] = listing.id
+      to_deactivate[listing.id] = listing
     }
     puts "Constructed foreign to local id/key map."
 
@@ -66,6 +70,7 @@ namespace :rentjuicer do
         end
       end
   
+      to_deactiveate.delete(listing.id)
       listing.active = true
       listing.infos[:ad_title] = rentjuicer.title || ""
       listing.infos[:ad_description] = rentjuicer.description || ""
@@ -114,6 +119,13 @@ namespace :rentjuicer do
       puts "Created/Updated new Listing. Leadadvo ID #{listing.id}"
       puts "-----------------------------------------"
     }
+
+    puts "Found #{to_deactivate.count} listing(s) that need(s) to be deactivated."
+    for listing_id, listing in to_deactivate do
+      puts "Disabling listing with Leadadvo ID #{listing_id}"
+      listing.active = false
+      listing.save
+    end
   end
 end
 
