@@ -33,23 +33,31 @@ namespace :rentjuicer do
           new = false
       end
       if new
-        puts "New Listing Found, Rentjuce ID #{rentjuicer.id}"
-        listing = Listing.new
+        done = false
+        while !done
+          begin
+            puts "New Listing Found, Rentjuce ID #{rentjuicer.id}"
+            listing = Listing.new
 
-        listing.customer_id = leadadvo_id
-        listing.infos[:ad_foreign_id] = rentjuicer.id.to_s
+            listing.customer_id = leadadvo_id
+            listing.infos[:ad_foreign_id] = rentjuicer.id.to_s
 
-        #Stuff that should never change (Trying to help skipped listings run faster.)
-        listing.infos[:ad_city] = rentjuicer.city || ""
-        listing.infos[:ad_state] = rentjuicer.state || ""
-        listing.infos[:ad_zip_code] = rentjuicer.zip_code || ""
-        
-        address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}" 
-        json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
-        parsed_json = ActiveSupport::JSON.decode(json_string)
-        location = parsed_json["results"].first["address_components"][2]["short_name"]
-        listing.infos[:ad_location] = location
-        puts "Detected location: #{location}"
+            #Stuff that should never change (Trying to help skipped listings run faster.)
+            listing.infos[:ad_city] = rentjuicer.city || ""
+            listing.infos[:ad_state] = rentjuicer.state || ""
+            listing.infos[:ad_zip_code] = rentjuicer.zip_code || ""
+            
+            address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}" 
+            json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+            parsed_json = ActiveSupport::JSON.decode(json_string)
+            location = parsed_json["results"].first["address_components"][2]["short_name"]
+            listing.infos[:ad_location] = location
+            puts "Detected location: #{location}"
+            done = true
+          rescue => e
+            puts "Error: #{e.inspect}"
+          end
+        end
      end
   
       listing.active = true
