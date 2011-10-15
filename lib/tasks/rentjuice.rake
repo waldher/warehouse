@@ -103,6 +103,7 @@ namespace :rentjuicer do
 
       #If there are no images we don't want to save the listing.
       if rentjuicer.sorted_photos or rentjuicer.status != "active"
+        puts "Disabled for inactivity of photo status."
         listing.active = false
       end
       puts "Saving Listing"
