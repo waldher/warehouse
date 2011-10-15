@@ -13,7 +13,7 @@ namespace :rentjuicer do
     puts "Identified Kangarent's Leadadvo ID (#{leadadvo_id})"
 
     rentjuice_listings = @listings.find_all
-    puts "Downloaded Kangarent's Rentjuce listings (#{customer_listings.count} in total)"
+    puts "Downloaded Kangarent's Rentjuce listings (#{rentjuice_listings.count} in total)"
 
     key_map = {}
     Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
