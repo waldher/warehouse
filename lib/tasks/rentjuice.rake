@@ -33,32 +33,38 @@ namespace :rentjuicer do
           new = false
       end
       if new
+        puts "New Listing Found, Rentjuce ID #{rentjuicer.id}"
+        listing = Listing.new
+
+        listing.customer_id = leadadvo_id
+        listing.infos[:ad_foreign_id] = rentjuicer.id.to_s
+
+        #Stuff that should never change (Trying to help skipped listings run faster.)
+        listing.infos[:ad_city] = rentjuicer.city || ""
+        listing.infos[:ad_state] = rentjuicer.state || ""
+        listing.infos[:ad_zip_code] = rentjuicer.zip_code || ""
+        
+        address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
+        address.gsub!(/'/,' ')
+        puts "Address: #{address}"
+
         done = false
         while !done
           begin
-            puts "New Listing Found, Rentjuce ID #{rentjuicer.id}"
-            listing = Listing.new
 
-            listing.customer_id = leadadvo_id
-            listing.infos[:ad_foreign_id] = rentjuicer.id.to_s
-
-            #Stuff that should never change (Trying to help skipped listings run faster.)
-            listing.infos[:ad_city] = rentjuicer.city || ""
-            listing.infos[:ad_state] = rentjuicer.state || ""
-            listing.infos[:ad_zip_code] = rentjuicer.zip_code || ""
-            
-            address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}" 
             json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
             parsed_json = ActiveSupport::JSON.decode(json_string)
             location = parsed_json["results"].first["address_components"][2]["short_name"]
-            listing.infos[:ad_location] = location
+            #listing.infos[:ad_location] = location
             puts "Detected location: #{location}"
             done = true
+            sleep(0.1)
           rescue => e
-            puts "Error: #{e.inspect}"
+            puts "Error: #{c(red)}#{e.inspect}#{ec}"
+            sleep(0.5)
           end
         end
-     end
+      end
   
       listing.active = true
       listing.infos[:ad_title] = rentjuicer.title || ""
@@ -110,3 +116,9 @@ namespace :rentjuicer do
     }
   end
 end
+
+def gray; 8; end 
+def green; 2; end 
+def red; 1; end 
+def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
+def ec; "\x1b[0m"; end 
