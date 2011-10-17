@@ -18,10 +18,10 @@ namespace :rentjuicer do
     puts "Rentjuice Listings Object Created"
 
     leadadvo_id = Customer.where("key = ?","kangarent").last.id
-    puts "Identified Kangarent's Leadadvo ID (#{leadadvo_id})"
+    puts "Identified Kangarent's Leadadvo ID as #{leadadvo_id}"
 
     rentjuice_listings = @listings.find_all
-    puts "Downloaded Kangarent's Rentjuce listings (#{rentjuice_listings.count} in total)"
+    puts "Downloaded Kangarent's Rentjuce listings, #{rentjuice_listings.count} in total"
 
     #These keys hold the foregin keys.
     #This way we don't have to iterate through all listings for every listing.
@@ -54,7 +54,14 @@ namespace :rentjuicer do
         listing.infos[:ad_city] = rentjuicer.city || ""
         listing.infos[:ad_state] = rentjuicer.state || ""
         listing.infos[:ad_zip_code] = rentjuicer.zip_code || ""
-        
+        listing.infos[:ad_address] = rentjuicer.address || ""
+ 
+        listing.infos[:ad_bedrooms] = rentjuicer.bedrooms || ""
+        listing.infos[:ad_bathrooms] = rentjuicer.bathrooms || ""
+        listing.infos[:ad_square_footage] = rentjuicer.square_footage || ""
+        listing.infos[:ad_property_type] = rentjuicer.property_type || ""
+        listing.infos[:ad_floor_number] = rentjuicer.floor_number || ""
+     
         address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
         address.gsub!(/'/,' ')
         puts "Address: #{address}"
@@ -62,7 +69,6 @@ namespace :rentjuicer do
         done = false
         while !done
           begin
-
             json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
             parsed_json = ActiveSupport::JSON.decode(json_string)
             location = parsed_json["results"].first["address_components"][2]["short_name"]
@@ -81,15 +87,12 @@ namespace :rentjuicer do
       end
   
       puts "Updating/ adding listing infos"
-      listing.infos[:ad_title] = rentjuicer.title || ""
+
+      if !listing.infos[:ad_title].nil? and listing.infos[:ad_title].empty?
+        listing.infos[:ad_title] = rentjuicer.title || ""
+      end
       listing.infos[:ad_description] = rentjuicer.description || ""
-      listing.infos[:ad_address] = rentjuicer.address || ""
       listing.infos[:ad_price] = rentjuicer.rent || ""
-      listing.infos[:ad_bedrooms] = rentjuicer.bedrooms || ""
-      listing.infos[:ad_bathrooms] = rentjuicer.bathrooms || ""
-      listing.infos[:ad_square_footage] = rentjuicer.square_footage || ""
-      listing.infos[:ad_property_type] = rentjuicer.property_type || ""
-      listing.infos[:ad_floor_number] = rentjuicer.floor_number || ""
       listing.infos[:ad_agent_name] = rentjuicer.agent_name || ""
       listing.infos[:ad_agent_email] = rentjuicer.agent_email || ""
       listing.infos[:ad_agent_phone] = rentjuicer.agent_phone || ""
@@ -103,15 +106,18 @@ namespace :rentjuicer do
 
       puts "Deleting from deactivation map"
       to_deactivate.delete(listing.id)
-      listing.active = true
+      listing.foreign_active = true
 
       #If there are no images we don't want to save the listing.
       if !rentjuicer.sorted_photos
         puts "Disabled due to photos"
-        listing.active = false
+        listing.foreign_active = false
       elsif rentjuicer.status != "active"
         puts "Disabled due to status"
-        listing.active = false
+        listing.foreign_active = false
+      elsif !rentjuicer.title or rentjuicer.title.empty?
+        puts "Disabled due to no title"
+        listing.foreign_active = false
       end
 
       puts "Saving Listing"
@@ -147,7 +153,7 @@ namespace :rentjuicer do
     puts "Found #{to_deactivate.count} listing(s) that need(s) to be deactivated."
     for listing_id, listing in to_deactivate do
       puts "Disabling listing with Leadadvo ID #{listing_id}"
-      listing.active = false
+      listing.foreign_active = false
       listing.save
     end
   end
