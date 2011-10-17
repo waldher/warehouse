@@ -11,8 +11,8 @@
       <th>Last Updated</th>
       <th>Status</th>
       <th>Enable/Disable</th>
-      <th>Foreign Status</th>
       <th></th>
+      <th>Import Status</th>
     </tr>
   </thead>
 
@@ -27,8 +27,8 @@
         <td><%= listing.updated_at.strftime("%m/%d %I:%M %p") %></td>
         <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.active ? 'Active' : 'Inactive' %></td>
         <td><%= link_to (listing.active ? 'Deactivate' : 'Activate'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
-        <td class="<%= listing.foreign_active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.foreign_active ? 'Updated' : 'Old' %></td>
         <td><%= link_to 'Edit', edit_customer_listing_path(@customer, listing) %></td>
+        <td class="<%= listing.foreign_active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.foreign_active ? 'Updated' : 'Outdated' %></td>
      </tr>
     <% end %>
   </tbody>
@@ -46,10 +46,19 @@
       "bJQueryUI": true,
       "iDisplayLength": 50,
       <% if @customer.craigslist_type == "apa" %>
-      "aaSorting" : [[4, 'asc'],[3, 'desc']]
+        "aaSorting" : [[4, 'asc'],[3, 'desc']],
+        "aoColumns": [ 
+        /* Address */ null,
+        /* Price */   null,
+        /* Title */   null,
+        /* Updated */ null,
+        /* Status */  null,
+        /* E/D */     null,
+        /* Edit */    null,
+        /* Foreign */ {"bVisible":false}
       <% else %>
-      "aaSorting" : []
+        "aaSorting" : [],
       <% end %>
-    });
+    ]});
   });
 </script>
