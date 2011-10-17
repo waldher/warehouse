@@ -80,7 +80,7 @@
     </div>
     <div class="field">
       <%= infos.label :ad_keywords, "Keywords" %><br />
-      <%= infos.text_field :ad_keywords, :maxlength => '100', :value => @listing.infos[:ad_keywords] %>
+      <%= infos.text_field :ad_keywords, :maxlength => '160', :value => @listing.infos[:ad_keywords] %>
     </div>
     <% if @customer.craigslist_type == "apa" %>
       <div>
