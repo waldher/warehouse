@@ -228,14 +228,12 @@ namespace :rentjuicer do
         key_map[rentjuicer.id.to_s] = listing.id
 
         #Assumption being, images never change.
-        if new
-          puts "New add Import Images"
+        if new and !rentjuicer.sorted_photos.empty?
+          puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
           for image in rentjuicer.sorted_photos
-            uploaded = false
-            while !uploaded
+            uploaded = 5
+            while uploaded > 0
               begin
-                puts "Attempting Image: #{image.fullsize}"
-
                 http = nil
                 domain = URI.split(image.fullsize)[2]
                 if connections.has_key?(domain)
@@ -247,10 +245,11 @@ namespace :rentjuicer do
                 resp = http.get(image.fullsize)
 
                 ListingImage.create(:listing_id => listing.id, :image => resp.body, :threading => image.sort_order)
-                uploaded = true
+                uploaded = 0
                 puts "Imported Image: #{image.fullsize}"
               rescue => e
-                puts "#{e.inspect}"
+                puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
+                uploaded -= 1
               end
             end
           end
