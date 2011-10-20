@@ -234,19 +234,28 @@ namespace :rentjuicer do
             uploaded = 5
             while uploaded > 0
               begin
+                image_uri = ""
+                if !image.fullsize.nil?
+                  image_uri = image.fullsize
+                elsif !image.original.nil?
+                  image_uri = image.original
+                else
+                  break
+                end
+                  
                 http = nil
-                domain = URI.split(image.fullsize)[2]
+                domain = URI.split(image_uri)[2]
                 if connections.has_key?(domain)
                   http = connections[domain]
                 else
                   http = Net::HTTP.start(domain)
                   connections[domain] = http
                 end
-                resp = http.get(image.fullsize)
+                resp = http.get(image_uri)
 
                 ListingImage.create(:listing_id => listing.id, :image => resp.body, :threading => image.sort_order)
                 uploaded = 0
-                puts "Imported Image: #{image.fullsize}"
+                puts "Imported Image: #{image_uri}"
               rescue => e
                 puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
                 uploaded -= 1
