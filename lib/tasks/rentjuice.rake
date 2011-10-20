@@ -83,7 +83,10 @@ namespace :rentjuicer do
       }
       puts "Constructed foreign to local id/key map."
 
+      index = 0
+      max = rentjuice_listings.count
       rentjuice_listings.each { |rentjuicer|
+        puts "Now working on listing #{index += 1} of #{max} for #{customer[:name]}"
         
         new = true
         if key_map[rentjuicer.id.to_s]
