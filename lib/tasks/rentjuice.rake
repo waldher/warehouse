@@ -1,3 +1,4 @@
+require 'uri'
 require 'rentjuicer'
 
 namespace :rentjuicer do
@@ -233,6 +234,7 @@ namespace :rentjuicer do
             while !uploaded
               begin
                 http = nil
+                domain = URI.split(image.fullsize)[2]
                 if connections.has_key?(domain)
                   http = connections[domain]
                 else
