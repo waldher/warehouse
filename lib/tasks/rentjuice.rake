@@ -153,7 +153,7 @@ namespace :rentjuicer do
 
         #---Title
         if listing.infos[:ad_title] != (rentjuicer.title || "")
-          puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
+          puts "Title Changed. Was '#{listing.infos[:ad_title]}'(nil? #{listing.infos[:ad_title].nil?}) is now '#{(rentjuicer.title || "")}'(nil? #{rentjuicer.title.nil?})."
           save = true
           listing.infos[:ad_title] = (rentjuicer.title || "")
         end
@@ -169,10 +169,10 @@ namespace :rentjuicer do
         end
 
         #---Price
-        if listing.infos[:ad_price] != (rentjuicer.rent || "")
-          puts "Price Changed"
+        if listing.infos[:ad_price] != (rentjuicer.rent.to_s || "")
+          puts "Price Changed. Was '#{listing.infos[:ad_price]}'(nil? #{listing.infos[:ad_price].nil?}) is now '#{(rentjuicer.rent.to_s || "")}'(nil? #{rentjuicer.rent.to_s.nil?})."
           save = true
-          listing.infos[:ad_price] = (rentjuicer.rent || "")
+          listing.infos[:ad_price] = (rentjuicer.rent.to_s || "")
         end
        
         #---Keywords
