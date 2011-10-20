@@ -87,7 +87,9 @@ namespace :rentjuicer do
       max = rentjuice_listings.count
       rentjuice_listings.each { |rentjuicer|
         puts "Now working on listing #{index += 1} of #{max} for #{customer[:name]}"
-        
+
+        save = false
+
         new = true
         if key_map[rentjuicer.id.to_s]
             puts "Old Listing Found"
@@ -95,6 +97,7 @@ namespace :rentjuicer do
             new = false
         end
         if new
+          save = true
           puts "#{c(green)}New Listing Found, Rentjuce ID #{rentjuicer.id}#{ec}"
           listing = Listing.new
 
@@ -112,7 +115,10 @@ namespace :rentjuicer do
           listing.infos[:ad_square_footage] = rentjuicer.square_footage || ""
           listing.infos[:ad_property_type] = rentjuicer.property_type || ""
           listing.infos[:ad_floor_number] = rentjuicer.floor_number || ""
-       
+ 
+          listing.infos[:ad_latitude] = rentjuicer.latitude || ""
+          listing.infos[:ad_longitude] = rentjuicer.longitude || ""
+      
           address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
           address.gsub!(/'/,' ')
           puts "Address: #{address}"
@@ -136,46 +142,83 @@ namespace :rentjuicer do
             end
           end
         end
+ 
+        #listing.infos[:ad_agent_name] = rentjuicer.agent_name || ""
+        #listing.infos[:ad_agent_email] = rentjuicer.agent_email || ""
+        #listing.infos[:ad_agent_phone] = rentjuicer.agent_phone || ""
     
         puts "Updating/ adding listing infos"
 
-        if !listing.infos[:ad_title].nil? and listing.infos[:ad_title].empty?
-          listing.infos[:ad_title] = rentjuicer.title || ""
+        #---Title
+        if listing.infos[:ad_title] != (rentjuicer.title || "")
+          puts "Title Changed"
+          save = true
+          listing.infos[:ad_title] = (rentjuicer.title || "")
         end
         if listing.infos[:ad_title].nil? or listing.infos[:ad_title].emtpy?
           listing.active = false
         end
-        listing.infos[:ad_description] = rentjuicer.description || ""
-        listing.infos[:ad_price] = rentjuicer.rent || ""
-        listing.infos[:ad_agent_name] = rentjuicer.agent_name || ""
-        listing.infos[:ad_agent_email] = rentjuicer.agent_email || ""
-        listing.infos[:ad_agent_phone] = rentjuicer.agent_phone || ""
 
-        listing.infos[:ad_keywords] = (rentjuicer.features * ", ") || ""
-        listing.infos[:ad_neighborhoods] = (rentjuicer.neighborhoods * ", ") || ""
-        listing.infos[:ad_rental_terms] = (rentjuicer.rental_terms * ", ") || ""
+        #---Description
+        if listing.infos[:ad_description] != (rentjuicer.description || "")
+          puts "Description Changed"
+          save = true
+          listing.infos[:ad_description] = (rentjuicer.description || "")
+        end
 
-        listing.infos[:ad_latitude] = rentjuicer.latitude || ""
-        listing.infos[:ad_longitude] = rentjuicer.longitude || ""
+        #---Price
+        if listing.infos[:ad_price] != (rentjuicer.rent || "")
+          puts "Price Changed"
+          save = true
+          listing.infos[:ad_price] = (rentjuicer.rent || "")
+        end
+       
+        #---Keywords
+        if listing.infos[:ad_keywords] != ((rentjuicer.features * ", ") || "")
+          puts "Keywords Changed"
+          save = true
+          listing.infos[:ad_keywords] = ((rentjuicer.features * ", ") || "")
+        end
+        
+        #---Neighborhoods
+        if listing.infos[:ad_neighborhoods] != ((rentjuicer.neighborhoods * ", ") || "")
+          puts "Neighborhoods Changed"
+          save = true
+          listing.infos[:ad_neighborhoods] = ((rentjuicer.neighborhoods * ", ") || "")
+        end
 
-        puts "Deleting from deactivation map"
-        to_deactivate.delete(listing.id)
-        listing.foreign_active = true
+        #---Rental Terms
+        if listing.infos[:ad_rental_terms] != ((rentjuicer.rental_terms * ", ") || "")
+          puts "Rental Terms Changed"
+          save = true
+          listing.infos[:ad_rental_terms] = ((rentjuicer.rental_terms * ", ") || "")
+        end
 
         #If there are no images we don't want to save the listing.
         if !rentjuicer.sorted_photos
           puts "Disabled due to photos"
-          listing.foreign_active = false
+          new_foreign_active = false
         elsif rentjuicer.status != "active"
           puts "Disabled due to status"
-          listing.foreign_active = false
+          new_foreign_active = false
         elsif !rentjuicer.title or rentjuicer.title.empty?
           puts "Disabled due to no title"
-          listing.foreign_active = false
+          new_foreign_active = false
         end
 
-        puts "Saving Listing"
-        listing.save
+        if new_foreign_active != listing.foregin_active
+          puts "Foreign Active Sataus Changed"
+          save = true
+        end
+    
+        if save
+          puts "Saving Listing"
+          listing.save
+        end
+
+        puts "Deleting from deactivation map"
+        to_deactivate.delete(listing.id)
+        new_foreign_active = true
 
         puts "Updating key_map"
         key_map[rentjuicer.id.to_s] = listing.id
