@@ -64,15 +64,15 @@ namespace :rentjuicer do
       rentjuice_listings = []
       for condition in customer[:filter]
         rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50}))
-        puts "Downloaded Kangarent's Rentjuce listings, #{rentjuice_listings.count} in total"
+        puts "Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
       end
       puts "Took #{Time.now-start}"
 
       leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
-      puts "Identified Kangarent's Leadadvo ID as #{leadadvo_id}"
+      puts "Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
 
       #These keys hold the foregin keys.
-      #This way we don't have to iterate through all listings for every listing.
+      #This way we don't have to iterate through all listings for every rentjuice unit.
       key_map = {}
       #These keys will be deleted when an listing is active.
       #That way at the end of the import we know what listings to disable
