@@ -51,6 +51,8 @@ namespace :rentjuicer do
     :email => {:agent => "leads@kangarent.com"}
     }
     ]
+
+    connections = {}
   
     for customer in customers
 
@@ -230,7 +232,16 @@ namespace :rentjuicer do
             uploaded = false
             while !uploaded
               begin
-                ListingImage.create(:listing_id => listing.id, :image => open(image.fullsize), :threading => image.sort_order)
+                http = nil
+                if connections.has_key?(domain)
+                  http = connections[domain]
+                else
+                  http = Net::HTTP.start(domain)
+                  connections[domain] = http
+                end
+                resp = http.get(image.fullsize)
+
+                ListingImage.create(:listing_id => listing.id, :image => resp.body, :threading => image.sort_order)
                 uploaded = true
                 puts "Imported Image: #{image.fullsize}"
               rescue => e
