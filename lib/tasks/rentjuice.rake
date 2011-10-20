@@ -234,6 +234,8 @@ namespace :rentjuicer do
             uploaded = false
             while !uploaded
               begin
+                puts "Attempting Image: #{image.fullsize}"
+
                 http = nil
                 domain = URI.split(image.fullsize)[2]
                 if connections.has_key?(domain)
@@ -248,7 +250,6 @@ namespace :rentjuicer do
                 uploaded = true
                 puts "Imported Image: #{image.fullsize}"
               rescue => e
-                puts "#{image.fullsize}"
                 puts "#{e.inspect}"
               end
             end
