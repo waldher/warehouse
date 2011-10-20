@@ -259,6 +259,9 @@ namespace :rentjuicer do
               rescue => e
                 puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
                 uploaded -= 1
+                if uploaded == 0
+                  return
+                end
               end
             end
           end
