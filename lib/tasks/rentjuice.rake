@@ -247,6 +247,7 @@ namespace :rentjuicer do
                 uploaded = true
                 puts "Imported Image: #{image.fullsize}"
               rescue => e
+                puts "#{image.fullsize}"
                 puts "#{e.inspect}"
               end
             end
