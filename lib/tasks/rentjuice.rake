@@ -151,7 +151,7 @@ namespace :rentjuicer do
 
         #---Title
         if listing.infos[:ad_title] != (rentjuicer.title || "")
-          puts "Title Changed. Was #{listing.infos[:ad_title]} is now #{(rentjuicer.title || "")}"
+          puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
           save = true
           listing.infos[:ad_title] = (rentjuicer.title || "")
         end
@@ -206,7 +206,7 @@ namespace :rentjuicer do
           new_foreign_active = false
         end
 
-        if new_foreign_active != listing.foregin_active
+        if new_foreign_active != listing.foreign_active
           puts "Foreign Active Sataus Changed"
           save = true
         end
