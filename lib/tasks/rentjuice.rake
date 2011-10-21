@@ -50,6 +50,13 @@ namespace :rentjuicer do
     :hoods => {:neighborhoods => kanga_neighborhoods},
     :filter => kanga,
     :email => {:agent => "leads@kangarent.com"}
+    },
+
+    {:name => 'casabellaboca',
+    :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
+    :hoods => {:neighborhoods => []},
+    :filter => [],
+    :email => {:agent => "john@casabellaboca.com"}
     }
     ]
 
