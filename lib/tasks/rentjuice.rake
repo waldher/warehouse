@@ -213,9 +213,6 @@ namespace :rentjuicer do
         elsif rentjuicer.status != "active"
           puts "Disabled due to status"
           new_foreign_active = false
-        elsif !rentjuicer.title or rentjuicer.title.empty?
-          puts "Disabled due to no title"
-          new_foreign_active = false
         end
 
         if new_foreign_active != listing.foreign_active
@@ -230,7 +227,6 @@ namespace :rentjuicer do
 
         puts "Deleting from deactivation map"
         to_deactivate.delete(listing.id)
-        new_foreign_active = true
 
         puts "Updating key_map"
         key_map[rentjuicer.id.to_s] = listing.id
