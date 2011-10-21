@@ -1,14 +1,17 @@
 require 'uri'
 require 'rentjuicer'
 
-def in_memory_file(data, filename)
+def in_memory_file(data, pathname)
   #load up some data
   file = StringIO.new(data)
 
   #tell the class that it knows about a "name" property,
   #and assign the filename to it
-  file.class.class_eval { attr_accessor :name } 
-  file.name = filename 
+  file.class.class_eval { attr_accessor :original_filename } 
+  file.original_filename = pathname 
+  
+  file.class.class_eval { attr_accessor :content_type } 
+  file.content_type = "image/#{pathname.split(".").last }"
 
   #FPDF uses the rindex and [] funtions on the "filename",
   #so we'll make our in-memory file object act like a filename
@@ -313,7 +316,7 @@ namespace :rentjuicer do
                 resp = http.get(path)
                 image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
-                ListingImage.create(:listing_id => listing.id, :image => image_file, :image_file_name => urisplit.last.split("/").last, :threading => image.sort_order)
+                ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
                 uploaded = 0
                 puts "Imported Image: #{image_uri}"
               rescue => e
