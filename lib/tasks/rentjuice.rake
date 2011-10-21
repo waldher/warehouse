@@ -146,7 +146,7 @@ namespace :rentjuicer do
               #0.1 is minimum but, with all the other code the total time between requests should be >> 0.1
               sleep(0.1)
             rescue => e
-              puts "Error: #{c(red)}#{e.inspect}#{ec}"
+              puts "#{c(red)}Location Error: #{e.inspect}, trying again.#{ec}"
               #If for some reason the minimum is surpased. Make sure to wait a long time before trying again.
               #(I have seen it border on black listing requests.)
               sleep(0.5)
