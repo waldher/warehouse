@@ -216,7 +216,7 @@ namespace :rentjuicer do
               save = true
             end
           else
-            if listing.infos[:ad_title].empty?
+            if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
               listing.active = false
               save = true
             end
