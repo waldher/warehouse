@@ -16,6 +16,7 @@ namespace :rentjuicer do
     elizabeth_neighborhoods = ["Miami Beach", "Surfside", "Brickell"] * ", " 
     paola_neighborhoods = ["Brickell", "Coral Gables", "Coconut Grove", "Downtown"] * ", "
     ronda_neighborhoods = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
+    casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"]
 
     kanga = [{:min_rent => 850, :has_photos => 1, :include_mls => 1}]
     maf = [
@@ -54,8 +55,8 @@ namespace :rentjuicer do
 
     {:name => 'casabellaboca',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => []},
-    :filter => [],
+    :hoods => {:neighborhoods => casa_neighborhoods},
+    :filter => [{:include_mls => 1}],
     :email => {:agent => "john@casabellaboca.com"}
     }
     ]
