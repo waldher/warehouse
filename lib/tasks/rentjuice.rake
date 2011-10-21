@@ -211,7 +211,7 @@ namespace :rentjuicer do
         #If new data not viable
         else
           if !listing.active
-            if !listing.infos[:ad_title].empty?
+            if listing.infos[:ad_title] and !listing.infos[:ad_title].empty?
               listing.active = true
               save = true
             end
