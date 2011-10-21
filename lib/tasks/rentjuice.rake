@@ -207,17 +207,21 @@ namespace :rentjuicer do
           listing.infos[:ad_rental_terms] = ((rentjuicer.rental_terms * ", ") || "")
         end
 
+        new_foreign_active = true
         #If there are no images we don't want to save the listing.
         if !rentjuicer.sorted_photos
           puts "Disabled due to photos"
           new_foreign_active = false
+          save = true
         elsif rentjuicer.status != "active"
           puts "Disabled due to status"
           new_foreign_active = false
+          save = true
         end
 
         if new_foreign_active != listing.foreign_active
-          puts "Foreign Active Sataus Changed"
+          puts "Foreign Active Sataus Changed from #{listing.foreign_active} to #{new_foreign_active}"
+          listing.foreign_active = new_foreign_active
           save = true
         end
     
