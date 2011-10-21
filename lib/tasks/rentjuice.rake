@@ -162,13 +162,14 @@ namespace :rentjuicer do
         puts "Updating/ adding listing infos"
 
         #---Title
-        if !rentjuicer.title.empty?
+        if !rentjuicer.title.nil? and !rentjuicer.title.empty?
           if listing.infos[:ad_title] != rentjuicer.title
             puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
             listing.infos[:ad_title] = (rentjuicer.title || "")
             listing.active = true
             save = true
           end
+        #If new data not viable
         else
           if !listing.active
             if !listing.infos[:ad_title].empty?
