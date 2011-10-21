@@ -164,11 +164,12 @@ namespace :rentjuicer do
         #---Title
         if listing.infos[:ad_title] != (rentjuicer.title || "")
           puts "Title Changed. Was '#{listing.infos[:ad_title]}'(nil? #{listing.infos[:ad_title].nil?}) is now '#{(rentjuicer.title || "")}'(nil? #{rentjuicer.title.nil?})."
-          save = true
           listing.infos[:ad_title] = (rentjuicer.title || "")
+          save = true
         end
         if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
           listing.active = false
+          save = true
         end
 
         #---Description
