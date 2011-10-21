@@ -295,7 +295,7 @@ namespace :rentjuicer do
         end
       }
 
-      puts "Found #{to_deactivate.count} listing(s) that need(s) to be deactivated."
+      puts "Found #{to_deactivate.count} listing(s) that may need to be deactivated."
       for listing_id, listing in to_deactivate do
         if listing.foreign_active
           puts "Disabling listing with Leadadvo ID #{listing_id}"
@@ -303,6 +303,7 @@ namespace :rentjuicer do
           listing.save
         end
       end
+      puts "Finished deactivation"
     end
   end
 end
