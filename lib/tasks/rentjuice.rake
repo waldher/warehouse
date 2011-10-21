@@ -162,14 +162,25 @@ namespace :rentjuicer do
         puts "Updating/ adding listing infos"
 
         #---Title
-        if listing.infos[:ad_title] != (rentjuicer.title || "")
-          puts "Title Changed. Was '#{listing.infos[:ad_title]}'(nil? #{listing.infos[:ad_title].nil?}) is now '#{(rentjuicer.title || "")}'(nil? #{rentjuicer.title.nil?})."
-          listing.infos[:ad_title] = (rentjuicer.title || "")
-          save = true
-        end
-        if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-          listing.active = false
-          save = true
+        if !rentjuicer.title.empty?
+          if listing.infos[:ad_title] != rentjuicer.title
+            puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
+            listing.infos[:ad_title] = (rentjuicer.title || "")
+            listing.active = true
+            save = true
+          end
+        else
+          if !listing.active
+            if !listing.infos[:ad_title].empty?
+              listing.active = true
+              save = true
+            end
+          else
+            if listing.infos[:ad_title].empty?
+              listing.active = false
+              save = true
+            end
+          end
         end
 
         #---Description
