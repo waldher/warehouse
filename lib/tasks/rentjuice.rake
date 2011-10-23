@@ -259,9 +259,11 @@ namespace :rentjuicer do
               :location => listing.infos[:ad_location],
               :type => listing.infos[:ad_property_type],
               :amenities => listing.infos[:ad_keywords])
-            listing.infos[:ad_title] = title
-            puts "New title generated: #{title}"
-            save = true
+            if title.length > 20
+              listing.infos[:ad_title] = title
+              puts "New title generated: #{title}"
+              save = true
+            end
           end
           if !listing.active
             if listing.infos[:ad_title] and !listing.infos[:ad_title].empty?
