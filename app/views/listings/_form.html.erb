@@ -38,60 +38,64 @@
         <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location] %>
       </span>
     </div>
-    <div>
-      <span class="field">
-        <%= infos.label :ad_address, "Address" %><br />
-        <%= infos.text_field :ad_address, :max_length => 70, :size => 70, :value => @listing.infos[:ad_address]  %>
-      </span>
-    </div>
-    <div>
-      <span class="field">
-        <%= infos.label :ad_price, "Price" %><br />
-        <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos[:ad_price] %>
-      </span>
-      <span class="field">
-        <%= infos.label :ad_bedrooms, "Bedrooms" %><br />
-        <%= infos.select :ad_bedrooms, 0..8, :selected => @listing.infos[:ad_bedrooms] %>
-      </span>
-      <% if @customer.has_capability?("bathrooms") %>
+    <% if @customer.craigslist_type == "apa" %>
+      <div>
         <span class="field">
-          <%= infos.label :ad_bathrooms, "Bathrooms" %><br />
-          <%= infos.select :ad_bathrooms, (0..16).collect{|n| n/2.0}, :selected => @listing.infos[:ad_bathrooms] %>
+          <%= infos.label :ad_address, "Address" %><br />
+          <%= infos.text_field :ad_address, :max_length => 70, :size => 70, :value => @listing.infos[:ad_address]  %>
         </span>
-      <% end %>
-      <% if @customer.has_capability?("sqft") %>
+      </div>
+      <div>
         <span class="field">
-          <%= infos.label :ad_sqft, "Square Feet" %><br />
-          <%= infos.text_field :ad_sqft, :value => @listing.infos[:ad_sqft], :size => 5 %>
+          <%= infos.label :ad_price, "Price" %><br />
+          <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos[:ad_price] %>
         </span>
-      <% end %>
-      <% if @customer.has_capability?("style") %>
         <span class="field">
-          <%= infos.label :ad_style, "Style" %><br />
-          <%= infos.text_field :ad_style, :value => (@listing.infos[:ad_style] or "Condominium") %>
+          <%= infos.label :ad_bedrooms, "Bedrooms" %><br />
+          <%= infos.select :ad_bedrooms, 0..8, :selected => @listing.infos[:ad_bedrooms] %>
         </span>
-      <% end %>
-    </div>
+        <% if @customer.has_capability?("bathrooms") %>
+          <span class="field">
+            <%= infos.label :ad_bathrooms, "Bathrooms" %><br />
+            <%= infos.select :ad_bathrooms, (0..16).collect{|n| n/2.0}, :selected => @listing.infos[:ad_bathrooms] %>
+          </span>
+        <% end %>
+        <% if @customer.has_capability?("sqft") %>
+          <span class="field">
+            <%= infos.label :ad_sqft, "Square Feet" %><br />
+            <%= infos.text_field :ad_sqft, :value => @listing.infos[:ad_sqft], :size => 5 %>
+          </span>
+        <% end %>
+        <% if @customer.has_capability?("style") %>
+          <span class="field">
+            <%= infos.label :ad_style, "Style" %><br />
+            <%= infos.text_field :ad_style, :value => (@listing.infos[:ad_style] or "Condominium") %>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
     <div class="field">
       <%= infos.label :ad_description, "Ad Description" %><br />
       <%= infos.text_area :ad_description, :value => @listing.infos[:ad_description] %>
     </div>
     <div class="field">
       <%= infos.label :ad_keywords, "Keywords" %><br />
-      <%= infos.text_field :ad_keywords, :maxlength => '100', :value => @listing.infos[:ad_keywords] %>
+      <%= infos.text_field :ad_keywords, :maxlength => '160', :value => @listing.infos[:ad_keywords] %>
     </div>
-    <div>
-      <span class="field">
-        <% checked = @listing.infos[:ad_cats] == "1" ? true : false %>
-        <%= infos.label :ad_cats, "Cats" %> 
-        <%= infos.check_box :ad_cats, { :checked => checked } %>
-      </span>
-      <span class="field">
-        <% checked = @listing.infos[:ad_dogs] == "1" ? true : false %>
-        <%= infos.label :ad_dogs, "Dogs" %>
-        <%= infos.check_box :ad_dogs, { :checked => checked } %>
-      </span>
-    </div>
+    <% if @customer.craigslist_type == "apa" %>
+      <div>
+        <span class="field">
+          <% checked = @listing.infos[:ad_cats] == "1" ? true : false %>
+          <%= infos.label :ad_cats, "Cats" %> 
+          <%= infos.check_box :ad_cats, { :checked => checked } %>
+        </span>
+        <span class="field">
+          <% checked = @listing.infos[:ad_dogs] == "1" ? true : false %>
+          <%= infos.label :ad_dogs, "Dogs" %>
+          <%= infos.check_box :ad_dogs, { :checked => checked } %>
+        </span>
+      </div>
+    <% end %>
 
     <label>Images</label><br />
     <div>

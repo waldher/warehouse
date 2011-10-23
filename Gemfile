@@ -15,3 +15,8 @@ gem 'devise'
 gem 'ruby-debug19'
 
 gem 'mechanize'
+
+gem 'wirble'
+gem 'hirb'
+
+gem 'rentjuicer', :git => 'git://github.com/lgbr/rentjuicer.git'

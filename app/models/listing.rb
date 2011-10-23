@@ -44,7 +44,7 @@ class Listing < ActiveRecord::Base
   after_create :create_infos
 
   def ad_image_urls
-    return listing_images.collect{|li| li.image_url}
+    return listing_images.where("image_updated_at is not null").collect{|li| li.image_url}
   end
 
   protected

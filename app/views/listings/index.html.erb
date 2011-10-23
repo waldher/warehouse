@@ -3,26 +3,32 @@
 <table class="dataTable" style="width: 100%;">
   <thead>
     <tr>
-      <th>Address</th>
-      <th>Price</th>
+      <% if @customer.craigslist_type == "apa" %>
+        <th>Address</th>
+        <th>Price</th>
+      <% end %>
       <th>Title</th>
       <th>Last Updated</th>
       <th>Status</th>
       <th>Enable/Disable</th>
       <th></th>
+      <th>Import Status</th>
     </tr>
   </thead>
 
   <tbody>
     <% @listings.each do |listing| %>
       <tr>
-        <td><%= listing.infos[:ad_address] %></td>
-        <td><%= listing.infos[:ad_price] %></td>
+        <% if @customer.craigslist_type == "apa" %>
+          <td><%= listing.infos[:ad_address] %></td>
+          <td><%= listing.infos[:ad_price] %></td>
+        <% end %>
         <td><%= listing.title %></td>
-        <td><%= listing.updated_at.strftime("%m/%d %I:%M:%p") %></td>
+        <td><%= listing.updated_at.strftime("%m/%d %I:%M %p") %></td>
         <td class="<%= listing.active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.active ? 'Active' : 'Inactive' %></td>
         <td><%= link_to (listing.active ? 'Deactivate' : 'Activate'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.active ? "stop" : "start"} posting this ad?" %></td>
         <td><%= link_to 'Edit', edit_customer_listing_path(@customer, listing) %></td>
+        <td class="<%= listing.foreign_active ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.foreign_active ? 'Updated' : 'Outdated' %></td>
      </tr>
     <% end %>
   </tbody>
@@ -39,7 +45,20 @@
     $(".dataTable").dataTable({
       "bJQueryUI": true,
       "iDisplayLength": 50,
-      "aaSorting" : [[4, 'asc'],[3, 'desc']]
-    });
+      <% if @customer.craigslist_type == "apa" %>
+        "aaSorting" : [[4, 'asc'],[3, 'desc']],
+        "aoColumns": [ 
+        /* Address */ null,
+        /* Price */   null,
+        /* Title */   null,
+        /* Updated */ null,
+        /* Status */  null,
+        /* E/D */     null,
+        /* Edit */    null,
+        /* Foreign */ {"bVisible":false}
+      <% else %>
+        "aaSorting" : [],
+      <% end %>
+    ]});
   });
 </script>

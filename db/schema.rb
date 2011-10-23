@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111009171730) do
+ActiveRecord::Schema.define(:version => 20111016203556) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -90,10 +90,11 @@ ActiveRecord::Schema.define(:version => 20111009171730) do
   add_index "listing_infos", ["listing_id", "key"], :name => "index_listing_infos_on_listing_id_and_key", :unique => true
 
   create_table "listings", :force => true do |t|
-    t.integer  "customer_id",                   :null => false
-    t.boolean  "active",      :default => true, :null => false
+    t.integer  "customer_id",                       :null => false
+    t.boolean  "active",         :default => true,  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "foreign_active", :default => false, :null => false
   end
 
   create_table "real_estate_images", :force => true do |t|

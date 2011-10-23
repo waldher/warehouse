@@ -30,7 +30,8 @@ class Customer < ActiveRecord::Base
 
   AVAILABLE_CRAIGSLIST_TYPES = {
     'Apartments / Housing' => 'apa',
-    'Cars & Trucks - By Dealer' => 'ctd'
+    'Cars & Trucks - By Dealer' => 'ctd',
+    'Gigs' => 'ggg'
   }
 
   def set_setup_nonce
@@ -39,7 +40,7 @@ class Customer < ActiveRecord::Base
 
   def update_key
     if self.key_changed? && !self.key.nil?
-      self.key = self.key.downcase.gsub(/[^a-z ]/, '').gsub(/  */, '_')
+      self.key = self.key.downcase.gsub(/[^a-z _]/, '').gsub(/  */, '_')
     end
   end
 

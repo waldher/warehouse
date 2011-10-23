@@ -106,7 +106,7 @@ span.spacer {
  * Table Info
  */
 
-  .postedBlue {
+.postedBlue {
     background-color: #AAAAFF !important;
     text-align: center;
 }
@@ -123,7 +123,7 @@ span.spacer {
 /*
  * Dealer Info
  */
-  #citystatezip label, #citystatezip input {
+#citystatezip label, #citystatezip input {
     width: 326px;
     display: inline-block;
 }
