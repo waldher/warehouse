@@ -105,6 +105,7 @@ namespace :rentjuicer do
   
     for customer in customers.shuffle
       puts "============================================="
+      puts "Starting import for: #{customer[:name]}"
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
       puts "Rentjuice Client Created"
