@@ -11,15 +11,15 @@ class ListingTitle
 
   TRANSFORMS = [UPCASE, TITLECASE, DOWNCASE]
 
-  WITHS = ["with", "w/", "feat", "has", "incl", nil]
+  WITHS = ["with", "w/", "has", "incl", nil]
 
   #
   #Real Estate
   #
-  INS = ["in", "at", "on", nil]
+  INS = ["in", nil]
 
-  LISTING_ADJECTIVES = ["beatiful", "gorgeous", "classy", "ideal", "attractive", "lovely", "marvelous", "radiant", "wonderful", "attractive", "bright", "comfortable"]
-  LOCATION_ADJECTIVES = ["alluring", "bright", "cozy", "quiet", "comfortable", "attractive", "lovely", "exquisite", "impressive", "pretty", "classy", "wonderful", "fun", "convenient", "accessible"]
+  LISTING_ADJECTIVES = ["beatiful", "gorgeous", "classy", "attractive", "lovely", "marvelous", "radiant", "wonderful", "attractive", "comfortable"]
+  LOCATION_ADJECTIVES = ["alluring", "cozy", "quiet", "comfortable", "attractive", "lovely", "exquisite", "impressive", "classy", "wonderful", "fun", "convenient", "accessible"]
   LOCATION_NOUNS = ["locale", "area", "community", "neighborhood", "location"]
 
   AMENITIES = ["balcony", "pool", "gym", "hot tub", "tennis", "basketball"]
