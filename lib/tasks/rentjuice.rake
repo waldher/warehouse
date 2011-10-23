@@ -1,5 +1,6 @@
 require 'uri'
 require 'rentjuicer'
+require 'listing_title'
 
 def in_memory_file(data, pathname)
   #load up some data
@@ -206,29 +207,6 @@ namespace :rentjuicer do
     
         puts "Updating/ adding listing infos"
 
-        #---Title
-        if !rentjuicer.title.nil? and !rentjuicer.title.empty?
-          if listing.infos[:ad_title] != rentjuicer.title
-            puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
-            listing.infos[:ad_title] = (rentjuicer.title || "")
-            listing.active = true
-            save = true
-          end
-        #If new data not viable
-        else
-          if !listing.active
-            if listing.infos[:ad_title] and !listing.infos[:ad_title].empty?
-              listing.active = true
-              save = true
-            end
-          else
-            if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-              listing.active = false
-              save = true
-            end
-          end
-        end
-
         #---Description
         if listing.infos[:ad_description] != (rentjuicer.description || "")
           puts "Description Changed"
@@ -264,6 +242,39 @@ namespace :rentjuicer do
           listing.infos[:ad_rental_terms] = ((rentjuicer.rental_terms * ", ") || "")
         end
 
+        #---Title
+        if !rentjuicer.title.nil? and !rentjuicer.title.empty?
+          if listing.infos[:ad_title] != rentjuicer.title
+            puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
+            listing.infos[:ad_title] = rentjuicer.title
+            listing.active = true
+            save = true
+          end
+        #If new data not viable
+        else
+          if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
+            title = ListingTitle.generate(
+              :bedrooms => listing.infos[:ad_bedrooms].to_i,
+              :location => listing.infos[:ad_location],
+              :type => listing.infos[:ad_property_type],
+              :amenities => listing.infos[:ad_keywords])
+            listing.infos[:ad_title] = title
+            puts "New title generated: #{title}"
+            save = true
+          end
+          if !listing.active
+            if listing.infos[:ad_title] and !listing.infos[:ad_title].empty?
+              listing.active = true
+              save = true
+            end
+          else
+            if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
+              listing.active = false
+              save = true
+            end
+          end
+        end
+
         new_foreign_active = true
         #If there are no images we don't want to save the listing.
         if !rentjuicer.sorted_photos
@@ -272,6 +283,10 @@ namespace :rentjuicer do
           save = true
         elsif rentjuicer.status != "active"
           puts "Disabled due to status"
+          new_foreign_active = false
+          save = true
+        elsif listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
+          puts "Disabled due to title"
           new_foreign_active = false
           save = true
         end
