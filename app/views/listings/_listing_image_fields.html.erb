@@ -1,14 +1,16 @@
-  <% if f.object.new_record? %>
-    <div class="fields">
-      <%= f.file_field :image %>
-    </div>
-  <% else %>
-    <span class="fields image"  id="<%= "threading_#{f.object.threading}" %>" style="display: block;">
-      <a href="#" id="sort-icon"><img src="/images/sort_neutral_green.png" /></a>
-      <a href="<%= f.object.image.url %>" class="thumb">
-        <img src="<%= f.object.image.url(:thumbnail) %>" />
-      </a>
-      <%= link_to_remove_fields("Remove Image", f) %>
-    </span>
-  <% end %>
+<% if f.object.new_record? %>
+  <div class="fields">
+    <%= f.file_field :image %>
+  </div>
+<% else %>
+  <li id="<%= "threading_#{f.object.threading}" %>">
+  <span class="fields image"  style="display: block;">
+    <a href="#" id="sort-icon"><img src="/images/sort_neutral_green.png" /></a>
+    <a href="<%= f.object.image.url %>" class="thumb">
+      <img src="<%= f.object.image.url(:thumbnail) %>" />
+    </a>
+    <%= link_to_remove_fields("Remove Image", f) %>
+  </span>
+  </li>
+<% end %>
 
