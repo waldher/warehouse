@@ -114,10 +114,16 @@ namespace :rentjuicer do
       start=Time.now
       rentjuice_listings = []
       for condition in customer[:filter]
-        rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50}))
+        rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50, :order_by => "random"}))
         puts "Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
       end
       puts "Took #{Time.now-start}"
+
+      if rentjuice_listings.count > 400
+        puts "More than 400 listings, limiting results"
+      end
+      #Bascially the amount of data the listings import on heathrow can handle is under 400 entries.      
+      rentjuice_listings = rentjuice_listings.shuffle[0..400]
 
       leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
       puts "Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
