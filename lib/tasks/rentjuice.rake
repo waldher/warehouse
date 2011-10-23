@@ -103,7 +103,7 @@ namespace :rentjuicer do
 
     connections = {}
   
-    for customer in customers
+    for customer in customers.shuffle
       puts "============================================="
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
