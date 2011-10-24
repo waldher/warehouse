@@ -178,7 +178,6 @@ a.rm_btn {
   margin-bottom: 14px;
   width: 191px;
   position: relative;
-  bottom: 150px;
   left: 100px;
 }
 
@@ -207,8 +206,6 @@ span.image {
 }
 
 a#sort-icon {
-  position: relative;
-  bottom: 150px;
   margin-right: 120px;
 }
 
