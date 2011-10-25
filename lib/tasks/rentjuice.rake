@@ -341,7 +341,7 @@ namespace :rentjuicer do
                 image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
                 ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
-                attempts = 5
+                attempts = 0
                 puts "Imported Image: #{image_uri}"
               rescue => e
                 puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
