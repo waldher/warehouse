@@ -315,8 +315,8 @@ namespace :rentjuicer do
         if new and !rentjuicer.sorted_photos.empty? and listing.infos[:ad_image_urls].nil?
           puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
           for image in rentjuicer.sorted_photos
-            uploaded = 5
-            while uploaded > 0
+            attempts = 5
+            while attempts > 0
               begin
                 image_uri = ""
                 if !image.fullsize.nil?
@@ -341,12 +341,12 @@ namespace :rentjuicer do
                 image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
                 ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
-                uploaded = 0
+                attempts = 5
                 puts "Imported Image: #{image_uri}"
               rescue => e
                 puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
-                uploaded -= 1
-                if uploaded == 0
+                attempts -= 1
+                if attempts == 0
                   return
                 end
               end
