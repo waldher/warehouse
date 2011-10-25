@@ -344,7 +344,7 @@ namespace :rentjuicer do
                 attempts = 0
                 puts "Imported Image: #{image_uri}"
               rescue => e
-                puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
+                puts "#{c(red)}Attempt: #{attempts}, #{e.inspect}#{ec}"
                 attempts -= 1
                 if attempts == 0
                   return
