@@ -15,13 +15,22 @@ function remove_fields(link) {
 
 $(function() {
   $('.sortable').sortable({
-    update: function() {
-              id = $(this).attr('id');
-              data = $(this).sortable('serialize');
-              url = " /listings/image_update/"+id;
-              $.post(url, data);
-            }
+    placeholder: "ui-state-highlight",
+    tolerance: 'pointer',
+    delay: 500,
+    pointer: 'move',
+    revert: true,
+    start: function(e, ui) {
+      ui.placeholder.height(ui.item.height());
+    },
+    update: function(e, ui) {
+      id = $(this).attr('id');
+      data = $(this).sortable('serialize');
+      url = " /listings/image_update/"+id;
+      $.post(url, data);
+    }
   });
+
   $(".image_upload .fields").live('click', function() {
     content = $("<img />").attr("src", $(this).find('a').attr("data-url"));
     console.log(content);
