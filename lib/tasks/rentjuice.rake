@@ -312,7 +312,7 @@ namespace :rentjuicer do
         key_map[rentjuicer.id.to_s] = listing.id
 
         #Assumption being, images never change.
-        if new and !rentjuicer.sorted_photos.empty?
+        if new and !rentjuicer.sorted_photos.empty? and listing.infos[:ad_image_urls].nil?
           puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
           for image in rentjuicer.sorted_photos
             uploaded = 5
