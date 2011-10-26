@@ -104,6 +104,11 @@
       May be used as a tagline.
     </div>
   </div>
+  <div class="field">
+    <%= f.label :sublocation_string %><br />
+    <%= hidden_field_tag "customer[latest_infos_attributes][13][key]", "sublocation_string" %>
+    <%= text_field_tag "customer[latest_infos_attributes][13][value]", @infos[:sublocation_string] %>
+  </div>
 
   <div class="time field">
     <%= f.label :start_time %>
