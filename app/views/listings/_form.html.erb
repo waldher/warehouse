@@ -37,6 +37,10 @@
         <%= infos.label :ad_location, "Ad Location" %><br />
         <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location] %>
       </span>
+      <span class="field">
+        <%= infos.label :ad_sublocation, "Ad Sub-Location" %><br />
+        <%= infos.text_field :ad_sublocation, :value => @listing.infos[:ad_sublocation] %>
+      </span>
     </div>
     <% if @customer.craigslist_type == "apa" %>
       <div>
