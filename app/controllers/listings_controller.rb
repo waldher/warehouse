@@ -13,16 +13,23 @@ class ListingsController < ApplicationController
 
   def sync
     if @customer
-      @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true).includes(:listing_infos)
-
-      render :json => @listings.to_json(
-        :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
-        :methods => :ad_image_urls )
+      @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true)
+      .includes(:listing_infos, :listing_images)
+      data = []
+      @listings.each do |listing|
+        images = listing.listing_images.map(&:image_url)
+        infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
+        data << listing.attributes.merge(:images => images, :listing_infos => infos)
+      end
+      render :json => JSON.generate(data) 
+      #render :json => @listings.to_json(
+      #  :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
+      #  :methods => :ad_image_urls )
     else
       render :json => []
     end
   end
-  
+
   def image_update
     logger.debug params
     listing = Listing.find(params[:id])
