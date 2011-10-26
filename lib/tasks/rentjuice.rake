@@ -58,7 +58,7 @@ namespace :rentjuicer do
     ronda_neighborhoods = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
     casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"]
 
-    kanga = [{:min_rent => 850, :has_photos => 1, :include_mls => 1}]
+    kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1}]
     maf = [
     {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
     {:min_beds => 2, :max_beds => 2, :min_rent => 2000, :max_rent => 4000, :has_photos => 1, :include_mls => 1}
@@ -96,7 +96,7 @@ namespace :rentjuicer do
     {:name => 'casabellaboca',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
     :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1}],
+    :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "john@casabellaboca.com"}
     }
     ]
@@ -312,11 +312,11 @@ namespace :rentjuicer do
         key_map[rentjuicer.id.to_s] = listing.id
 
         #Assumption being, images never change.
-        if new and !rentjuicer.sorted_photos.empty?
+        if new and !rentjuicer.sorted_photos.empty? and listing.infos[:ad_image_urls].nil?
           puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
           for image in rentjuicer.sorted_photos
-            uploaded = 5
-            while uploaded > 0
+            attempts = 5
+            while attempts > 0
               begin
                 image_uri = ""
                 if !image.fullsize.nil?
@@ -341,12 +341,12 @@ namespace :rentjuicer do
                 image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
                 ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
-                uploaded = 0
+                attempts = 0
                 puts "Imported Image: #{image_uri}"
               rescue => e
-                puts "#{c(red)}Attempt: #{uploaded}, #{e.inspect}#{ec}"
-                uploaded -= 1
-                if uploaded == 0
+                puts "#{c(red)}Attempt: #{attempts}, #{e.inspect}#{ec}"
+                attempts -= 1
+                if attempts == 0
                   return
                 end
               end
