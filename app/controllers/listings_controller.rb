@@ -19,7 +19,7 @@ class ListingsController < ApplicationController
       @listings.each do |listing|
         images = listing.listing_images.map(&:image_url)
         infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
-        data << listing.attributes.merge(:images => images, :listing_infos => infos)
+        data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos)
       end
       render :json => JSON.generate(data) 
       #render :json => @listings.to_json(
