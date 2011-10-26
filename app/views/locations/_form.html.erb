@@ -1,0 +1,12 @@
+<%= form_for @location do |f| %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :enabled? %>
+    <%= f.check_box :enabled %>
+  </div>
+  <%= f.submit %>
+  <%= link_to "Cancel", locations_url %>
+<% end %>

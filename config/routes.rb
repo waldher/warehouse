@@ -1,5 +1,9 @@
 Marsala::Application.routes.draw do
 
+
+  resources :locations do 
+    resources :sublocations
+  end
   resources :admin, :controller => :admin
   
   get '/customers/:key/listings/sync' => 'listings#sync'

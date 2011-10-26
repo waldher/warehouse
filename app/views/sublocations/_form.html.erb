@@ -1,0 +1,9 @@
+<%= form_for [@location, @sublocation] do |f| %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <%= f.submit %>
+<% end %>
+<br />
+<%= link_to "Cancel", @location %>

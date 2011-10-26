@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111016203556) do
+ActiveRecord::Schema.define(:version => 20111026140555) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -97,6 +97,11 @@ ActiveRecord::Schema.define(:version => 20111016203556) do
     t.boolean  "foreign_active", :default => false, :null => false
   end
 
+  create_table "locations", :force => true do |t|
+    t.string  "name",    :default => "",    :null => false
+    t.boolean "enabled", :default => false, :null => false
+  end
+
   create_table "real_estate_images", :force => true do |t|
     t.integer  "real_estate_id",     :null => false
     t.string   "image_file_name"
@@ -121,5 +126,12 @@ ActiveRecord::Schema.define(:version => 20111016203556) do
     t.string   "ad_location"
     t.string   "ad_keywords",    :default => "",    :null => false
   end
+
+  create_table "sublocations", :force => true do |t|
+    t.string  "name"
+    t.integer "location_id"
+  end
+
+  add_index "sublocations", ["location_id"], :name => "index_sublocations_on_location_id"
 
 end

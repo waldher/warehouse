@@ -1,0 +1,24 @@
+<div>
+  <b>Location Name:</b> 
+  <%= @location.name %>
+</div>
+<div>
+  <b>Enabled?</b> 
+  <%= @location.enabled ? "Yes" : "No" %>
+</div>
+<%= link_to "Edit", edit_location_url(@location) %> |
+<%= link_to "Back", locations_url %> 
+<br />
+
+<h2>SubLocations</h2>
+
+<% if @sublocations.any? %>
+<% @sublocations.each do |location| %>
+  Name: <%= link_to location.name, edit_location_sublocation_url(@location, location) %> | 
+  <%= link_to "Delete", [@location, location], :method => :delete, :confirm => "Are you sure?" %>
+<% end %>
+<% else %>
+  <h3>No Sublocation.</h3>
+<% end %>
+<br />
+<%= link_to "Add sublocation", new_location_sublocation_url(@location) %>
