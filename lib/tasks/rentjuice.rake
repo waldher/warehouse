@@ -96,7 +96,7 @@ namespace :rentjuicer do
     {:name => 'casabellaboca',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
     :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1}],
+    :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "john@casabellaboca.com"}
     }
     ]
