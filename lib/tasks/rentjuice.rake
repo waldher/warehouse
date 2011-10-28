@@ -311,47 +311,58 @@ namespace :rentjuicer do
         puts "Updating key_map"
         key_map[rentjuicer.id.to_s] = listing.id
 
+        no_images = true
         #Assumption being, images never change.
         if new and !rentjuicer.sorted_photos.empty? and listing.infos[:ad_image_urls].nil?
           puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
           for image in rentjuicer.sorted_photos
-            attempts = 5
-            while attempts > 0
-              begin
-                image_uri = ""
-                if !image.fullsize.nil?
-                  image_uri = image.fullsize
-                elsif !image.original.nil?
-                  image_uri = image.original
-                else
-                  break
-                end
-                  
-                http = nil
-                urisplit = URI.split(image_uri).reject{|i| i.nil?}
-                domain = urisplit[1]
-                path = urisplit[2..-1] * "/"
-                if connections.has_key?(domain)
-                  http = connections[domain]
-                else
-                  http = Net::HTTP.start(domain)
-                  connections[domain] = http
-                end
-                resp = http.get(path)
-                image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
+            if !image.include?("/images/original/missing.png")
+              attempts = 5
+              while attempts > 0
+                begin
+                  image_uri = ""
+                  if !image.fullsize.nil?
+                    image_uri = image.fullsize
+                  elsif !image.original.nil?
+                    image_uri = image.original
+                  else
+                    break
+                  end
+                    
+                  http = nil
+                  urisplit = URI.split(image_uri).reject{|i| i.nil?}
+                  domain = urisplit[1]
+                  path = urisplit[2..-1] * "/"
+                  if connections.has_key?(domain)
+                    http = connections[domain]
+                  else
+                    http = Net::HTTP.start(domain)
+                    connections[domain] = http
+                  end
+                  resp = http.get(path)
+                  image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
-                ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
-                attempts = 0
-                puts "Imported Image: #{image_uri}"
-              rescue => e
-                puts "#{c(red)}Attempt: #{attempts}, #{e.inspect}#{ec}"
-                attempts -= 1
-                if attempts == 0
-                  return
+                  ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
+                  if no_images
+                    no_images = false
+                  end
+                  attempts = 0
+                  puts "Imported Image: #{image_uri}"
+                rescue => e
+                  puts "#{c(red)}Attempt: #{attempts}, #{e.inspect}#{ec}"
+                  attempts -= 1
+                  if attempts == 0
+                    return
+                  end
                 end
               end
             end
           end
+        end
+        
+        if no_images
+          listing.foreign_active = false
+          listing.save
         end
 
         puts "Created/Updated new Listing. Leadadvo ID #{listing.id}"
