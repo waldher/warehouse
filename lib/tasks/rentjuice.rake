@@ -1,4 +1,4 @@
-require 'uri'
+REQUIRE 'uri'
 require 'rentjuicer'
 require 'listing_title'
 
@@ -391,7 +391,7 @@ end
 def gray; 8; end
 def l_blue; 6; end
 def pink; 5; end
-def yellow 3; end
+def yellow; 3; end
 def green; 2; end
 def red; 1; end
 def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
