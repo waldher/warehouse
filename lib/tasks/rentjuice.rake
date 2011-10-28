@@ -210,35 +210,35 @@ namespace :rentjuicer do
 
         #---Description
         if listing.infos[:ad_description] != (rentjuicer.description || "")
-          puts "Description Changed"
+          puts "#{c(yellow)}Description Changed#{ec}"
           save = true
           listing.infos[:ad_description] = (rentjuicer.description || "")
         end
 
         #---Price
         if listing.infos[:ad_price] != (rentjuicer.rent.to_s || "")
-          puts "Price Changed. Was '#{listing.infos[:ad_price]}'(nil? #{listing.infos[:ad_price].nil?}) is now '#{(rentjuicer.rent.to_s || "")}'(nil? #{rentjuicer.rent.to_s.nil?})."
+          puts "#{c(yellow)}Price Changed. Was '#{listing.infos[:ad_price]}'(nil? #{listing.infos[:ad_price].nil?}) is now '#{(rentjuicer.rent.to_s || "")}'(nil? #{rentjuicer.rent.to_s.nil?}).#{ec}"
           save = true
           listing.infos[:ad_price] = (rentjuicer.rent.to_s || "")
         end
        
         #---Keywords
         if listing.infos[:ad_keywords] != ((rentjuicer.features * ", ") || "")
-          puts "Keywords Changed"
+          puts "#{c(yellow)}Keywords Changed#{ec}"
           save = true
           listing.infos[:ad_keywords] = ((rentjuicer.features * ", ") || "")
         end
         
         #---Neighborhoods
         if listing.infos[:ad_neighborhoods] != ((rentjuicer.neighborhoods * ", ") || "")
-          puts "Neighborhoods Changed"
+          puts "#{c(yellow)}Neighborhoods Changed#{ec}"
           save = true
           listing.infos[:ad_neighborhoods] = ((rentjuicer.neighborhoods * ", ") || "")
         end
 
         #---Rental Terms
         if listing.infos[:ad_rental_terms] != ((rentjuicer.rental_terms * ", ") || "")
-          puts "Rental Terms Changed"
+          puts "#{c(yellow)}Rental Terms Changed#{ec}"
           save = true
           listing.infos[:ad_rental_terms] = ((rentjuicer.rental_terms * ", ") || "")
         end
@@ -246,7 +246,7 @@ namespace :rentjuicer do
         #---Title
         if !rentjuicer.title.nil? and !rentjuicer.title.empty?
           if listing.infos[:ad_title] != rentjuicer.title
-            puts "Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'."
+            puts "#{c(yellow)}Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'.#{ec}"
             listing.infos[:ad_title] = rentjuicer.title
             listing.active = true
             save = true
@@ -261,47 +261,48 @@ namespace :rentjuicer do
               :amenities => listing.infos[:ad_keywords])
             if title.length > 20
               listing.infos[:ad_title] = title
-              puts "New title generated: #{title}"
+              puts "#{c(yellow)}New title generated: #{title}#{ec}"
               save = true
             end
           end
           if !listing.active
-            if listing.infos[:ad_title] and !listing.infos[:ad_title].empty?
+            if !listing.infos[:ad_title].nil? and !listing.infos[:ad_title].empty?
+              puts "#{c(yellow)}Listing was disabled#{ec}"
               listing.active = true
               save = true
             end
-          else
-            if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-              listing.active = false
-              save = true
-            end
+          #else
+          #  if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
+          #    listing.active = false
+          #    save = true
+          #  end
           end
         end
 
         new_foreign_active = true
         #If there are no images we don't want to save the listing.
         if !rentjuicer.sorted_photos
-          puts "Disabled due to photos"
+          puts "#{c(red)}Disabled due to photos#{ec}"
           new_foreign_active = false
           save = true
         elsif rentjuicer.status != "active"
-          puts "Disabled due to status"
+          puts "#{c(red)}Disabled due to status#{ec}"
           new_foreign_active = false
           save = true
         elsif listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-          puts "Disabled due to title"
+          puts "#{c(red)}Disabled due to title#{ec}"
           new_foreign_active = false
           save = true
         end
 
         if new_foreign_active != listing.foreign_active
-          puts "Foreign Active Sataus Changed from #{listing.foreign_active} to #{new_foreign_active}"
+          puts "#{c(yellow)}Foreign Active Sataus Changed from #{listing.foreign_active} to #{new_foreign_active}#{ec}"
           listing.foreign_active = new_foreign_active
           save = true
         end
     
         if save
-          puts "Saving Listing"
+          puts "#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
 
@@ -311,9 +312,10 @@ namespace :rentjuicer do
         puts "Updating key_map"
         key_map[rentjuicer.id.to_s] = listing.id
 
-        no_images = true
+        no_images = nil
         #Assumption being, images never change.
         if new and !rentjuicer.sorted_photos.empty? and listing.infos[:ad_image_urls].nil?
+         no_image = true
           puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
           for image in rentjuicer.sorted_photos
             if !image.include?("/images/original/missing.png")
@@ -361,12 +363,13 @@ namespace :rentjuicer do
         end
         
         if no_images
+          puts "#{c(pink)}Listing has no images#{ec}"
           listing.foreign_active = false
           listing.save
         end
 
         puts "Created/Updated new Listing. Leadadvo ID #{listing.id}"
-        puts "-----------------------------------------"
+        puts "`-----------------------------------------"
         if !@running
           return
         end
@@ -385,8 +388,11 @@ namespace :rentjuicer do
   end
 end
 
-def gray; 8; end 
-def green; 2; end 
-def red; 1; end 
+def gray; 8; end
+def l_blue; 6; end
+def pink; 5; end
+def yellow 3; end
+def green; 2; end
+def red; 1; end
 def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
 def ec; "\x1b[0m"; end 
