@@ -1,4 +1,4 @@
-REQUIRE 'uri'
+require 'uri'
 require 'rentjuicer'
 require 'listing_title'
 
