@@ -101,25 +101,45 @@ namespace :rentjuicer do
     }
     ]
 
-    connections = {}
+    @connections = {}
   
     for customer in customers.shuffle
-      puts "============================================="
-      puts "Starting import for: #{customer[:name]}"
+      puts ",============================================="
+      leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
+      puts "Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
+
+      start = Time.now
+      #Key is foreign_id, value is listing
+      key_map = {}
+      Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
+        foreign_id = listing.infos[:ad_rentjuice_id].to_s
+        if !key_map[foreign_id].nil?
+          old_listing = key_map[foreign_id]
+          puts "#{c(pink)}Found a duplicate foregin ID #{foreign_id}, local IDs @#{listing.id} - #{old_listing.id}#{ec}"
+          if listing.id > old_listing.id
+            puts "Tossing the Old"
+            old_listing.destroy
+          else
+            puts "Tossing the New"
+            listing.destroy
+          end
+        end
+        key_map[foreign_id] = listing
+      }
+      puts "Took #{Time.now - start} seconds to construct foreign id to listing map."
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
       puts "Rentjuice Client Created"
-
       @listings = Rentjuicer::Listings.new(@rentjuicer)
       puts "Rentjuice Listings Object Created"
  
-      start=Time.now
       rentjuice_listings = []
       for condition in customer[:filter]
+        start = Time.now
         rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50, :order_by => "random"}))
         puts "Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
+        puts "Took #{Time.now - start}"
       end
-      puts "Took #{Time.now-start}"
 
       if rentjuice_listings.count > 400
         puts "More than 400 listings, limiting results"
@@ -127,265 +147,232 @@ namespace :rentjuicer do
       #Bascially the amount of data the listings import on heathrow can handle is under 400 entries.      
       rentjuice_listings = rentjuice_listings.shuffle[0..400]
 
-      leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
-      puts "Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
-
-      #These keys hold the foregin keys.
-      #This way we don't have to iterate through all listings for every rentjuice unit.
-      key_map = {}
-      #These keys will be deleted when an listing is active.
-      #That way at the end of the import we know what listings to disable
-      to_deactivate = {}
-      Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
-        key_map[listing.infos[:ad_foreign_id]] = listing.id
-        to_deactivate[listing.id] = listing
-      }
-      puts "Constructed foreign to local id/key map."
-
       index = 0
-      max = rentjuice_listings.count
-      rentjuice_listings.each { |rentjuicer|
-        puts "Now working on listing #{index += 1} of #{max} for #{customer[:name]}"
+      active = []
+      for rentjuicer in rentjuice_listings
+        puts ",-----------------------------------------"
 
-        save = false
-
-        new = true
-        if key_map[rentjuicer.id.to_s]
-            puts "Old Listing Found"
-            listing = Listing.find(key_map[rentjuicer.id.to_s])
-            new = false
-        end
-        if new
-          save = true
-          puts "#{c(green)}New Listing Found, Rentjuce ID #{rentjuicer.id}#{ec}"
-          listing = Listing.new
-
-          listing.customer_id = leadadvo_id
-          listing.infos[:ad_foreign_id] = rentjuicer.id.to_s
-
-          #Stuff that should never change (Trying to help skipped listings run faster.)
-          listing.infos[:ad_city] = rentjuicer.city || ""
-          listing.infos[:ad_state] = rentjuicer.state || ""
-          listing.infos[:ad_zip_code] = rentjuicer.zip_code || ""
-          listing.infos[:ad_address] = rentjuicer.address || ""
-   
-          listing.infos[:ad_bedrooms] = rentjuicer.bedrooms || ""
-          listing.infos[:ad_bathrooms] = rentjuicer.bathrooms || ""
-          listing.infos[:ad_square_footage] = rentjuicer.square_footage || ""
-          listing.infos[:ad_property_type] = rentjuicer.property_type || ""
-          listing.infos[:ad_floor_number] = rentjuicer.floor_number || ""
- 
-          listing.infos[:ad_latitude] = rentjuicer.latitude || ""
-          listing.infos[:ad_longitude] = rentjuicer.longitude || ""
-      
-          address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
-          address.gsub!(/'/,' ')
-          puts "Address: #{address}"
-
-          done = false
-          while !done
-            begin
-              json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
-              parsed_json = ActiveSupport::JSON.decode(json_string)
-              location = parsed_json["results"].first["address_components"][2]["short_name"]
-              listing.infos[:ad_location] = location
-              puts "Detected location: #{location}"
-              done = true
-              #0.1 is minimum but, with all the other code the total time between requests should be >> 0.1
-              sleep(0.1)
-            rescue => e
-              puts "#{c(red)}Location Error: #{e.inspect}, trying again.#{ec}"
-              #If for some reason the minimum is surpased. Make sure to wait a long time before trying again.
-              #(I have seen it border on black listing requests.)
-              sleep(0.5)
-            end
-          end
-        end
- 
-        #listing.infos[:ad_agent_name] = rentjuicer.agent_name || ""
-        #listing.infos[:ad_agent_email] = rentjuicer.agent_email || ""
-        #listing.infos[:ad_agent_phone] = rentjuicer.agent_phone || ""
-    
-        puts "Updating/ adding listing infos"
-
-        #---Description
-        if listing.infos[:ad_description] != (rentjuicer.description || "")
-          puts "#{c(yellow)}Description Changed#{ec}"
-          save = true
-          listing.infos[:ad_description] = (rentjuicer.description || "")
-        end
-
-        #---Price
-        if listing.infos[:ad_price] != (rentjuicer.rent.to_s || "")
-          puts "#{c(yellow)}Price Changed. Was '#{listing.infos[:ad_price]}'(nil? #{listing.infos[:ad_price].nil?}) is now '#{(rentjuicer.rent.to_s || "")}'(nil? #{rentjuicer.rent.to_s.nil?}).#{ec}"
-          save = true
-          listing.infos[:ad_price] = (rentjuicer.rent.to_s || "")
-        end
-       
-        #---Keywords
-        if listing.infos[:ad_keywords] != ((rentjuicer.features * ", ") || "")
-          puts "#{c(yellow)}Keywords Changed#{ec}"
-          save = true
-          listing.infos[:ad_keywords] = ((rentjuicer.features * ", ") || "")
-        end
-        
-        #---Neighborhoods
-        if listing.infos[:ad_neighborhoods] != ((rentjuicer.neighborhoods * ", ") || "")
-          puts "#{c(yellow)}Neighborhoods Changed#{ec}"
-          save = true
-          listing.infos[:ad_neighborhoods] = ((rentjuicer.neighborhoods * ", ") || "")
-        end
-
-        #---Rental Terms
-        if listing.infos[:ad_rental_terms] != ((rentjuicer.rental_terms * ", ") || "")
-          puts "#{c(yellow)}Rental Terms Changed#{ec}"
-          save = true
-          listing.infos[:ad_rental_terms] = ((rentjuicer.rental_terms * ", ") || "")
-        end
-
-        #---Title
-        if !rentjuicer.title.nil? and !rentjuicer.title.empty?
-          if listing.infos[:ad_title] != rentjuicer.title
-            puts "#{c(yellow)}Title Changed. Was '#{listing.infos[:ad_title]}' is now '#{(rentjuicer.title || "")}'.#{ec}"
-            listing.infos[:ad_title] = rentjuicer.title
-            listing.active = true
-            save = true
-          end
-        #If new data not viable
+        listing = key_map[rentjuicer.id.to_s]
+        if !listing.nil?
+          puts "|Old Listing Found"
+          new = false
         else
-          if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-            title = ListingTitle.generate(
-              :bedrooms => listing.infos[:ad_bedrooms].to_i,
-              :location => listing.infos[:ad_location],
-              :type => listing.infos[:ad_property_type],
-              :amenities => listing.infos[:ad_keywords])
-            if title.length > 20
-              listing.infos[:ad_title] = title
-              puts "#{c(yellow)}New title generated: #{title}#{ec}"
-              save = true
-            end
-          end
-          if !listing.active
-            if !listing.infos[:ad_title].nil? and !listing.infos[:ad_title].empty?
-              puts "#{c(yellow)}Listing was disabled#{ec}"
-              listing.active = true
-              save = true
-            end
-          #else
-          #  if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-          #    listing.active = false
-          #    save = true
-          #  end
-          end
+          puts "|#{c(green)}New Listing Found#{ec}"
+          listing = Listing.new
+          listing.customer_id = leadadvo_id
+          listing.active = true
+          new = true
         end
+        puts "|#{customer[:name]}"
+        puts "|RentJuice ID: #{rentjuicer.id}"
+        puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
-        new_foreign_active = true
-        #If there are no images we don't want to save the listing.
-        if !rentjuicer.sorted_photos
-          puts "#{c(red)}Disabled due to photos#{ec}"
-          new_foreign_active = false
-          save = true
-        elsif rentjuicer.status != "active"
-          puts "#{c(red)}Disabled due to status#{ec}"
-          new_foreign_active = false
-          save = true
-        elsif listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-          puts "#{c(red)}Disabled due to title#{ec}"
-          new_foreign_active = false
-          save = true
-        end
-
-        if new_foreign_active != listing.foreign_active
-          puts "#{c(yellow)}Foreign Active Sataus Changed from #{listing.foreign_active} to #{new_foreign_active}#{ec}"
-          listing.foreign_active = new_foreign_active
-          save = true
-        end
-    
-        if save
-          puts "#{c(l_blue)}Saving Listing#{ec}"
+        if update_vars(listing, rentjuicer) or new #(New implies updated_vars returns true but, just for clarity I have included it.)
+          puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
-        end
 
-        puts "Deleting from deactivation map"
-        to_deactivate.delete(listing.id)
-
-        puts "Updating key_map"
-        key_map[rentjuicer.id.to_s] = listing.id
-
-        no_images = nil
-        #Assumption being, images never change.
-        if new and !rentjuicer.sorted_photos.empty? and listing.infos[:ad_image_urls].nil?
-         no_image = true
-          puts "New Ad, Import Images #{rentjuicer.sorted_photos}"
-          for image in rentjuicer.sorted_photos
-            if !image.include?("/images/original/missing.png")
-              attempts = 5
-              while attempts > 0
-                begin
-                  image_uri = ""
-                  if !image.fullsize.nil?
-                    image_uri = image.fullsize
-                  elsif !image.original.nil?
-                    image_uri = image.original
-                  else
-                    break
-                  end
-                    
-                  http = nil
-                  urisplit = URI.split(image_uri).reject{|i| i.nil?}
-                  domain = urisplit[1]
-                  path = urisplit[2..-1] * "/"
-                  if connections.has_key?(domain)
-                    http = connections[domain]
-                  else
-                    http = Net::HTTP.start(domain)
-                    connections[domain] = http
-                  end
-                  resp = http.get(path)
-                  image_file = in_memory_file(resp.body, urisplit.last.split("/").last)
-
-                  ListingImage.create(:listing_id => listing.id, :image => image_file, :threading => image.sort_order)
-                  if no_images
-                    no_images = false
-                  end
-                  attempts = 0
-                  puts "Imported Image: #{image_uri}"
-                rescue => e
-                  puts "#{c(red)}Attempt: #{attempts}, #{e.inspect}#{ec}"
-                  attempts -= 1
-                  if attempts == 0
-                    return
-                  end
-                end
-              end
-            end
+          if new #New implies listing.save, so this could be external but, again I like the clarity of: listing.save MUST happen before images are saved.
+            load_images(listing, rentjuicer.sorted_photos)
+            puts listing.ad_image_urls
           end
         end
         
-        if no_images
-          puts "#{c(pink)}Listing has no images#{ec}"
-          listing.foreign_active = false
-          listing.save
+        if rentjuicer.status == "active" and !disable(listing)
+          active << listing.id
         end
 
-        puts "Created/Updated new Listing. Leadadvo ID #{listing.id}"
+        puts "|Created/Updated Listing. Leadadvo ID #{listing.id}"
         puts "`-----------------------------------------"
         if !@running
           return
         end
-      }
-
-      puts "Found #{to_deactivate.count} listing(s) that may need to be deactivated."
-      for listing_id, listing in to_deactivate do
+      end
+      
+      activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active)
+      puts "#{active.count} active listing(s)."
+      for listing in activate
+        if !listing.foreign_active
+          puts "Activating listing with Leadadvo ID #{listing.id}"
+          listing.foreign_active = true
+          listing.save
+        end
+      end
+      puts "Finished activation"
+     
+      deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active)
+      puts "#{deactivate.count} listing(s) that need to be disabled."
+      for listing in deactivate do
         if listing.foreign_active
-          puts "Disabling listing with Leadadvo ID #{listing_id}"
+          puts "Disabling listing with Leadadvo ID #{listing.id}"
           listing.foreign_active = false
           listing.save
         end
       end
       puts "Finished deactivation"
+
     end
   end
+end
+
+###########################################################
+############# Disable Check
+###########################################################
+def disable(listing)
+  new_foreign_active = true
+  #If there are no images we don't want to save the listing.
+
+  if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
+    puts "|#{c(red)}Disabled due to empty title#{ec}"
+    return true
+  end
+
+  image_urls = listing.ad_image_urls
+  if image_urls.nil? or image_urls.empty?
+    puts "|#{c(red)}Disabled due to empty images#{ec}"
+    return true
+  end
+
+  #In theory this should never be seen
+  if image_urls.*(",").include?("/images/original/missing.png")
+    puts "|#{c(red)}Disabled due to missing.png image#{ec}"
+    return true
+  end
+end
+
+###########################################################
+############# Download Images
+###########################################################
+def load_images(listing, photos)
+  #Assumption being, images never change.
+  if !photos.empty? and listing.infos[:ad_image_urls].nil?
+
+    for photo in photos
+      if !photo.include?("/images/original/missing.png")
+
+        attempts = 5
+        while attempts > 0
+          begin
+
+            photo_uri = ""
+            #Some listings don't have fullsize versions of the photos
+            if !photo.fullsize.nil?
+              photo_uri = photo.fullsize
+            elsif !photo.original.nil?
+              photo_uri = photo.original
+            else
+              break
+            end
+              
+            http = nil
+            urisplit = URI.split(photo_uri).reject{|i| i.nil?}
+            domain = urisplit[1]
+            path = urisplit[2..-1] * "/"
+            if @connections.has_key?(domain)
+              http = @connections[domain]
+            else
+              http = Net::HTTP.start(domain)
+              @connections[domain] = http
+            end
+            resp = http.get(path)
+
+            photo_file = in_memory_file(resp.body, urisplit.last.split("/").last)
+
+            ListingImage.create(:listing_id => listing.id, :image => photo_file, :threading => photo.sort_order)
+            puts "|Imported: #{photo_uri}"
+
+            attempts = 0
+          rescue => e
+            puts "|#{c(red)}Attempt #{6 - attempts} failed: #{e.inspect}#{ec}"
+            attempts -= 1
+          end
+        end
+
+      end
+    end
+
+  end
+end
+
+###########################################################
+############# Updated all Listing Variables
+###########################################################
+#Update all the vairables
+#Requires the rentjuicer object to give values
+#Requires the listing object to store the values locally
+def update_vars(listing, rentjuicer)
+  save = false
+  rJson = rentjuicer.as_json
+  #Convert the rentjuicer into json so it's easy to access the key, val pairs
+  rJson.each{| key, val |
+    #If the value is an array this needs to be converted into a string
+    if val.class == Array
+      val = val.join(",") || ""
+    end
+
+    #Create the infos symbol
+    key_symbol = "ad_#{key}".to_sym
+    #Deal with special symbols
+    if key_symbol == :ad_rent
+      key_symbol = :ad_price
+    elsif key_symbol == :ad_features
+      key_symbol == :ad_keywords
+    elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
+      title = ListingTitle.generate(
+        :bedrooms => rJson["bedrooms"].to_i,
+        :location => listing.infos[:ad_location],
+        :type => rJson["property_type"],
+        :amenities => rJson["features"])
+      if title.length > 20
+        puts "|#{c(yellow)}New title generated: #{c(pink)}#{title}#{ec}"
+        val = title
+      end
+    end
+
+    #If the value is new then update the infos
+    if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
+      puts "|#{c(yellow)}#{key.titlecase} Changed#{ec}"
+      listing.infos[key_symbol] = val.to_s
+      save = true
+    end
+  }
+  save = get_location(listing, rentjuicer)
+  return save
+end
+
+###########################################################
+############# Get_Location
+###########################################################
+def get_location(listing, rentjuicer)
+  address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
+  address.gsub!(/'/,' ')
+  puts "|Address: #{address}"
+
+  done = false
+  while !done
+    begin
+      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+      #0.1 sec is the minimum wait between request but, with all the other code the total time between requests should be >> 0.1
+      #Thus, cutting it close ought to be safe.
+      sleep(0.1)
+
+      parsed_json = ActiveSupport::JSON.decode(json_string)
+      location = parsed_json["results"].first["address_components"][2]["short_name"]
+
+      puts "|Detected location: #{location}"
+      if listing.infos[:ad_location] != location
+        listing.infos[:ad_location] = location
+
+        return true
+      end
+      done = true
+    rescue => e
+      puts "|#{c(red)}Location Error: #{e.inspect}, trying again.#{ec}"
+      #If for some reason the minimum is surpased. Make sure to wait a long time before trying again.
+      #(I have seen it border on black listing if there are too many requests.)
+      sleep(0.5)
+    end
+  end
+  return false
 end
 
 def gray; 8; end
