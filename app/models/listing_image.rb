@@ -6,6 +6,12 @@ class ListingImage < ActiveRecord::Base
     :s3_credentials => "#{Rails.root}/config/s3.yml", 
     :path => ":id/:style/:filename"
 
+  before_save :set_complete_image_url
+
+  def set_complete_image_url
+    self.complete_image_url = image_url
+  end
+
   def image_url
     self.image.url
   end
