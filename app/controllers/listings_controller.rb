@@ -16,12 +16,15 @@ class ListingsController < ApplicationController
       @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true)
       .includes(:listing_infos, :listing_images)
       data = []
+      time = Time.now
       @listings.each do |listing|
-        images = listing.listing_images.map(&:image_url)
+        images = listing.listing_images.map(&:complete_image_url)
         infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
         data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos)
       end
+      logger.debug "It took #{Time.now-time}"
       render :json => JSON.generate(data) 
+      logger.debug "Total Time: #{Time.now-time}"
       #render :json => @listings.to_json(
       #  :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
       #  :methods => :ad_image_urls )
