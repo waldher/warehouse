@@ -192,6 +192,8 @@ span.remove {
   background: url(/images/delete.png) no-repeat 0px;
   text-indent: 50px;
   display: inline-block;
+  position: relative;
+  bottom: 150px;
 }
 
 span.remove:hover,  a.add_btn:hover, a.thumb {
@@ -200,6 +202,7 @@ span.remove:hover,  a.add_btn:hover, a.thumb {
 }
 
 span.image {
+  padding: 10px;
   cursor: all-scroll;
   width: 700px;
   height: 300px;
@@ -207,8 +210,16 @@ span.image {
 
 a#sort-icon {
   margin-right: 120px;
+  position: relative;
+  bottom: 150px;
 }
 
 .sortable li {
   list-style: none;
+}
+
+a.thumb img {
+  height: 300px;
+  width: 300px;
+  margin: 10px;
 }
