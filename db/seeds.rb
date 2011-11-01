@@ -22,13 +22,15 @@ end
   'kangarent' => 'leads@kangarent.com',
   'casabellaboca' => 'john@casabellaboca.com'
 }.each{ |key, val|
-  if Customer.where("key like ?", key) == 0
+  if Customer.where("key like ?", key).count == 0
     Customer.create({
       :email_address => val,
       :key => key,
       :craigslist_type => 'apa'
     })
     puts "Added customer #{key}, email #{val}"
+  else
+    puts "Customer #{key}, email #{val} exists"
   end
 }
 
