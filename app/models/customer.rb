@@ -1,4 +1,5 @@
 class Customer < ActiveRecord::Base
+  has_many :listings
   has_many :real_estates, :foreign_key => :realtor_id
   has_many :customer_infos
   has_many :latest_infos, :class_name => 'CustomerInfo',:dependent => :delete_all, :conditions => proc {
