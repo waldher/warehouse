@@ -348,15 +348,20 @@ end
 ############# Get_Location
 ###########################################################
 def get_location(listing, rentjuicer)
-  address = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
-  address.gsub!(/'/,' ')
-  puts "|Address: #{address}"
+  old_address = "#{listing.infos[:ad_street_number]} #{listing.infos[:ad_street]}, #{listing.infos[:ad_city]}, #{listing.infos[:ad_state]} #{listing.infos[:ad_zip_code]}" 
+  new_address   = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
+
+  old_address.gsub!(/'/,' ')
+  new_address.gsub!(/'/,' ')
+
+  puts "|Old Address: #{old_address}"
+  puts "|New Address: #{new_address}"
 
   done = false
   fail_attempts = 0
-  while !done
+  while !done and old_address != new_address
     begin
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true").read
       #0.1 sec is the minimum wait between request but, with all the other code the total time between requests should be >> 0.1
       #Thus, cutting it close ought to be safe.
       sleep(0.1)
