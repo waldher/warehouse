@@ -6,7 +6,6 @@ namespace :rentjuicer do
       puts "No such directory exists"
       exit
     end
-    listing_dir = Rails.root.join("lib", "plumpads")
     listing_attr = {
       "rentals rate" => "ad_price",
       "bedroom" => "ad_bedrooms",
