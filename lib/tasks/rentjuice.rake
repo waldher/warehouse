@@ -425,7 +425,6 @@ def find_dupe_ids (leadadvo_id)
     if !key_map[foreign_id].nil?
       old_listing = key_map[foreign_id]
       puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, local IDs <#{listing.id}> - <#{old_listing.id}>#{ec}"
-      return true
       if listing.id > old_listing.id
         puts "|Tossing the Old"
         old_listing.destroy
