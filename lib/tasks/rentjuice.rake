@@ -106,43 +106,29 @@ namespace :rentjuicer do
     for customer in customers.shuffle
       puts ",============================================="
       leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
-      puts "Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
+      puts "|Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
 
-      start = Time.now
-      #Key is foreign_id, value is listing
-      key_map = {}
-      Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
-        foreign_id = listing.infos[:ad_rentjuice_id].to_s
-        if !key_map[foreign_id].nil?
-          old_listing = key_map[foreign_id]
-          puts "#{c(pink)}Found a duplicate foregin ID #{foreign_id}, local IDs @#{listing.id} - #{old_listing.id}#{ec}"
-          if listing.id > old_listing.id
-            puts "Tossing the Old"
-            old_listing.destroy
-          else
-            puts "Tossing the New"
-            listing.destroy
-          end
-        end
-        key_map[foreign_id] = listing
-      }
-      puts "Took #{Time.now - start} seconds to construct foreign id to listing map."
+      if find_dupe_ids(leadadvo_id)
+        return
+      end
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
-      puts "Rentjuice Client Created"
+      puts "|Rentjuice Client Created"
       @listings = Rentjuicer::Listings.new(@rentjuicer)
-      puts "Rentjuice Listings Object Created"
+      puts "|Rentjuice Listings Object Created"
  
       rentjuice_listings = []
       for condition in customer[:filter]
         start = Time.now
         rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50, :order_by => "random"}))
-        puts "Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
-        puts "Took #{Time.now - start}"
+        puts "|Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
+        puts "|Took #{Time.now - start}"
       end
 
+      find_dupe_vals(rentjuice_listings)
+      
       if rentjuice_listings.count > 400
-        puts "More than 400 listings, limiting results"
+        puts "|More than 400 listings, limiting results"
       end
       #Bascially the amount of data the listings import on heathrow can handle is under 400 entries.      
       rentjuice_listings = rentjuice_listings.shuffle[0..400]
@@ -152,7 +138,13 @@ namespace :rentjuicer do
       for rentjuicer in rentjuice_listings
         puts ",-----------------------------------------"
 
-        listing = key_map[rentjuicer.id.to_s]
+        listing = nil
+        listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id)
+        if !listings.nil? and listings.count > 1
+          puts "|Duplicate Listings Please Check Advo ID #{leadadvo_id} RJ ID #{rentjuicer_id}."
+          return
+        end
+        listing = listings.nil? ? nil : listings[0]
         if !listing.nil?
           puts "|Old Listing Found"
           new = false
@@ -316,6 +308,15 @@ def update_vars(listing, rentjuicer)
       key_symbol = :ad_price
     elsif key_symbol == :ad_features
       key_symbol == :ad_keywords
+    elsif key_symbol == :ad_rentjuice_id
+      if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
+        print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
+        print "  Was <#{listing.foreign_id.nil? ? "" : puts(listing.foreign_id)}> "
+        print "|  Now <#{val.to_s}>\n"
+        listing.foreign_id = val.to_s
+        save = true
+      end
+      next
     elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
       title = ListingTitle.generate(
         :bedrooms => rJson["bedrooms"].to_i,
@@ -323,19 +324,23 @@ def update_vars(listing, rentjuicer)
         :type => rJson["property_type"],
         :amenities => rJson["features"])
       if title.length > 20
-        puts "|#{c(yellow)}New title generated: #{c(pink)}#{title}#{ec}"
+        puts "|New title generated: #{c(pink)}#{title}#{ec}"
         val = title
       end
     end
 
     #If the value is new then update the infos
     if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
-      puts "|#{c(yellow)}#{key.titlecase} Changed#{ec}"
+      print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
+      print "  Was <#{listing.infos[key_symbol].to_s[0..140]}> "
+      print "|  Now <#{val.to_s[0..140]}>\n"
       listing.infos[key_symbol] = val.to_s
       save = true
     end
   }
-  save = get_location(listing, rentjuicer)
+  if get_location(listing, rentjuicer) or save
+    save = true
+  end
   return save
 end
 
@@ -348,6 +353,7 @@ def get_location(listing, rentjuicer)
   puts "|Address: #{address}"
 
   done = false
+  fail_attempts = 0
   while !done
     begin
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
@@ -366,7 +372,10 @@ def get_location(listing, rentjuicer)
       end
       done = true
     rescue => e
-      puts "|#{c(red)}Location Error: #{e.inspect}, trying again.#{ec}"
+      puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{fail_attempts += 1}#{ec}"
+      if fail_attempts > 5
+        return false
+      end
       #If for some reason the minimum is surpased. Make sure to wait a long time before trying again.
       #(I have seen it border on black listing if there are too many requests.)
       sleep(0.5)
@@ -382,4 +391,53 @@ def yellow; 3; end
 def green; 2; end
 def red; 1; end
 def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
-def ec; "\x1b[0m"; end 
+def ec; "\x1b[0m"; end
+
+def find_dupe_vals (rentjuice_listings)
+  key_map = {}
+  for rentjuicer in rentjuice_listings
+    foreign_id = rentjuicer.id
+    if !key_map[foreign_id].nil?
+      key_map[foreign_id] << rentjuicer
+      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{key_map[foreign_id].count}#{ec}"
+      for key in rentjuicer.as_json.keys
+        vals = []
+        for rj in key_map[foreign_id]
+          vals << rj.as_json[key]
+        end
+        if vals.uniq.count > 1
+          puts "|#{key}"
+          puts "|#{vals * "\n"}"
+        end
+      end
+    else
+      key_map[foreign_id] = [rentjuicer]
+    end
+  end
+end
+
+def find_dupe_ids (leadadvo_id)
+  start = Time.now
+  #Key is foreign_id, value is listing
+  key_map = {}
+  Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
+    foreign_id = listing.foreign_id
+    if !key_map[foreign_id].nil?
+      old_listing = key_map[foreign_id]
+      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, local IDs <#{listing.id}> - <#{old_listing.id}>#{ec}"
+      return true
+      if listing.id > old_listing.id
+        puts "|Tossing the Old"
+        old_listing.destroy
+      else
+        puts "|Tossing the New"
+        listing.destroy
+      end
+    end
+    key_map[foreign_id] = listing
+    if !@running
+      #return
+    end
+  }
+  puts "|Took #{Time.now - start} seconds to construct foreign id to listing map."
+end 
