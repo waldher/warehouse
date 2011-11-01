@@ -1,6 +1,11 @@
 namespace :rentjuicer do 
   desc "Import Listing for plumpads from files"
   task :plumpads => :environment do
+    listing_dir = ENV['path']
+    unless(Dir.exists?(listing_dir)) 
+      puts "No such directory exists"
+      exit
+    end
     listing_dir = Rails.root.join("lib", "plumpads")
     listing_attr = {
       "rentals rate" => "ad_price",
@@ -14,7 +19,7 @@ namespace :rentjuicer do
       Dir.foreach(listing_dir) do |filename|
         ## Skip files starting with . (dot)
         next if filename =~ /^[.]/
-        file_path = "#{listing_dir}/#{filename}"
+          file_path = "#{listing_dir}/#{filename}"
         file = File.open(file_path)
 
         # create a new listing with customer_id
