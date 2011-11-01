@@ -146,16 +146,16 @@ namespace :rentjuicer do
         end
         listing = listings.nil? ? nil : listings[0]
         if !listing.nil?
-          puts "|Old Listing Found"
+          print "|Old Listing Found for "
           new = false
         else
-          puts "|#{c(green)}New Listing Found#{ec}"
+          print "|#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = leadadvo_id
           listing.active = true
           new = true
         end
-        puts "|#{customer[:name]}"
+        puts "#{customer[:name]}#{ec}"
         puts "|RentJuice ID: #{rentjuicer.id}"
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
@@ -293,6 +293,10 @@ end
 #Requires the listing object to store the values locally
 def update_vars(listing, rentjuicer)
   save = false
+  #Need to run the location before the infos are set
+  if get_location(listing, rentjuicer)
+    save = true
+  end
   rJson = rentjuicer.as_json
   #Convert the rentjuicer into json so it's easy to access the key, val pairs
   rJson.each{| key, val |
@@ -338,9 +342,6 @@ def update_vars(listing, rentjuicer)
       save = true
     end
   }
-  if get_location(listing, rentjuicer) or save
-    save = true
-  end
   return save
 end
 
@@ -354,12 +355,12 @@ def get_location(listing, rentjuicer)
   old_address.gsub!(/'/,' ')
   new_address.gsub!(/'/,' ')
 
-  puts "|Old Address: #{old_address}"
-  puts "|New Address: #{new_address}"
-
   done = false
   fail_attempts = 0
-  while !done and old_address != new_address
+  while !done and (listing.infos[:ad_location].nil? or old_address != new_address)
+    puts "|Old Address: #{old_address}"
+    puts "|New Address: #{new_address}"
+
     begin
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true").read
       #0.1 sec is the minimum wait between request but, with all the other code the total time between requests should be >> 0.1
