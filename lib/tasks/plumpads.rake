@@ -15,6 +15,11 @@ namespace :plumpads do
       "Location/city" => "ad_location",
     }
     customer = Customer.where(:key => "plumpads").first
+    if customer.nil?
+      puts "Customer not found"
+    else
+      puts "Customer with key #{customer.key} found"
+    end
     if customer
       Dir.foreach(listing_dir) do |filename|
         ## Skip files starting with . (dot)
