@@ -181,7 +181,7 @@ namespace :rentjuicer do
       end
       
       activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active)
-      puts "#{active.count} active listing(s)."
+      puts "#{active.count} listings seen. #{activate.count} unique listings."
       for listing in activate
         if !listing.foreign_active
           puts "Activating listing with Leadadvo ID #{listing.id}"
