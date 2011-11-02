@@ -405,7 +405,7 @@ def find_dupe_vals (rentjuice_listings)
     foreign_id = rentjuicer.id
     if !key_map[foreign_id].nil?
       key_map[foreign_id] << rentjuicer
-      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{key_map[foreign_id].count}#{ec}"
+      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{key_map[foreign_id].count}. Value differences are as follows:#{ec}"
       for key in rentjuicer.as_json.keys
         vals = []
         for rj in key_map[foreign_id]
