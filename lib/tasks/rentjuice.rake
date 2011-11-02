@@ -201,6 +201,10 @@ namespace :rentjuicer do
         end
       end
       puts "Finished deactivation"
+      
+      if !@running
+        return
+      end
 
     end
   end
