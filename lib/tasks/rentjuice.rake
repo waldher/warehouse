@@ -108,9 +108,7 @@ namespace :rentjuicer do
       leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
       puts "|Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
 
-      if find_dupe_ids(leadadvo_id)
-        return
-      end
+      find_dupe_ids(leadadvo_id)
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
       puts "|Rentjuice Client Created"
@@ -436,7 +434,7 @@ def find_dupe_ids (leadadvo_id)
     end
     key_map[foreign_id] = listing
     if !@running
-      #return
+      exit
     end
   }
 end 
