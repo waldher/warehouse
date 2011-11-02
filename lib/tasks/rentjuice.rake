@@ -419,7 +419,6 @@ def find_dupe_vals (rentjuice_listings)
 end
 
 def find_dupe_ids (leadadvo_id)
-  start = Time.now
   #Key is foreign_id, value is listing
   key_map = {}
   Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
@@ -440,5 +439,4 @@ def find_dupe_ids (leadadvo_id)
       #return
     end
   }
-  puts "|Took #{Time.now - start} seconds to construct foreign id to listing map."
 end 
