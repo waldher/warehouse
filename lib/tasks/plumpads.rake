@@ -57,7 +57,9 @@ namespace :plumpads do
           #listing_infos = listing.listing_infos.create!({:key => "ad_description", :value => $1}) if $1
           listing.infos[:ad_body] = $1 if $1
         end
-
+        
+        listing.active = true
+        listing.foreign_active = true
         listing.save
       end
     end
