@@ -126,12 +126,6 @@ namespace :rentjuicer do
       end
 
       find_dupe_vals(rentjuice_listings)
-      
-      if rentjuice_listings.count > 400
-        puts "|More than 400 listings, limiting results"
-      end
-      #Bascially the amount of data the listings import on heathrow can handle is under 400 entries.      
-      rentjuice_listings = rentjuice_listings.shuffle[0..400]
 
       index = 0
       active = []
@@ -142,7 +136,7 @@ namespace :rentjuicer do
         listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id.to_s)
         if !listings.nil? and listings.count > 1
           puts "|Duplicate Listings Please Check Advo ID #{leadadvo_id} RJ ID #{rentjuicer_id}."
-          return
+          exit
         end
         listing = listings.nil? ? nil : listings[0]
         if !listing.nil?
