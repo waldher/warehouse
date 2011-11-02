@@ -229,6 +229,7 @@ def disable(listing)
     puts "|#{c(red)}Disabled due to missing.png image#{ec}"
     return true
   end
+  return false
 end
 
 ###########################################################
