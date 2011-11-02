@@ -139,7 +139,7 @@ namespace :rentjuicer do
         puts ",-----------------------------------------"
 
         listing = nil
-        listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id)
+        listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id.to_s)
         if !listings.nil? and listings.count > 1
           puts "|Duplicate Listings Please Check Advo ID #{leadadvo_id} RJ ID #{rentjuicer_id}."
           return
