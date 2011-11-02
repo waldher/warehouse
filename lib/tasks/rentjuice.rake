@@ -210,9 +210,6 @@ end
 ############# Disable Check
 ###########################################################
 def disable(listing)
-  new_foreign_active = true
-  #If there are no images we don't want to save the listing.
-
   if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
     puts "|#{c(red)}Disabled due to empty title#{ec}"
     return true
