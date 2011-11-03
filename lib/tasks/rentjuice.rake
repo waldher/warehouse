@@ -108,9 +108,7 @@ namespace :rentjuicer do
       leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
       puts "|Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
 
-      if find_dupe_ids(leadadvo_id)
-        return
-      end
+      find_dupe_ids(leadadvo_id)
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
       puts "|Rentjuice Client Created"
@@ -126,12 +124,6 @@ namespace :rentjuicer do
       end
 
       find_dupe_vals(rentjuice_listings)
-      
-      if rentjuice_listings.count > 400
-        puts "|More than 400 listings, limiting results"
-      end
-      #Bascially the amount of data the listings import on heathrow can handle is under 400 entries.      
-      rentjuice_listings = rentjuice_listings.shuffle[0..400]
 
       index = 0
       active = []
@@ -139,10 +131,10 @@ namespace :rentjuicer do
         puts ",-----------------------------------------"
 
         listing = nil
-        listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id)
+        listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id.to_s)
         if !listings.nil? and listings.count > 1
           puts "|Duplicate Listings Please Check Advo ID #{leadadvo_id} RJ ID #{rentjuicer_id}."
-          return
+          exit
         end
         listing = listings.nil? ? nil : listings[0]
         if !listing.nil?
@@ -181,7 +173,7 @@ namespace :rentjuicer do
       end
       
       activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active)
-      puts "#{active.count} active listing(s)."
+      puts "#{active.count} listings seen. #{activate.count} unique listings."
       for listing in activate
         if !listing.foreign_active
           puts "Activating listing with Leadadvo ID #{listing.id}"
@@ -201,6 +193,10 @@ namespace :rentjuicer do
         end
       end
       puts "Finished deactivation"
+      
+      if !@running
+        return
+      end
 
     end
   end
@@ -210,9 +206,6 @@ end
 ############# Disable Check
 ###########################################################
 def disable(listing)
-  new_foreign_active = true
-  #If there are no images we don't want to save the listing.
-
   if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
     puts "|#{c(red)}Disabled due to empty title#{ec}"
     return true
@@ -229,6 +222,7 @@ def disable(listing)
     puts "|#{c(red)}Disabled due to missing.png image#{ec}"
     return true
   end
+  return false
 end
 
 ###########################################################
@@ -405,7 +399,7 @@ def find_dupe_vals (rentjuice_listings)
     foreign_id = rentjuicer.id
     if !key_map[foreign_id].nil?
       key_map[foreign_id] << rentjuicer
-      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{key_map[foreign_id].count}#{ec}"
+      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{key_map[foreign_id].count}. Value differences are as follows:#{ec}"
       for key in rentjuicer.as_json.keys
         vals = []
         for rj in key_map[foreign_id]
@@ -423,7 +417,6 @@ def find_dupe_vals (rentjuice_listings)
 end
 
 def find_dupe_ids (leadadvo_id)
-  start = Time.now
   #Key is foreign_id, value is listing
   key_map = {}
   Listing.where("customer_id = ?", leadadvo_id).each{ |listing|
@@ -441,8 +434,7 @@ def find_dupe_ids (leadadvo_id)
     end
     key_map[foreign_id] = listing
     if !@running
-      #return
+      exit
     end
   }
-  puts "|Took #{Time.now - start} seconds to construct foreign id to listing map."
 end 

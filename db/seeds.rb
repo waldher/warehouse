@@ -20,7 +20,8 @@ end
   'maf_ronda' => 'ronda@miamiapartmentfinders.com',
   'maf_paola' => 'paola@miamiapartmentfinders.com',
   'kangarent' => 'leads@kangarent.com',
-  'casabellaboca' => 'john@casabellaboca.com'
+  'casabellaboca' => 'john@casabellaboca.com',
+  'plumpads' => 'mike.thinking@gmail.com'
 }.each{ |key, val|
   if Customer.where("key like ?", key).count == 0
     Customer.create({
