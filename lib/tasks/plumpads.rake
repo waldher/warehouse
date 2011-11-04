@@ -10,7 +10,7 @@ namespace :plumpads do
     listing_attr = {
       "rentals rate" => "ad_price",
       "bedroom" => "ad_bedrooms",
-      "Square Footage" => "ad_sqft",
+      "Square Footage" => "ad_square_footage",
       "Title" => "ad_title",
       "Location/city" => "ad_location",
     }
