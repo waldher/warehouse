@@ -294,9 +294,7 @@ def update_vars(listing, rentjuicer)
       key_symbol == :ad_keywords
     elsif key_symbol == :ad_rentjuice_id
       if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
-        print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
-        print "  Was <#{listing.foreign_id.nil? ? "" : puts(listing.foreign_id)}> "
-        print "|  #{c(green)}Now <#{ec}#{val.to_s}#{c(green)}>#{ec}\n"
+        print_change(key_symbol, listing.foreign_id.nil? ? "": listing.foreign_id, val)
         listing.foreign_id = val.to_s
         save = true
       end
@@ -308,21 +306,27 @@ def update_vars(listing, rentjuicer)
         :type => rJson["property_type"],
         :amenities => rJson["features"])
       if title.length > 20
-        puts "|New title generated: #{c(pink)}#{title}#{ec}"
+        #puts "|,New title generated:#{c(pink)}#{title}#{ec}"
         val = title
+      else
+        val = ""
       end
     end
 
     #If the value is new then update the infos
     if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
-      print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
-      print "  Was <{listing.infos[key_symbol].to_s[0..140]}> "
-      print "|  #{c(green)}Now <#{ec}#{val.to_s[0..140]}#{c(green)}>#{ec}\n"
+      print_change(key_symbol, listing.infos[key_symbol], val)
       listing.infos[key_symbol] = val.to_s
       save = true
     end
   }
   return save
+end
+
+def print_change(symbol, was, now)
+  print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
+  print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
+  print "|  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
 end
 
 ###########################################################
@@ -370,6 +374,7 @@ def get_location(listing, rentjuicer)
   return false
 end
 
+def blue; 4; end
 def gray; 8; end
 def l_blue; 6; end
 def pink; 5; end
