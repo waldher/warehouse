@@ -4,7 +4,8 @@ class ListingImage < ActiveRecord::Base
   has_attached_file :image, 
     :storage => :s3, 
     :s3_credentials => "#{Rails.root}/config/s3.yml", 
-    :path => ":id/:style/:filename"
+    :path => ":id/:style/:filename",
+    :s3_permissions => :public_read
 
   before_save :set_complete_image_url
 
