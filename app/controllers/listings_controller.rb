@@ -12,13 +12,13 @@ class ListingsController < ApplicationController
   end
 
   def sync
-    if @customer
+if @customer
       @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true)
       .includes(:listing_infos, :listing_images)
       data = []
       time = Time.now
       @listings.each do |listing|
-        images = listing.listing_images.map(&:complete_image_url)
+        images = listing.ad_image_urls
         infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
         data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos)
       end
