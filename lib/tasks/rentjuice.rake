@@ -316,8 +316,8 @@ def update_vars(listing, rentjuicer)
     #If the value is new then update the infos
     if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
       print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
-      print "  Was <#{listing.infos[key_symbol].to_s[0..140]}> "
-      print "|  Now <#{val.to_s[0..140]}>\n"
+      print "  #{c(pink)}Was <#{ec}#{listing.infos[key_symbol].to_s[0..140]}#{c(pink)}>#{ec} "
+      print "|  #{c(green)}Now <#{ec}#{val.to_s[0..140]}#{c(green)}>#{ec}\n"
       listing.infos[key_symbol] = val.to_s
       save = true
     end
