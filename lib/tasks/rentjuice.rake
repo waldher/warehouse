@@ -123,7 +123,7 @@ namespace :rentjuicer do
         puts "|Took #{Time.now - start}"
       end
 
-      find_dupe_vals(rentjuice_listings)
+      #find_dupe_vals(rentjuice_listings)
 
       index = 0
       active = []
