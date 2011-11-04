@@ -296,7 +296,7 @@ def update_vars(listing, rentjuicer)
       if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
         print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
         print "  Was <#{listing.foreign_id.nil? ? "" : puts(listing.foreign_id)}> "
-        print "|  Now <#{val.to_s}>\n"
+        print "|  #{c(green)}Now <#{ec}#{val.to_s}#{c(green)}>#{ec}\n"
         listing.foreign_id = val.to_s
         save = true
       end
@@ -316,7 +316,7 @@ def update_vars(listing, rentjuicer)
     #If the value is new then update the infos
     if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
       print "|#{c(yellow)}#{key_symbol.to_s.ljust(20," ")} Changed#{ec}"
-      print "  #{c(pink)}Was <#{ec}#{listing.infos[key_symbol].to_s[0..140]}#{c(pink)}>#{ec} "
+      print "  Was <{listing.infos[key_symbol].to_s[0..140]}> "
       print "|  #{c(green)}Now <#{ec}#{val.to_s[0..140]}#{c(green)}>#{ec}\n"
       listing.infos[key_symbol] = val.to_s
       save = true
