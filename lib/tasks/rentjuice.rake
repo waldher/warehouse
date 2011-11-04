@@ -157,7 +157,7 @@ namespace :rentjuicer do
 
           #if new #New implies listing.save, so this could be external but, again I like the clarity of: listing.save MUST happen before images are saved.
             load_images(listing, rentjuicer.sorted_photos)
-            puts listing.ad_image_urls
+          #  puts listing.ad_image_urls
           #end
         end
         
