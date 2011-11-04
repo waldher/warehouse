@@ -215,7 +215,7 @@ end
 ###########################################################
 def load_images(listing, photos)
   #Assumption being, images never change.
-  if !photos.empty? and listing.ad_image_urls.nil?
+  if !photos.empty? and listing.ad_image_urls.empty?
 
     for photo in photos
       if !photo.include?("/images/original/missing.png")
