@@ -154,12 +154,13 @@ namespace :rentjuicer do
         if update_vars(listing, rentjuicer) or new #(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
-
-          #if new #New implies listing.save, so this could be external but, again I like the clarity of: listing.save MUST happen before images are saved.
-            load_images(listing, rentjuicer.sorted_photos)
-          #end
         end
-        
+
+        #if new #New implies listing.save, so this could be external but, again I like the clarity of: listing.save MUST happen before images are saved.
+        if !listing.id.nil?
+          load_images(listing, rentjuicer.sorted_photos)
+        end
+       
         if rentjuicer.status == "active" and !disable(listing)
           active << listing.id
         end
