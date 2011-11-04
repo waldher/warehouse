@@ -172,27 +172,12 @@ namespace :rentjuicer do
         end
       end
       
-      activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active)
-      puts "#{active.count} listings seen. #{activate.count} unique listings."
-      for listing in activate
-        if !listing.foreign_active
-          puts "Activating listing with Leadadvo ID #{listing.id}"
-          listing.foreign_active = true
-          listing.save
-        end
-      end
-      puts "Finished activation"
+      puts "#{active.count} listings seen."
+      activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active).update_all("foreign_active = 't'")
+      puts "#{activate} listings were activated."
      
-      deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active)
-      puts "#{deactivate.count} listing(s) that need to be disabled."
-      for listing in deactivate do
-        if listing.foreign_active
-          puts "Disabling listing with Leadadvo ID #{listing.id}"
-          listing.foreign_active = false
-          listing.save
-        end
-      end
-      puts "Finished deactivation"
+      deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active).update_all("foreign_active = 'f'")
+      puts "#{deactivate} listing(s) were deactivated."
       
       if !@running
         return
@@ -230,7 +215,7 @@ end
 ###########################################################
 def load_images(listing, photos)
   #Assumption being, images never change.
-  if !photos.empty? and listing.infos[:ad_image_urls].nil?
+  if !photos.empty? and listing.ad_image_urls.nil?
 
     for photo in photos
       if !photo.include?("/images/original/missing.png")
@@ -399,21 +384,71 @@ def find_dupe_vals (rentjuice_listings)
     foreign_id = rentjuicer.id
     if !key_map[foreign_id].nil?
       key_map[foreign_id] << rentjuicer
-      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{key_map[foreign_id].count}. Value differences are as follows:#{ec}"
-      for key in rentjuicer.as_json.keys
-        vals = []
-        for rj in key_map[foreign_id]
-          vals << rj.as_json[key]
-        end
-        if vals.uniq.count > 1
-          puts "|#{key}"
-          puts "|#{vals * "\n"}"
-        end
-      end
     else
       key_map[foreign_id] = [rentjuicer]
     end
   end
+
+  for foreign_id, listings in key_map
+    if listings.count > 1
+      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{listings.count}. Value differences are as follows:#{ec}"
+      key_count = {}
+      for listing in listings
+        for key in listing.as_json.keys
+          if key_count[key].nil?
+            key_count[key] = 1
+          else
+            key_count[key] += 1
+          end
+        end
+      end
+      for key, count in key_count
+        if count != listings.count
+          puts "#{key} has fewer instances than listings. #{count} for #{listings.count}"
+        end
+      end
+
+      for listing in listings
+        for key in listing.as_json.keys
+          vals = []
+          for rj in listings
+            if rj.as_json[key].class == Array
+              for val in rj.as_json[key]
+                if val.class == Hashie::Rash
+                  ans = [] if ans.nil?
+                  ans << val.values
+                else
+                  ans = "" if ans.nil?
+                  ans << val
+                end
+              end
+              vals << ans
+              ans = nil
+            else
+              vals << rj.as_json[key]
+            end
+          end
+          if vals[0] == Array
+            index = 0
+            for val in vals
+              puts "#{val[index]}"
+              index += 1
+            end
+          else
+            if vals.uniq.count > 1         
+              puts "|#{key} #{vals.class}"
+              puts "|#{vals * "\n"}"
+            end
+          end
+        end
+      end
+    end
+    if !@running
+      exit
+    end
+  end
+  exit
+  return rentjuice_listings
 end
 
 def find_dupe_ids (leadadvo_id)
