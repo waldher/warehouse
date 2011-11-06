@@ -23,7 +23,7 @@ class ListingsController < ApplicationController
         data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos)
       end
       logger.debug "It took #{Time.now-time}"
-      render :json => JSON.generate(data) 
+      render :json => JSON.generate(data.encode("ISO-8859-1", undef: :replace)) 
       logger.debug "Total Time: #{Time.now-time}"
       #render :json => @listings.to_json(
       #  :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
