@@ -65,26 +65,26 @@ namespace :rentjuicer do
     ]
 
     customers = [
-    {:name => 'maf_elizabeth',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => elizabeth_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "elizabeth@miamiapartmentfinders.com"}
-    },
+#    {:name => 'maf_elizabeth',
+#    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+#    :hoods => {:neighborhoods => elizabeth_neighborhoods},
+#    :filter => maf,
+#    :email => {:agent => "elizabeth@miamiapartmentfinders.com"}
+#    },
 
-    {:name => 'maf_ronda',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => ronda_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "ronda@miamiapartmentfinders.com"}
-    },
+#    {:name => 'maf_ronda',
+#    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+#    :hoods => {:neighborhoods => ronda_neighborhoods},
+#    :filter => maf,
+#    :email => {:agent => "ronda@miamiapartmentfinders.com"}
+#    },
 
-    {:name => 'maf_paola',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => paola_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "paola@miamiapartmentfinders.com"}
-    },
+#    {:name => 'maf_paola',
+#    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+#    :hoods => {:neighborhoods => paola_neighborhoods},
+#    :filter => maf,
+#    :email => {:agent => "paola@miamiapartmentfinders.com"}
+#    },
 
     {:name => 'kangarent',
     :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
