@@ -64,10 +64,10 @@
             <%= infos.select :ad_bathrooms, (0..16).collect{|n| n/2.0}, :selected => @listing.infos[:ad_bathrooms] %>
           </span>
         <% end %>
-        <% if @customer.has_capability?("sqft") %>
+        <% if @customer.has_capability?("square_footage") %>
           <span class="field">
-            <%= infos.label :ad_sqft, "Square Feet" %><br />
-            <%= infos.text_field :ad_sqft, :value => @listing.infos[:ad_sqft], :size => 5 %>
+            <%= infos.label :ad_square_footage, "Square Feet" %><br />
+            <%= infos.text_field :ad_square_footage, :value => @listing.infos[:ad_square_footage], :size => 5 %>
           </span>
         <% end %>
         <% if @customer.has_capability?("style") %>

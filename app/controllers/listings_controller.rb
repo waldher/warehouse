@@ -13,8 +13,7 @@ class ListingsController < ApplicationController
 
   def sync
     if @customer
-      @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true)
-      .includes(:listing_infos, :listing_images)
+      @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true).includes(:listing_infos, :listing_images)
       data = []
       time = Time.now
       @listings.each do |listing|
