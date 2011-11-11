@@ -21,6 +21,7 @@ namespace :plumpads do
       puts "Customer with key #{customer.key} found"
     end
     if customer
+      Listing.where("customer_id = ?", customer.id).update_all("foreign_active = false")
       Dir.foreach(listing_dir) do |filename|
         ## Skip files starting with . (dot)
         next if filename =~ /^[.]/
@@ -62,6 +63,7 @@ namespace :plumpads do
         listing.foreign_active = true
         listing.save
       end
+
     end
   end
 end
