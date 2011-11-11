@@ -58,7 +58,7 @@ namespace :rentjuicer do
     ronda_neighborhoods = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
     casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"]
 
-    kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1}]
+    kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1, :featured => 1}]
     maf = [
     {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
     {:min_beds => 2, :max_beds => 2, :min_rent => 2000, :max_rent => 4000, :has_photos => 1, :include_mls => 1}
