@@ -152,6 +152,7 @@ namespace :rentjuicer do
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
         if update_vars(listing, rentjuicer) or new #(New implies updated_vars returns true but, just for clarity I have included it.)
+          val = ""
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
@@ -300,17 +301,18 @@ def update_vars(listing, rentjuicer)
       end
       next
     elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
-      title = ListingTitle.generate(
-        :bedrooms => rJson["bedrooms"].to_i,
-        :location => listing.infos[:ad_location],
-        :type => rJson["property_type"],
-        :amenities => rJson["features"])
-      if title.length > 20
-        #puts "|,New title generated:#{c(pink)}#{title}#{ec}"
-        val = title
-      else
-        val = ""
-      end
+      val = []
+      (0..2).each{
+        title = ListingTitle.generate(
+          :bedrooms => rJson["bedrooms"].to_i,
+          :location => listing.infos[:ad_location],
+          :type => rJson["property_type"],
+          :amenities => rJson["features"])
+        if title.length > 20
+          #puts "|,New title generated:#{c(pink)}#{title}#{ec}"
+          val << title
+        end
+      }
     end
 
     #If the value is new then update the infos
