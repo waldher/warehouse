@@ -154,6 +154,7 @@ namespace :rentjuicer do
         if update_vars(listing, rentjuicer) or new #(New implies updated_vars returns true but, just for clarity I have included it.)
           val = ""
           puts "|#{c(l_blue)}Saving Listing#{ec}"
+          listing.updated_at = Time.now
           listing.save
         end
 
@@ -412,7 +413,7 @@ def find_dupe_vals (rentjuice_listings)
       end
       for key, count in key_count
         if count != listings.count
-          puts "#{key} has fewer instances than listings. #{count} for #{listings.count}"
+          puts "#{key} has fewer instances than listings. #{count} for #{listings.count}. aka duplicates w/ similar values."
         end
       end
 
