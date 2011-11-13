@@ -292,8 +292,8 @@ def update_vars(listing, rentjuicer)
     #Deal with special symbols
     if key_symbol == :ad_rent
       key_symbol = :ad_price
-    elsif key_symbol == :ad_features
-      key_symbol == :ad_keywords
+    #elsif key_symbol == :ad_features
+    #  key_symbol == :ad_keywords
     elsif key_symbol == :ad_rentjuice_id
       if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
         print_change(key_symbol, listing.foreign_id.nil? ? "": listing.foreign_id, val)
