@@ -302,7 +302,7 @@ def update_vars(listing, rentjuicer)
       end
       next
     elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
-      val = []
+      titles = []
       (0..2).each{
         title = ListingTitle.generate(
           :bedrooms => rJson["bedrooms"].to_i,
@@ -311,9 +311,10 @@ def update_vars(listing, rentjuicer)
           :amenities => rJson["features"])
         if title.length > 20
           #puts "|,New title generated:#{c(pink)}#{title}#{ec}"
-          val << title
+          titles << title
         end
       }
+      val = titles * ","
     end
 
     #If the value is new then update the infos
