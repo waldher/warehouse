@@ -314,7 +314,7 @@ def update_vars(listing, rentjuicer)
           :bedrooms => rJson["bedrooms"].to_i,
           :location => listing.infos[:ad_location],
           :type => rJson["property_type"],
-          :amenities => rJson["features"]).gsub(/  /. " ")
+          :amenities => rJson["features"]).gsub(/  /, " ")
         if title.length > 20
           #puts "|,New title generated:#{c(pink)}#{title}#{ec}"
           titles << title
