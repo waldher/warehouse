@@ -21,6 +21,8 @@ end
   'maf_paola' => 'paola@miamiapartmentfinders.com',
   'kangarent' => 'leads@kangarent.com',
   'casabellaboca' => 'john@casabellaboca.com',
+  'bnrfn_kendall' => 'mmorsy@buynrentfreenow.com',
+  'bnrfn_homestead' => 'nhozien@buynrentfreenow.com',
   'plumpads' => 'mike.thinking@gmail.com'
 }.each{ |key, val|
   if Customer.where("key like ?", key).count == 0
