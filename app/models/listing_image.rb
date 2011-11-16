@@ -7,13 +7,10 @@ class ListingImage < ActiveRecord::Base
     :path => ":id/:style/:filename",
     :s3_permissions => :public_read
 
-  after_save :set_complete_image_url
+  after_create :set_complete_image_url
 
   def set_complete_image_url
-    if @already_set_complete_image_url.nil?
-      update_attribute(:complete_image_url, image_url)
-      @already_set_complete_image_url = true
-    end
+    update_attribute(:complete_image_url, image_url)
   end
 
   def image_url
