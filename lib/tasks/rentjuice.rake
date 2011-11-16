@@ -153,7 +153,6 @@ namespace :rentjuicer do
 
         if update_vars(listing, rentjuicer) or new #(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
-          listing.updated_at = Time.now
           listing.save
         end
 
