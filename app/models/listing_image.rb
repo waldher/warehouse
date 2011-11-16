@@ -10,7 +10,10 @@ class ListingImage < ActiveRecord::Base
   after_save :set_complete_image_url
 
   def set_complete_image_url
-    update_attribute(:complete_image_url, image_url)
+    if @already_set_complete_image_url.nil?
+      update_attribute(:complete_image_url, image_url)
+      @already_set_complete_image_url = true
+    end
   end
 
   def image_url
