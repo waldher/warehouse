@@ -20,8 +20,10 @@ namespace :plumpads do
     else
       puts "Customer with key #{customer.key} found"
     end
+    location = Location.where("url = ?", "miami").first
+    sublocation = location.sublocations.where("url = ?", "brw").first
     if customer
-      Listing.where("customer_id = ?", customer.id).update_all("foreign_active = ?", false)
+      Listing.where("customer_id = ?", customer.id).update_all("foreign_active = 'f'")
       page.links.each{|link|
         ## Skip files starting with . (dot)
         next if (link.href =~ /[.]txt$/).nil?
@@ -59,8 +61,8 @@ namespace :plumpads do
         
         listing.active = true
         listing.foreign_active = true
-        location = Location.find_by_url("miami")
-        sublocation = Sublocation.where("location_id = ? and url = ", location.id, "brw")
+        listing.location = location
+        listing.sublocation = sublocation
         listing.save
       }
 

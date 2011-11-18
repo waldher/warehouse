@@ -19,7 +19,7 @@ class ListingsController < ApplicationController
       @listings.each do |listing|
         images = listing.listing_images.map(&:complete_image_url)
         infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
-        data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos)
+        data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos, :location => listing.location ? listing.location.url : "miami", :sublocation => listing.sublocation ? listing.sublocation.url : "mdc")
       end
       logger.debug "It took #{Time.now-time}"
       render :json => JSON.generate(data) 

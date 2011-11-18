@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111118142727) do
+ActiveRecord::Schema.define(:version => 20111118175725) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -97,6 +97,8 @@ ActiveRecord::Schema.define(:version => 20111118142727) do
     t.datetime "updated_at"
     t.boolean  "foreign_active", :default => false, :null => false
     t.string   "foreign_id"
+    t.integer  "location_id"
+    t.integer  "sublocation_id"
   end
 
   create_table "locations", :force => true do |t|
