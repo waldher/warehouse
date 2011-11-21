@@ -123,7 +123,7 @@ namespace :rentjuicer do
         puts "|Took #{Time.now - start}"
       end
 
-      #find_dupe_vals(rentjuice_listings)
+      find_dupe_vals(rentjuice_listings)
 
       index = 0
       active = []
@@ -160,7 +160,13 @@ namespace :rentjuicer do
         if !listing.id.nil?
           load_images(listing, rentjuicer.sorted_photos)
         end
-       
+      
+        if rentjuicer.status == "active"
+          puts "|#{c(green)}Foreign state is #{rentjuicer.status}#{ec}"
+        else
+          puts "|#{c(red)}Foreign state is #{rentjuicer.status}#{ec}"
+        end
+
         if rentjuicer.status == "active" and !disable(listing)
           active << listing.id
         end
@@ -462,7 +468,6 @@ def find_dupe_vals (rentjuice_listings)
       exit
     end
   end
-  exit
   return rentjuice_listings
 end
 
