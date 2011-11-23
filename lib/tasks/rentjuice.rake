@@ -158,14 +158,14 @@ namespace :rentjuicer do
         location = false
         if !listing.location.nil? or listing.location.id =! customer[:location_id]
           print "|#{c(yellow)}Location Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100]}#{c(blue)}>#{ec} "
+          print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.location.id = customer[:location_id]
           location = true
         end
         if !listing.sublocation.nil? or listing.sublocation.id != customer[:sublocation_id]
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100]}#{c(blue)}>#{ec} "
+          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.sublocation.id = customer[:sublocation_id]
           location = true
