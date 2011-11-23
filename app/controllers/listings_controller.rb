@@ -19,11 +19,11 @@ class ListingsController < ApplicationController
       @listings.each do |listing|
         images = listing.listing_images.map(&:complete_image_url)
         infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
-        data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos, :location => listing.location ? listing.location.url : "miami", :sublocation => listing.sublocation ? listing.sublocation.url : "mdc")
+        data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos, :location => (!listing.location.nil? ? listing.location.url : "miami"), :sublocation => (!listing.sublocation.nil? ? listing.sublocation.url : "mdc"), :ad_foreign_id => listing.foreing_id)
       end
-      logger.debug "It took #{Time.now-time}"
+      logger.debug "It took #{Time.now-time} to iterate through listings"
       render :json => JSON.generate(data) 
-      logger.debug "Total Time: #{Time.now-time}"
+      logger.debug "Total Time: #{Time.now-time} (after JSON.generate)"
       #render :json => @listings.to_json(
       #  :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
       #  :methods => :ad_image_urls )
