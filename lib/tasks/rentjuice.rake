@@ -100,7 +100,7 @@ namespace :rentjuicer do
     :hoods => {:neighborhoods => casa_neighborhoods},
     :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "john@casabellaboca.com"},
-    :location => Location.find_by_url("miami").id,
+    :location_id => Location.find_by_url("miami").id,
     :sublocation => Sublocation.find_by_url("pbc").id
     }
     ]
@@ -156,9 +156,18 @@ namespace :rentjuicer do
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
         location = false
-        if listing.location =! customer[:location] or listing.sublocation != customer[:sublocation]
-          listing.location = customer[:location]
-          listing.sublocation = customer[:sublocation]
+        if listing.location =! customer[:location_id]
+          print "|#{c(yellow)}Location Changed#{ec}"
+          print "  Was #{c(blue)}<#{ec}#{listing.location,id.to_s[0..100]}#{c(blue)}>#{ec} "
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
+          listing.location.id = customer[:location_id]
+          location = true
+        end
+        if listing.sublocation != customer[:sublocation_id]
+          print "|#{c(yellow)}Sublocaion Changed#{ec}"
+          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100]}#{c(blue)}>#{ec} "
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
+          listing.sublocation.id = customer[:sublocation_id]
           location = true
         end
 
@@ -308,6 +317,9 @@ def update_vars(listing, rentjuicer)
     if val.class == Array
       val = val.join(",") || ""
     end
+  print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
+  print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
+  print "|  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
 
     #Create the infos symbol
     key_symbol = "ad_#{key}".to_sym
