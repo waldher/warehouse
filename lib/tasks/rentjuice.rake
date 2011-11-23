@@ -91,8 +91,8 @@ namespace :rentjuicer do
     :hoods => {:neighborhoods => kanga_neighborhoods},
     :filter => kanga,
     :email => {:agent => "leads@kangarent.com"},
-    :location => Location.find_by_url("miami").id,
-    :sublocation => Sublocation.find_by_url("pbc").id
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("pbc")
     },
 
     {:name => 'casabellaboca',
@@ -100,8 +100,8 @@ namespace :rentjuicer do
     :hoods => {:neighborhoods => casa_neighborhoods},
     :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "john@casabellaboca.com"},
-    :location_id => Location.find_by_url("miami").id,
-    :sublocation => Sublocation.find_by_url("pbc").id
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("pbc")
     }
     ]
 
@@ -155,23 +155,23 @@ namespace :rentjuicer do
         puts "|RentJuice ID: #{rentjuicer.id}"
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
-        location = false
-        if listing.location.nil? or listing.location.id =! customer[:location_id]
+        location_changed = false
+        if listing.location.nil? or listing.location.id =! customer[:location].id
           print "|#{c(yellow)}Location Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.location.id = customer[:location_id]
-          location = true
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          listing.location.id = location.id
+          location_changed = true
         end
-        if listing.sublocation.nil? or listing.sublocation.id != customer[:sublocation_id]
+        if listing.sublocation.nil? or listing.sublocation.id != customer[:sublocation].id
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.sublocation.id = customer[:sublocation_id]
-          location = true
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          listing.sublocation.id = sublocation.id
+          location_changed = true
         end
 
-        if update_vars(listing, rentjuicer) or new or location#(New implies updated_vars returns true but, just for clarity I have included it.)
+        if update_vars(listing, rentjuicer) or new or location_changed#(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
