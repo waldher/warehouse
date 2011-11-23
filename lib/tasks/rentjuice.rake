@@ -158,7 +158,7 @@ namespace :rentjuicer do
         location = false
         if listing.location =! customer[:location_id]
           print "|#{c(yellow)}Location Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.location,id.to_s[0..100]}#{c(blue)}>#{ec} "
+          print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100]}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.location.id = customer[:location_id]
           location = true
