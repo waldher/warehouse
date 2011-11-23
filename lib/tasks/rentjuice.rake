@@ -90,14 +90,18 @@ namespace :rentjuicer do
     :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
     :hoods => {:neighborhoods => kanga_neighborhoods},
     :filter => kanga,
-    :email => {:agent => "leads@kangarent.com"}
+    :email => {:agent => "leads@kangarent.com"},
+    :location => Location.find_by_url("miami").id,
+    :sublocation => Sublocation.find_by_url("pbc").id
     },
 
     {:name => 'casabellaboca',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
     :hoods => {:neighborhoods => casa_neighborhoods},
     :filter => [{:include_mls => 1, :featured => 1}],
-    :email => {:agent => "john@casabellaboca.com"}
+    :email => {:agent => "john@casabellaboca.com"},
+    :location => Location.find_by_url("miami").id,
+    :sublocation => Sublocation.find_by_url("pbc").id
     }
     ]
 
@@ -118,7 +122,7 @@ namespace :rentjuicer do
       rentjuice_listings = []
       for condition in customer[:filter]
         start = Time.now
-        rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50, :order_by => "random"}))
+        rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50, :order_by => "rentjuice_id"}))
         puts "|Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
         puts "|Took #{Time.now - start}"
       end
@@ -151,7 +155,14 @@ namespace :rentjuicer do
         puts "|RentJuice ID: #{rentjuicer.id}"
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
-        if update_vars(listing, rentjuicer) or new #(New implies updated_vars returns true but, just for clarity I have included it.)
+        location = false
+        if listing.location =! customer[:location] or listing.sublocation != customer[:sublocation]
+          listing.location = customer[:location]
+          listing.sublocation = customer[:sublocation]
+          location = true
+        end
+
+        if update_vars(listing, rentjuicer) or new or location#(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
