@@ -157,17 +157,17 @@ namespace :rentjuicer do
 
         location_changed = false
         if listing.location.nil? or listing.location.id =! customer[:location].id
-          print "|#{c(yellow)}Location Changed#{ec}"
+          print "|#{c(yellow)}Location   Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.location.id = location.id
+          listing.location = customer[:location]
           location_changed = true
         end
         if listing.sublocation.nil? or listing.sublocation.id != customer[:sublocation].id
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.sublocation.id = sublocation.id
+          listing.sublocation = customer[:sublocation]
           location_changed = true
         end
 
@@ -317,9 +317,6 @@ def update_vars(listing, rentjuicer)
     if val.class == Array
       val = val.join(",") || ""
     end
-  print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
-  print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
-  print "|  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
 
     #Create the infos symbol
     key_symbol = "ad_#{key}".to_sym
