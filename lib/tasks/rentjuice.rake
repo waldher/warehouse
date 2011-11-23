@@ -156,14 +156,14 @@ namespace :rentjuicer do
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
         location = false
-        if listing.location =! customer[:location_id]
+        if listing.location.id =! customer[:location_id]
           print "|#{c(yellow)}Location Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100]}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.location.id = customer[:location_id]
           location = true
         end
-        if listing.sublocation != customer[:sublocation_id]
+        if listing.sublocation.id != customer[:sublocation_id]
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100]}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation_id].to_s[0..100]}#{c(blue)}>#{ec}\n"
