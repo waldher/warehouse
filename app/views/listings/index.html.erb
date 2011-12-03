@@ -44,6 +44,7 @@
   $(document).ready(function(){
     $(".dataTable").dataTable({
       "bJQueryUI": true,
+      sPaginationType: "full_numbers",
       "iDisplayLength": 50,
       <% if @customer.craigslist_type == "apa" %>
         "aaSorting" : [[4, 'asc'],[3, 'desc']],
@@ -55,10 +56,10 @@
         /* Status */  null,
         /* E/D */     null,
         /* Edit */    null,
-        /* Foreign */ {"bVisible":false}
+        /* Foreign */ {"bVisible":false}]
       <% else %>
         "aaSorting" : [],
       <% end %>
-    ]});
+    });
   });
 </script>
