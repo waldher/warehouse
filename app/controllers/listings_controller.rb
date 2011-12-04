@@ -183,11 +183,16 @@ class ListingsController < ApplicationController
     logger.debug "==========================="
     logger.debug @data.to_sql
     logger.debug "==========================="
-    {
+    datatable_data = {
       sEcho: params[:sEcho],
       iTotalRecords: Listing.where(:customer_id => @customer.id).count,
       iTotalDisplayRecords: @listings.size,
-      aaData: @data.map {|listing| 
+      aaData: []
+    }
+
+    aaData = []
+    if @customer.craigslist_type == "ctd"
+      aaData =  @data.map {|listing| 
       [
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
@@ -197,7 +202,22 @@ class ListingsController < ApplicationController
         listing.foreign_active ? 'Updated' : 'Outdated'
       ]
     }
-    }.to_json
+    elsif @customer.craigslist_type == "apa"
+      aaData =  @data.map {|listing| 
+      [
+        listing.infos[:ad_address],
+        listing.infos[:ad_price],
+        listing.title,
+        listing.updated_at.strftime("%m/%d %I:%M %p"),
+        listing.active ? 'Active' : 'Inactive',
+        act_de(listing),
+        edit_it(listing),
+        listing.foreign_active ? 'Updated' : 'Outdated'
+      ]
+    }
+    end
+    
+    datatable_data.merge({aaData: aaData})
   end
 
   def act_de(listing)

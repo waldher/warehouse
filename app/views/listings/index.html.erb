@@ -40,6 +40,8 @@
   <%= link_to 'New Listing', new_customer_listing_path(@customer), :style => "font-size: 40px; text-align: center;" %>
 </div>
 
+<% index = @customer.craigslist_type == "apa" ? 4 : 2%>
+
 <script type="text/javascript">
   $(document).ready(function(){
     var oTable = $(".dataTable").dataTable({
@@ -51,13 +53,13 @@
       bServerSide: true,
       fnPreDrawCallback: function(oSettings) {
         $(oSettings.aoData).each(function(index, element){
-          var td = $($(element.nTr).find('td').get(2));
+          var td = $($(element.nTr).find('td').get(<%= index %>));
           if(td.text() == "Active") {
             td.addClass('postedGreen');
             } else {
             td.addClass('postedRed');
             }
-          var td = $($(element.nTr).find('td').get(5));
+            var td = $($(element.nTr).find('td').get(<%= index + 3 %>));
           if(td.text() == "Updated") {
             td.addClass('postedGreen');
             } else {
