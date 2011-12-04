@@ -42,10 +42,30 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    $(".dataTable").dataTable({
+    var oTable = $(".dataTable").dataTable({
       "bJQueryUI": true,
       sPaginationType: "full_numbers",
+      bStateSave: true,
       "iDisplayLength": 50,
+      bProcessing: true,
+      bServerSide: true,
+      fnPreDrawCallback: function(oSettings) {
+        $(oSettings.aoData).each(function(index, element){
+          var td = $($(element.nTr).find('td').get(2));
+          if(td.text() == "Active") {
+            td.addClass('postedGreen');
+            } else {
+            td.addClass('postedRed');
+            }
+          var td = $($(element.nTr).find('td').get(5));
+          if(td.text() == "Updated") {
+            td.addClass('postedGreen');
+            } else {
+            td.addClass('postedRed');
+            }
+        });
+      },
+      sAjaxSource: '<%= customer_listings_path(@customer) %>',
       <% if @customer.craigslist_type == "apa" %>
         "aaSorting" : [[4, 'asc'],[3, 'desc']],
         "aoColumns": [ 
@@ -56,7 +76,7 @@
         /* Status */  null,
         /* E/D */     null,
         /* Edit */    null,
-        /* Foreign */ {"bVisible":false}]
+        /* Foreign */ {"bVisible":true}]
       <% else %>
         "aaSorting" : [],
       <% end %>
