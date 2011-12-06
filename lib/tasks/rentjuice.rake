@@ -73,21 +73,27 @@ namespace :rentjuicer do
     :rj_id => '868f2445f9f09786e35f8a1b9356a417',
     :hoods => {:neighborhoods => elizabeth_neighborhoods},
     :filter => maf,
-    :email => {:agent => "elizabeth@miamiapartmentfinders.com"}
+    :email => {:agent => "elizabeth@miamiapartmentfinders.com"},
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("mdc")
     },
 
     {:name => 'maf_ronda',
     :rj_id => '868f2445f9f09786e35f8a1b9356a417',
     :hoods => {:neighborhoods => ronda_neighborhoods},
     :filter => maf,
-    :email => {:agent => "ronda@miamiapartmentfinders.com"}
+    :email => {:agent => "ronda@miamiapartmentfinders.com"},
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("mdc")
     },
 
     {:name => 'maf_paola',
     :rj_id => '868f2445f9f09786e35f8a1b9356a417',
     :hoods => {:neighborhoods => paola_neighborhoods},
     :filter => maf,
-    :email => {:agent => "paola@miamiapartmentfinders.com"}
+    :email => {:agent => "paola@miamiapartmentfinders.com"},
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("mdc")
     },
 
     {:name => 'kangarent',
