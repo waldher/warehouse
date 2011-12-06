@@ -52,39 +52,43 @@ namespace :rentjuicer do
       print " *****************************\n"
     }
 
-    kanga_neighborhoods = ["Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", "North Palm Beach", "Royal Palm Beach", "Stuart", "Tequesta", "Wellington", "West Palm Beach"] * ", "
-    elizabeth_neighborhoods = ["Miami Beach", "Surfside", "Brickell"] * ", " 
-    paola_neighborhoods = ["Brickell", "Coral Gables", "Coconut Grove", "Downtown"] * ", "
-    ronda_neighborhoods = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
+    kanga_neighborhoods = [
+    "Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", 
+    "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", 
+    "North Palm Beach", "Royal Palm Beach", "Stuart", "Tequesta", "Wellington", "West Palm Beach"] * ", "
+    kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1, :featured => 1}]
+
     casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"]
 
-    kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1, :featured => 1}]
     maf = [
     {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
-    {:min_beds => 2, :max_beds => 2, :min_rent => 2000, :max_rent => 4000, :has_photos => 1, :include_mls => 1}
+    {:min_beds => 2, :max_beds => 2, :min_rent => 2000, :max_rent => 5000, :has_photos => 1, :include_mls => 1}
     ]
+    elizabeth_neighborhoods = ["Miami Beach", "Brickell"] * ", " #"Surfside",  
+    paola_neighborhoods     = [               "Brickell", "Coral Gables", "Coconut Grove", "Downtown Miami"] * ", "
+    ronda_neighborhoods     = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
 
     customers = [
-#    {:name => 'maf_elizabeth',
-#    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-#    :hoods => {:neighborhoods => elizabeth_neighborhoods},
-#    :filter => maf,
-#    :email => {:agent => "elizabeth@miamiapartmentfinders.com"}
-#    },
+    {:name => 'maf_elizabeth',
+    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    :hoods => {:neighborhoods => elizabeth_neighborhoods},
+    :filter => maf,
+    :email => {:agent => "elizabeth@miamiapartmentfinders.com"}
+    },
 
-#    {:name => 'maf_ronda',
-#    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-#    :hoods => {:neighborhoods => ronda_neighborhoods},
-#    :filter => maf,
-#    :email => {:agent => "ronda@miamiapartmentfinders.com"}
-#    },
+    {:name => 'maf_ronda',
+    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    :hoods => {:neighborhoods => ronda_neighborhoods},
+    :filter => maf,
+    :email => {:agent => "ronda@miamiapartmentfinders.com"}
+    },
 
-#    {:name => 'maf_paola',
-#    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-#    :hoods => {:neighborhoods => paola_neighborhoods},
-#    :filter => maf,
-#    :email => {:agent => "paola@miamiapartmentfinders.com"}
-#    },
+    {:name => 'maf_paola',
+    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    :hoods => {:neighborhoods => paola_neighborhoods},
+    :filter => maf,
+    :email => {:agent => "paola@miamiapartmentfinders.com"}
+    },
 
     {:name => 'kangarent',
     :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
