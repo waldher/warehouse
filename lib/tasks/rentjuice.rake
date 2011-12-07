@@ -397,7 +397,7 @@ def get_location(listing, rentjuicer)
       sleep(0.1)
 
       parsed_json = ActiveSupport::JSON.decode(json_string)
-      location = parsed_json["results"].first["address_components"][1]["short_name"]
+      location = parsed_json["results"].first["address_components"][2]["short_name"]
 
       puts "|Detected location: #{location}"
       if listing.infos[:ad_location] != location
