@@ -52,6 +52,10 @@ namespace :rentjuicer do
       print " *****************************\n"
     }
 
+#Some Neighborhood Options
+["Miami Beach", "North Miami Beach", "Key Biscayne", "Miami", "South Beach", "Surfside", "Sunny Isles Beach", "Brickell", "Bal Harbour", "Coconut Grove", "South Miami", "Midtown Miami", "Coral Gables", "Downtown Miami", "Venetian Islands", "Bay Harbor Islands", "North Miami", "North Bay Village"] 
+
+
     kanga_neighborhoods = [
     "Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", 
     "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", 
@@ -67,7 +71,7 @@ namespace :rentjuicer do
     elizabeth_neighborhoods = ["Miami Beach", "Brickell", "Surfside"] * ", "
     paola_neighborhoods     = [               "Brickell", "Coral Gables", "Coconut Grove", "Downtown Miami"] * ", "
     ronda_neighborhoods     = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
-    luis_neighborhoods      = [               "Brickell", "Midtown"]
+    luis_neighborhoods      = [               "Brickell", "Midtown Miami"]
 
     customers = [
     {:name => 'maf_elizabeth',
