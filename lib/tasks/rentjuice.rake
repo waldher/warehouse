@@ -64,9 +64,10 @@ namespace :rentjuicer do
     {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
     {:min_beds => 2, :max_beds => 2, :min_rent => 2000, :max_rent => 5000, :has_photos => 1, :include_mls => 1}
     ]
-    elizabeth_neighborhoods = ["Miami Beach", "Brickell"] * ", " #"Surfside",  
+    elizabeth_neighborhoods = ["Miami Beach", "Brickell", "Surfside"] * ", "
     paola_neighborhoods     = [               "Brickell", "Coral Gables", "Coconut Grove", "Downtown Miami"] * ", "
     ronda_neighborhoods     = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
+    luis_neighborhoods      = [               "Brickell", "Midtown"]
 
     customers = [
     {:name => 'maf_elizabeth',
@@ -92,6 +93,15 @@ namespace :rentjuicer do
     :hoods => {:neighborhoods => paola_neighborhoods},
     :filter => maf,
     :email => {:agent => "paola@miamiapartmentfinders.com"},
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("mdc")
+    },
+
+    {:name => 'maf_luis',
+    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    :hoods => {:neighborhoods => luis_neighborhoods},
+    :filter => maf,
+    :email => {:agent => "luis@miamiapartmentfinders.com"},
     :location => Location.find_by_url("miami"),
     :sublocation => Sublocation.find_by_url("mdc")
     },
