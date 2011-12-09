@@ -259,6 +259,11 @@ def disable(listing)
     return true
   end
 
+  if listing.ad_image_urls.count < 4
+    puts "|#{c(red)}Disabled due to too few images#{ec}"
+    return true
+  end
+
   #In theory this should never be seen
   if image_urls.*(",").include?("/images/original/missing.png")
     puts "|#{c(red)}Disabled due to missing.png image#{ec}"
