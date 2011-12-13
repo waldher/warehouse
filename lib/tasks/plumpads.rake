@@ -13,6 +13,10 @@ namespace :plumpads do
       "Square Footage" => "ad_square_footage",
       "Title" => "ad_title",
       "Location/city" => "ad_location",
+      "description" => "ad_description",
+      "image load area" => "ad_image_list",
+      "top text" => "ad_top_text",
+      "Address" => "ad_address"
     }
     customer = Customer.where(:key => "plumpads").first
     if customer.nil?
@@ -42,21 +46,34 @@ namespace :plumpads do
 
         file = link.click
 
-        file.body.split("\n\n").each do |ele| 
-          element = ele.strip.split(":")
-          key = listing_attr[element[0].strip]
-          value = element[1].nil? ? "" : element[1].strip
-          if key && value
-            print "#{key} => #{value}\n"
-            #listing_infos = listing.listing_infos.create!({:key => key, :value => value})
-            listing.infos[key.to_sym] = value
+        multiline_label = nil
+        multiline_body = ""
+
+        for line in file.body.split("\n")
+          if line.strip.empty?
+            next
+          elsif line.strip =~ /:$/
+            if multiline_label
+              listing.infos[listing_attr[multiline_label]] = multiline_body
+              print "#{listing_attr[multiline_label]} => #{multiline_body}\n"
+            end
+            multiline_label = line.split(":").first.strip
+            multiline_body = ""
+          elsif multiline_label
+            multiline_body += "\n" + line
+          elsif (element = line.strip.split(":")).size == 2
+            key = listing_attr[element[0].strip]
+            value = element[1].nil? ? "" : element[1].strip
+            if key && value
+              print "#{key} => #{value}\n"
+              listing.infos[key.to_sym] = value
+            end
           end
         end
 
-        file.body.match(/Body :(.*)/m) do
-          print "#ad_body => #{$1}\n"
-          #listing_infos = listing.listing_infos.create!({:key => "ad_description", :value => $1}) if $1
-          listing.infos[:ad_body] = $1 if $1
+        if multiline_label
+          listing.infos[listing_attr[multiline_label]] = multiline_body
+          print "#{listing_attr[multiline_label]} => #{multiline_body}\n"
         end
         
         listing.active = true
