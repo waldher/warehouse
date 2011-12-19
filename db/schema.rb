@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111101024224) do
+ActiveRecord::Schema.define(:version => 20111118175725) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -97,12 +97,18 @@ ActiveRecord::Schema.define(:version => 20111101024224) do
     t.datetime "updated_at"
     t.boolean  "foreign_active", :default => false, :null => false
     t.string   "foreign_id"
+    t.integer  "location_id"
+    t.integer  "sublocation_id"
   end
 
   create_table "locations", :force => true do |t|
     t.string  "name",    :default => "",    :null => false
     t.boolean "enabled", :default => false, :null => false
+    t.string  "url",                        :null => false
   end
+
+  add_index "locations", ["name"], :name => "index_locations_on_name", :unique => true
+  add_index "locations", ["url"], :name => "index_locations_on_url", :unique => true
 
   create_table "real_estate_images", :force => true do |t|
     t.integer  "real_estate_id",     :null => false
@@ -130,10 +136,13 @@ ActiveRecord::Schema.define(:version => 20111101024224) do
   end
 
   create_table "sublocations", :force => true do |t|
-    t.string  "name"
+    t.string  "name",        :null => false
     t.integer "location_id"
+    t.string  "url",         :null => false
   end
 
+  add_index "sublocations", ["location_id", "name"], :name => "index_sublocations_on_location_id_and_name", :unique => true
+  add_index "sublocations", ["location_id", "url"], :name => "index_sublocations_on_location_id_and_url", :unique => true
   add_index "sublocations", ["location_id"], :name => "index_sublocations_on_location_id"
 
 end

@@ -3,6 +3,9 @@ class Listing < ActiveRecord::Base
 
   has_many :listing_infos
 
+  belongs_to :location
+  belongs_to :sublocation
+
   has_many :listing_images, :dependent => :destroy, :order => "listing_images.threading"
 
   accepts_nested_attributes_for :listing_images, :allow_destroy => true
@@ -77,7 +80,7 @@ class Listing < ActiveRecord::Base
       end
 
       for key, value in @infos
-        if !updated.include?(key)
+        if !updated.to_s.include?(key.to_s)
           ListingInfo.create(:listing_id => id, :key => key, :value => value)
         end
       end
