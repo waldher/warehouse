@@ -2,7 +2,7 @@ require 'uri'
 require 'mechanize'
 require 'listing_title'
 
-class mlx_scrape
+class MlxScrape
 
   def blue; 4; end
   def gray; 8; end
