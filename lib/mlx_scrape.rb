@@ -200,7 +200,7 @@ class MlxScrape
     print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
   end
 
-  @connections = {}
+  @@connections = {}
   def load_images(listing, photos)
     #Assumption being, images never change.
     if !photos.empty? and listing.ad_image_urls.empty?
@@ -224,11 +224,11 @@ class MlxScrape
               urisplit = URI.split(photo_uri).reject{|i| i.nil?}
               domain = urisplit[1]
               path = urisplit[2..-1] * "/"
-              if @connections.has_key?(domain)
-                http = @connections[domain]
+              if @@connections.has_key?(domain)
+                http = @@connections[domain]
               else
                 http = Net::HTTP.start(domain)
-                @connections[domain] = http
+                @@connections[domain] = http
               end
               resp = http.get(path)
 
