@@ -130,8 +130,8 @@ namespace :rentjuicer do
 
     {:name => 'sea_rea_test',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => ["Miami Beach"]},
-    :filter => casa_neighborhoods,
+    :hoods => casa_neighborhoods,
+    :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "brendan@leadadvo.com"},
     :location => Location.find_by_url("seattle"),
     :sublocation => Sublocation.find_by_url("sea")
@@ -139,8 +139,8 @@ namespace :rentjuicer do
 
     {:name => 'mdc_rea_test',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => ["Miami Beach"]},
-    :filter => casa_neighborhoods,
+    :hoods => casa_neighborhoods,
+    :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "brendan@leadadvo.com"},
     :location => Location.find_by_url("miami"),
     :sublocation => Sublocation.find_by_url("mdc")
