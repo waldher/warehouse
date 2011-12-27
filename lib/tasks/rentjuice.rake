@@ -130,7 +130,7 @@ namespace :rentjuicer do
 
     {:name => 'sea_rea_test',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => casa_neighborhoods,
+    :hoods => {:neighborhoods => casa_neighborhoods},
     :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "brendan@leadadvo.com"},
     :location => Location.find_by_url("seattle"),
@@ -139,7 +139,7 @@ namespace :rentjuicer do
 
     {:name => 'mdc_rea_test',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => casa_neighborhoods,
+    :hoods => {:neighborhoods => casa_neighborhoods},
     :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "brendan@leadadvo.com"},
     :location => Location.find_by_url("miami"),
