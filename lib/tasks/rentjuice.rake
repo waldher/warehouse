@@ -134,7 +134,7 @@ namespace :rentjuicer do
     :filter => [{:include_mls => 1, :featured => 1}],
     :email => {:agent => "brendan@leadadvo.com"},
     :location => Location.find_by_url("seattle"),
-    :sublocation => Sublocation.find_by_url("sea")
+    :sublocation => Sublocation.find_by_url("see")
     },
 
     {:name => 'mdc_rea_test',
