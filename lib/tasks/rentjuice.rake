@@ -198,7 +198,7 @@ namespace :rentjuicer do
         puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
         location_changed = false
-        if listing.location.nil? or listing.location.id =! customer[:location].id
+        if listing.location.nil? or listing.location.id != customer[:location].id
           print "|#{c(yellow)}Location   Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
