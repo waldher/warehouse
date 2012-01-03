@@ -18,7 +18,7 @@ class ListingTitle
   #
   INS = ["in", nil]
 
-  LISTING_ADJECTIVES = ["beatiful", "gorgeous", "classy", "attractive", "lovely", "marvelous", "radiant", "wonderful", "attractive", "comfortable"]
+  LISTING_ADJECTIVES = ["beautiful", "gorgeous", "classy", "attractive", "lovely", "marvelous", "radiant", "wonderful", "attractive", "comfortable"]
   LOCATION_ADJECTIVES = ["alluring", "cozy", "quiet", "comfortable", "attractive", "lovely", "exquisite", "impressive", "classy", "wonderful", "fun", "convenient", "accessible"]
   LOCATION_NOUNS = ["locale", "area", "community", "neighborhood", "location"]
 
@@ -52,6 +52,6 @@ class ListingTitle
                       LOCATION_ADJECTIVES.sample,
                       location,
                       amenities.empty? ? nil : WITHS.sample,
-                      amenities.empty? ? nil : amenities].reject{|word| word.nil? }.join(" "))
+                      amenities.empty? ? nil : amenities].reject{|word| word.nil? }.join(" "))[0..69]
   end
 end
