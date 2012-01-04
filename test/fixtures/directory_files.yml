@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  ip_address: MyString
+  directory: 
+  filename: MyString
+  click: false
+  raw: MyText
+
+two:
+  ip_address: MyString
+  directory: 
+  filename: MyString
+  click: false
+  raw: MyText

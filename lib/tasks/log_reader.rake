@@ -1,12 +1,20 @@
 namespace :log do
   desc "Read heathrow_logging bucket and extract request data from each file and fill database for statistics"
   task :import => :environment do
-    puts bucket =  AWS::S3::Bucket.find("heathrow_logging", :max_keys => 10)
+    puts bucket =  AWS::S3::Bucket.find("heathrow_logging")
 
     bucket.objects.each do |object|
 
       # Check for filename if not exists add to the database to keep track of files
       filename = object.key
+      log_file = LogFile.find_or_initialize_by_filename(filename)
+
+      # Check next object(file) if this file is read before
+      is_new = log_file.new_record? ? true : false
+      next unless is_new
+
+      log_file.save!
+
       # Get data of read file and decompress it
       gz = Zlib::GzipReader.new(StringIO.new(object.value))
 
@@ -41,7 +49,7 @@ namespace :log do
       #p Time.new(*time_array)
       #break
 
-      puts Time.parse("#{date} #{time}")
+      requested_time = Time.parse("#{date} #{time}")
 
       # Request IP(Internet Protocal) address at index 4
       ip_address = request_array[4]
@@ -60,8 +68,20 @@ namespace :log do
       directory = path_array[1]
       filename = path_array[2]
       extension = path_array[3]
-
       p "#{directory} -> #{filename} -> #{extension}"
+      p request_array if directory.nil? || filename.nil? || extension.nil?
+
+      directory_object = Directory.find_or_create_by_name(directory)
+      options = {
+        :ip_address => ip_address, 
+        :filename => filename,
+        :click => (extension.try(:downcase).try(:eql?, "html") ? true : false),
+        :requested_at => requested_time,
+        :raw => request_info
+      }
+      file_object = DirectoryFile.create(options)
+      directory_object.files << file_object
+
 
       # Request response status(200/302/404) code at index 8
       # Request Referer at index 9

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120104193649) do
+ActiveRecord::Schema.define(:version => 20120104194804) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -67,6 +67,29 @@ ActiveRecord::Schema.define(:version => 20120104193649) do
   add_index "customers", ["key"], :name => "index_customers_on_key"
   add_index "customers", ["role_id"], :name => "index_customers_on_role_id"
   add_index "customers", ["setup_nonce"], :name => "index_customers_on_setup_nonce", :unique => true
+
+  create_table "directories", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "directories", ["name"], :name => "index_directories_on_name", :unique => true
+
+  create_table "directory_files", :force => true do |t|
+    t.string   "ip_address"
+    t.integer  "directory_id"
+    t.string   "filename"
+    t.boolean  "click"
+    t.text     "raw"
+    t.datetime "requested_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "directory_files", ["click"], :name => "index_directory_files_on_click"
+  add_index "directory_files", ["directory_id"], :name => "index_directory_files_on_directory_id"
+  add_index "directory_files", ["requested_at"], :name => "index_directory_files_on_requested_at"
 
   create_table "listing_images", :force => true do |t|
     t.integer  "listing_id"
