@@ -43,5 +43,6 @@ module Marsala
       :access_key_id     => 'AKIAJ6UXVVBVZN52TSAQ',
       :secret_access_key => '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'
     )
+    BUCKET = "heathrow_logging"
   end
 end

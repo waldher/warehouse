@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111118175725) do
+ActiveRecord::Schema.define(:version => 20120104193649) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -109,6 +109,14 @@ ActiveRecord::Schema.define(:version => 20111118175725) do
 
   add_index "locations", ["name"], :name => "index_locations_on_name", :unique => true
   add_index "locations", ["url"], :name => "index_locations_on_url", :unique => true
+
+  create_table "log_files", :force => true do |t|
+    t.string   "filename"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "log_files", ["filename"], :name => "index_log_files_on_filename", :unique => true
 
   create_table "real_estate_images", :force => true do |t|
     t.integer  "real_estate_id",     :null => false
