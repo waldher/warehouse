@@ -414,6 +414,8 @@ end
 ###########################################################
 ############# Get_Location
 ###########################################################
+#Takes a listing and rentjuice object
+#Returns true or false depending on success of variable setting
 def get_location(listing, rentjuicer)
   old_address = "#{listing.infos[:ad_street_number]} #{listing.infos[:ad_street]}, #{listing.infos[:ad_city]}, #{listing.infos[:ad_state]} #{listing.infos[:ad_zip_code]}" 
   new_address   = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
