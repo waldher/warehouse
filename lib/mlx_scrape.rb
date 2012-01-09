@@ -93,7 +93,7 @@ class MlxScrape
       sleep(0.1)
       parsed_json = ActiveSupport::JSON.decode(json_string)
       location = parsed_json["results"].first["address_components"][2]["short_name"]
-      if val_update(listing, :ad_location, info[:location].nil? ? location : info[:location])
+      if val_update(listing, :ad_location, (info[:location].nil? ? location : info[:location]))
         save = true
       end
 
