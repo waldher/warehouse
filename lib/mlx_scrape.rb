@@ -142,8 +142,10 @@ class MlxScrape
           end
         end
 
-        puts "#{c(l_blue)}Saving Listing#{ec}"
-        listing.save
+        if save
+          puts "#{c(l_blue)}Saving Listing#{ec}"
+          listing.save
+        end
 
         images = []
         $listing_page.body.split("\n").each{|l|
