@@ -125,7 +125,7 @@ class MlxScrape
         end
 
         titles = []
-        if true or listing.infos[:ad_title].nil?
+        if listing.infos[:ad_title].nil?
           (0..2).each{
             title = ListingTitle.generate(
               :bedrooms => listing.infos[:ad_bedrooms].to_i,
