@@ -30,6 +30,7 @@ class MlxScrape
     customer_key = info[:key]
     customer_id = Customer.where("key like ?",customer_key).first.id
 
+    active = []
     $page = nil
     for url in info[:urls]
       $page = agent.get(url.chomp.strip)
@@ -38,7 +39,6 @@ class MlxScrape
       $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
 
       index = 0
-      active = []
       for record_id in $record_ids
         puts "-----------------------------------------------------------------------"
         $listing_page = nil
