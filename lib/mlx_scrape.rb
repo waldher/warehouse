@@ -164,7 +164,7 @@ class MlxScrape
           puts "#{c(red)}Foreing Inactive#{ec} #{temp_active}"
         end
 
-        puts "Succereated/Updated Listing. Leadadvo ID #{listing.id}"
+        puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
         puts "-----------------------------------------------------------------------"
         if !@running
           puts "#{active.count} listings seen."
@@ -176,13 +176,13 @@ class MlxScrape
           return
         end
       end
-      puts "#{active.count} listings seen."
-      activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
-      puts "#{activate} listings were activated."
-
-      deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
-      puts "#{deactivate} listing(s) were deactivated."
     end
+    puts "#{active.count} listings seen."
+    activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
+    puts "#{activate} listings were activated."
+
+    deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
+    puts "#{deactivate} listing(s) were deactivated."
   end
 
   def val_update(listing, key_symbol, val)
