@@ -80,6 +80,7 @@ class MlxScrape
         puts "record_id = \"#{record_id}\""
         puts "Current listing is #{index += 1} of #{$record_ids.count}"
 
+        ########################## ADDRESS #############################
         address = ""
         $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
         address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
@@ -87,15 +88,25 @@ class MlxScrape
           save = true
         end
 
-        address += ", Miami, FL"
-        json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
-        sleep(0.1)
-        parsed_json = ActiveSupport::JSON.decode(json_string)
-        location = parsed_json["results"].first["address_components"][2]["short_name"]
-        if val_update(listing, :ad_location, (info[:location].nil? ? location : info[:location]))
+        ########################## LOCATION ############################
+        if !info[:location].nil?
+          location = info[:location]
+        else
+          $listing_page.body.split("\n").each{|l| building = l if !l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/) }
+          if !building.nil?
+          else
+            address += ", Miami, FL"
+            json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+            sleep(0.1)
+            parsed_json = ActiveSupport::JSON.decode(json_string)
+            location = parsed_json["results"].first["address_components"][2]["short_name"]
+          end
+        end
+        if val_update(listing, :ad_location, location)
           save = true
         end
 
+        ########################## PRICE ###############################
         price = ""
         $listing_page.body.split("\n").each{ |l| (price = l ) if l =~ /120px;height:22px;left:608px;width:152px;font:bold 12pt.*\$/ }
         price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
@@ -103,6 +114,7 @@ class MlxScrape
           save = true
         end
 
+        ########################## BEDROOMS ############################
         bedrooms = ""
         saw_beds = false
         $listing_page.body.split("\n").each{|l|
@@ -116,7 +128,8 @@ class MlxScrape
         if val_update(listing, :ad_bedrooms, bedrooms)
           save = true
         end
-        
+
+        ########################## DESCRIPTION #########################
         desc = ""
         $listing_page.body.split("\n").each{|l| desc = l if l =~ /.*552.*224,224,224.*/ }
         desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
@@ -124,6 +137,7 @@ class MlxScrape
           save = true
         end
 
+        ########################## TITLES ##############################
         titles = []
         if listing.infos[:ad_title].nil?
           (0..2).each{
@@ -147,6 +161,7 @@ class MlxScrape
           listing.save
         end
 
+        ########################## IMAGES ##############################
         images = []
         $listing_page.body.split("\n").each{|l|
           if l =~ /^ViewObject_[0-9]*_List = /
@@ -311,4 +326,29 @@ class MlxScrape
 
     return file 
   end
+
+  def building_to_location(building)
+
+    building = building.downcase.strip
+   
+    map = { 
+      "icon brickell" => "brickell",
+      "epic" => "downtown miami",
+      "carbonell" => "brickell key",
+      "asia" => "brickell key",
+      "jade" => "brickell",
+      "500 brickell" => "brickell",
+      "plaza" => "brickell",
+      "brickell on the river" => "brickell",
+      "ivy" => "brickell riverfront",
+      "mint" => "brickell riverfront",
+      "wind" => "brickell riverfront"
+    }   
+
+    for key in map.keys
+      return map[key] if building.match(/#{key}/)
+    end 
+    return false
+
+  end 
 end
