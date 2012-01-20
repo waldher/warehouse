@@ -15,8 +15,6 @@ class MlxScrape
   def ec; "\x1b[0m"; end
 
 #Info is a hash with:
-# :url => ''
-# :key =>
   def mlx_import(info)
     @running = true
     Kernel.trap("INT"){
@@ -32,149 +30,153 @@ class MlxScrape
     customer_key = info[:key]
     customer_id = Customer.where("key like ?",customer_key).first.id
 
-    $page = nil
-    $page = agent.get(info[:url].chomp.strip)
-
-    $record_ids = nil
-    $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
-
-    index = 0
     active = []
-    for record_id in $record_ids
-      puts "-----------------------------------------------------------------------"
-      $listing_page = nil
-      failed = false
-      while !failed
-        begin
-          $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => "1GdCmTJIpLlcE4KGf5pa5HC6P58ljE1n7BHGsz7yzuG+18HEq2nRnWCJYEeepcbz"} )
-          failed = true
-        rescue => e
-          puts "#{e.inspect}"
-        end
-      end
+    $page = nil
+    for url in info[:urls]
+      $page = agent.get(url.chomp.strip)
 
-      foreign_id = ""
-      $listing_page.body.split("\n").each{ |l| foreign_id = l if l =~ /top:168px;height:15px;left:56px;width:56px;font:8pt/}
-      foreign_id = foreign_id.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-      foreign_id.strip!
+      $record_ids = nil
+      $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
 
-      #Detect an old listing
-      listings = nil
-      listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
-      if !listings.nil? and listings.count > 1 
-        puts "Duplicate Listings Please Check Advo ID #{customer_id} RJ ID #{foreign_id}."
-        return
-      end 
-      listing = listings.nil? ? nil : listings[0]
-      if !listing.nil?
-        print "Old Listing Found for "
-      else
-        print "#{c(green)}New Listing Found for "
-        listing = Listing.new
-        listing.customer_id = customer_id
-        listing.foreign_id = foreign_id
-        listing.active = true
-        save = true
-      end 
-      puts "#{customer_key}#{ec}"
-      puts "MLX ID: #{foreign_id}"
-      puts "record_id = \"#{record_id}\""
-      puts "Current listing is #{index += 1} of #{$record_ids.count}"
-
-      address = ""
-      $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
-      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
-      if val_update(listing, :ad_address, address)
-        save = true
-      end
-
-      address += ", Miami, FL"
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
-      sleep(0.1)
-      parsed_json = ActiveSupport::JSON.decode(json_string)
-      location = parsed_json["results"].first["address_components"][2]["short_name"]
-      if val_update(listing, :ad_location, info[:location])
-        save = true
-      end
-
-      price = ""
-      $listing_page.body.split("\n").each{ |l| (price = l ) if l =~ /120px;height:22px;left:608px;width:152px;font:bold 12pt.*\$/ }
-      price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
-      if val_update(listing, :ad_price, price)
-        save = true
-      end
-
-      bedrooms = ""
-      saw_beds = false
-      $listing_page.body.split("\n").each{|l|
-        if saw_beds
-          saw_beds = false
-          bedrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Bedrooms:/
-          saw_beds = true
-        end
-      }
-      if val_update(listing, :ad_bedrooms, bedrooms)
-        save = true
-      end
-      
-      desc = ""
-      $listing_page.body.split("\n").each{|l| desc = l if l =~ /.*552.*224,224,224.*/ }
-      desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
-      if val_update(listing, :ad_description, desc)
-        save = true
-      end
-
-      titles = []
-      if true or listing.infos[:ad_title].nil?
-        (0..2).each{
-          title = ListingTitle.generate(
-            :bedrooms => listing.infos[:ad_bedrooms].to_i,
-            :location => listing.infos[:ad_location],
-            :type => "",
-            :amenities => "")
-          if title.length > 20
-            #puts "New title generated: #{c(pink)}#{title}#{ec}"
-            titles << title
+      index = 0
+      for record_id in $record_ids
+        puts "-----------------------------------------------------------------------"
+        $listing_page = nil
+        failed = false
+        while !failed
+          begin
+            $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => "1GdCmTJIpLlcE4KGf5pa5HC6P58ljE1n7BHGsz7yzuG+18HEq2nRnWCJYEeepcbz"} )
+            failed = true
+          rescue => e
+            puts "#{e.inspect}"
           end
-        }
-        if val_update(listing, :ad_title, (titles * ",").gsub(/  /,' '))
+        end
+
+        foreign_id = ""
+        $listing_page.body.split("\n").each{ |l| foreign_id = l if l =~ /top:168px;height:15px;left:56px;width:56px;font:8pt/}
+        foreign_id = foreign_id.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        foreign_id.strip!
+
+        #Detect an old listing
+        listings = nil
+        listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
+        if !listings.nil? and listings.count > 1 
+          puts "Duplicate Listings Please Check Advo ID #{customer_id} RJ ID #{foreign_id}."
+          return
+        end 
+        listing = listings.nil? ? nil : listings[0]
+        if !listing.nil?
+          print "Old Listing Found for "
+        else
+          print "#{c(green)}New Listing Found for "
+          listing = Listing.new
+          listing.customer_id = customer_id
+          listing.foreign_id = foreign_id
+          listing.active = true
+          save = true
+        end 
+        puts "#{customer_key}#{ec}"
+        puts "MLX ID: #{foreign_id}"
+        puts "record_id = \"#{record_id}\""
+        puts "Current listing is #{index += 1} of #{$record_ids.count}"
+
+        address = ""
+        $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
+        address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
+        if val_update(listing, :ad_address, address)
           save = true
         end
-      end
 
-      puts "#{c(l_blue)}Saving Listing#{ec}"
-      listing.save
-
-      images = []
-      $listing_page.body.split("\n").each{|l|
-        if l =~ /^ViewObject_[0-9]*_List = /
-          images << l.gsub(/^ViewObject_[0-9]*_List = "/, '').gsub(/\|.*/, '')
+        address += ", Miami, FL"
+        json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+        sleep(0.1)
+        parsed_json = ActiveSupport::JSON.decode(json_string)
+        location = parsed_json["results"].first["address_components"][2]["short_name"]
+        if val_update(listing, :ad_location, (info[:location].nil? ? location : info[:location]))
+          save = true
         end
-      }
-      images.rotate!(-3)
-      load_images(listing, images)
 
-      temp_active = nil
-      $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
-      temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-      if temp_active =="Active-Available" and  !disable(listing)
-        puts "#{c(green)}Foreign Active#{ec} #{temp_active}"
-        active << listing.id
-      else
-        puts "#{c(red)}Foreing Inactive#{ec} #{temp_active}"
-      end
+        price = ""
+        $listing_page.body.split("\n").each{ |l| (price = l ) if l =~ /120px;height:22px;left:608px;width:152px;font:bold 12pt.*\$/ }
+        price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
+        if val_update(listing, :ad_price, price)
+          save = true
+        end
 
-      puts "Succereated/Updated Listing. Leadadvo ID #{listing.id}"
-      puts "-----------------------------------------------------------------------"
-      if !@running
-        puts "#{active.count} listings seen."
-        activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
-        puts "#{activate} listings were activated."
+        bedrooms = ""
+        saw_beds = false
+        $listing_page.body.split("\n").each{|l|
+          if saw_beds
+            saw_beds = false
+            bedrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+          elsif l =~ /Bedrooms:/
+            saw_beds = true
+          end
+        }
+        if val_update(listing, :ad_bedrooms, bedrooms)
+          save = true
+        end
+        
+        desc = ""
+        $listing_page.body.split("\n").each{|l| desc = l if l =~ /.*552.*224,224,224.*/ }
+        desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
+        if val_update(listing, :ad_description, desc)
+          save = true
+        end
 
-        deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
-        puts "#{deactivate} listing(s) were deactivated."
-        return
+        titles = []
+        if listing.infos[:ad_title].nil?
+          (0..2).each{
+            title = ListingTitle.generate(
+              :bedrooms => listing.infos[:ad_bedrooms].to_i,
+              :location => listing.infos[:ad_location],
+              :type => "",
+              :amenities => "")
+            if title.length > 20
+              #puts "New title generated: #{c(pink)}#{title}#{ec}"
+              titles << title
+            end
+          }
+          if val_update(listing, :ad_title, (titles * ",").gsub(/  /,' '))
+            save = true
+          end
+        end
+
+        if save
+          puts "#{c(l_blue)}Saving Listing#{ec}"
+          listing.save
+        end
+
+        images = []
+        $listing_page.body.split("\n").each{|l|
+          if l =~ /^ViewObject_[0-9]*_List = /
+            images << l.gsub(/^ViewObject_[0-9]*_List = "/, '').gsub(/\|.*/, '')
+          end
+        }
+        images.rotate!(-3)
+        load_images(listing, images)
+
+        temp_active = nil
+        $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
+        temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        if temp_active =="Active-Available" and  !disable(listing)
+          puts "#{c(green)}Foreign Active#{ec} #{temp_active}"
+          active << listing.id
+        else
+          puts "#{c(red)}Foreing Inactive#{ec} #{temp_active}"
+        end
+
+        puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
+        puts "-----------------------------------------------------------------------"
+        if !@running
+          puts "#{active.count} listings seen."
+          activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
+          puts "#{activate} listings were activated."
+
+          deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
+          puts "#{deactivate} listing(s) were deactivated."
+          return
+        end
       end
     end
     puts "#{active.count} listings seen."
