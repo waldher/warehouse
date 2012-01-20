@@ -92,8 +92,11 @@ class MlxScrape
         if !info[:location].nil?
           location = info[:location]
         else
-          $listing_page.body.split("\n").each{|l| building = l if !l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/) }
+          building = nil
+          $listing_page.body.split("\n").each{|l| building = l if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/) }
           if !building.nil?
+            building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+            location = building_to_location(building)
           else
             address += ", Miami, FL"
             json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
@@ -346,7 +349,7 @@ class MlxScrape
     }   
 
     for key in map.keys
-      return map[key] if building.match(/#{key}/)
+      return map[key].titlecase if building.match(/#{key}/)
     end 
     return false
 
