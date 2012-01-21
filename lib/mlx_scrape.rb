@@ -49,6 +49,9 @@ class MlxScrape
             failed = true
           rescue => e
             puts "#{e.inspect}"
+            if record_id.nil?
+              break
+            end
           end
         end
 
@@ -89,6 +92,7 @@ class MlxScrape
         end
 
         ########################## LOCATION ############################
+        location = nil
         if !info[:location].nil?
           location = info[:location]
         else
@@ -98,12 +102,16 @@ class MlxScrape
             building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
             location = building_to_location(building)
           else
-            address += ", Miami, FL"
-            json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
-            sleep(0.1)
-            parsed_json = ActiveSupport::JSON.decode(json_string)
-            location = parsed_json["results"].first["address_components"][2]["short_name"]
+            location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
           end
+        end
+        #If, for whatever reason, location is nil it ought to be detected.
+        if location.nil?
+          address += ", Miami, FL"
+          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
+          sleep(0.1)
+          parsed_json = ActiveSupport::JSON.decode(json_string)
+          location = parsed_json["results"].first["address_components"][2]["short_name"]
         end
         if val_update(listing, :ad_location, location)
           save = true
@@ -351,7 +359,6 @@ class MlxScrape
     for key in map.keys
       return map[key].titlecase if building.match(/#{key}/)
     end 
-    return false
-
-  end 
+    return nil
+  end
 end
