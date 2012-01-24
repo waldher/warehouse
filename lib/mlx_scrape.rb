@@ -28,7 +28,12 @@ class MlxScrape
 
     #This saves the need to query and loop through the Listings table for each customer.
     customer_key = info[:key]
-    customer_id = Customer.where("key like ?",customer_key).first.id
+    begin
+      customer_id = Customer.where("key like ?",customer_key).first.id 
+    rescue 
+      special_puts "#{c(red)}Customer Key (#{customer_key.to_s}) Not Found!#{ec}"
+      return false 
+    end
 
     active = []
     $page = nil
@@ -40,7 +45,7 @@ class MlxScrape
 
       index = 0
       for record_id in $record_ids
-        puts "-----------------------------------------------------------------------"
+        print ",-----------------------------------------------------------------------\n"
         $listing_page = nil
         failed = false
         while !failed
@@ -48,7 +53,7 @@ class MlxScrape
             $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => "1GdCmTJIpLlcE4KGf5pa5HC6P58ljE1n7BHGsz7yzuG+18HEq2nRnWCJYEeepcbz"} )
             failed = true
           rescue => e
-            puts "#{e.inspect}"
+            special_puts "#{e.inspect}"
           end
         end
 
@@ -61,24 +66,24 @@ class MlxScrape
         listings = nil
         listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
         if !listings.nil? and listings.count > 1 
-          puts "Duplicate Listings Please Check Advo ID #{customer_id} RJ ID #{foreign_id}."
+          special_puts "Duplicate Listings Please Check Advo ID #{customer_id} RJ ID #{foreign_id}."
           return
         end 
         listing = listings.nil? ? nil : listings[0]
         if !listing.nil?
-          print "Old Listing Found for "
+          pre_message = "Old Listing Found for "
         else
-          print "#{c(green)}New Listing Found for "
+          pre_message = "#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = customer_id
           listing.foreign_id = foreign_id
           listing.active = true
           save = true
         end 
-        puts "#{customer_key}#{ec}"
-        puts "MLX ID: #{foreign_id}"
-        puts "record_id = \"#{record_id}\""
-        puts "Current listing is #{index += 1} of #{$record_ids.count}"
+        special_puts pre_message+"#{customer_key}#{ec}"
+        special_puts "MLX ID: #{foreign_id}"
+        special_puts "record_id = \"#{record_id}\""
+        special_puts "Current listing is #{index += 1} of #{$record_ids.count}"
 
         ########################## ADDRESS #############################
         address = ""
@@ -150,7 +155,7 @@ class MlxScrape
               :type => "",
               :amenities => "")
             if title.length > 20
-              #puts "New title generated: #{c(pink)}#{title}#{ec}"
+              #special_puts "New title generated: #{c(pink)}#{title}#{ec}"
               titles << title
             end
           }
@@ -160,7 +165,7 @@ class MlxScrape
         end
 
         if save
-          puts "#{c(l_blue)}Saving Listing#{ec}"
+          special_puts "#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
 
@@ -178,31 +183,31 @@ class MlxScrape
         $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
         temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
         if temp_active =="Active-Available" and  !disable(listing)
-          puts "#{c(green)}Foreign Active#{ec} #{temp_active}"
+          special_puts "Rental Status #{c(green)}Active #{ec}: #{temp_active}"
           active << listing.id
         else
-          puts "#{c(red)}Foreing Inactive#{ec} #{temp_active}"
+          special_puts "Rental Status #{c(red)}Inactive #{ec}: #{c(red)}#{temp_active}#{ec}"
         end
 
-        puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
-        puts "-----------------------------------------------------------------------"
+        special_puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
+        print "`-----------------------------------------------------------------------\n"
         if !@running
-          puts "#{active.count} listings seen."
+          special_puts "#{active.count} listings seen."
           activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
-          puts "#{activate} listings were activated."
+          special_puts "#{activate} listings were activated."
 
           deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
-          puts "#{deactivate} listing(s) were deactivated."
+          special_puts "#{deactivate} listing(s) were deactivated."
           return
         end
       end
     end
-    puts "#{active.count} listings seen."
+    special_puts "#{active.count} listings seen."
     activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
-    puts "#{activate} listings were activated."
+    special_puts "#{activate} listings were activated."
 
     deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
-    puts "#{deactivate} listing(s) were deactivated."
+    special_puts "#{deactivate} listing(s) were deactivated."
   end
 
   def val_update(listing, key_symbol, val)
@@ -215,7 +220,7 @@ class MlxScrape
   end
 
   def print_change(symbol, was, now)
-    print "#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
+    print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
     print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
     print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
   end
@@ -255,11 +260,11 @@ class MlxScrape
               photo_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
               ListingImage.create(:listing_id => listing.id, :image => photo_file, :threading => 0)
-              puts "Imported: #{photo_uri}"
+              special_puts "Imported: #{photo_uri}"
 
               attempts = 0
             rescue => e
-              puts "#{c(red)}Attempt #{6 - attempts} failed: #{e.inspect}#{ec}"
+              special_puts "#{c(red)}Attempt #{6 - attempts} failed: #{e.inspect}#{ec}"
               attempts -= 1
             end
           end
@@ -267,28 +272,32 @@ class MlxScrape
         end
       end
 
-      puts listing.ad_image_urls
+      listing.ad_image_urls.each{|url| special_puts url}
     end
   end
 
   def disable(listing)
     if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-      puts "|#{c(red)}Disabled due to empty title#{ec}"
+      special_puts "#{c(red)}Disabled due to empty title#{ec}"
       return true
     end
 
     image_urls = listing.ad_image_urls
     if image_urls.nil? or image_urls.empty?
-      puts "|#{c(red)}Disabled due to empty images#{ec}"
+      special_puts "#{c(red)}Disabled due to empty images#{ec}"
       return true
     end
 
     #In theory this should never be seen
     if image_urls.*(",").include?("/images/original/missing.png")
-      puts "|#{c(red)}Disabled due to missing.png image#{ec}"
+      special_puts "#{c(red)}Disabled due to missing.png image#{ec}"
       return true
     end
     return false
+  end
+  
+  def special_puts(string)
+    puts "|"+string
   end
 
   def in_memory_file(data, pathname)
