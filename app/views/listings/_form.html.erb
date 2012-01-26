@@ -34,12 +34,12 @@
         <%= infos.text_field :ad_title, :maxlength => 70, :size => 70, :value => @listing.infos[:ad_title] %>
       </span>
       <span class="field">
-        <%= infos.label :ad_location, "Ad Location" %><br />
+        <%= infos.label :ad_location, "Location Description" %><br />
         <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location] %>
       </span>
       <span class="field">
-        <%= infos.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= infos.text_field :ad_sublocation, :value => @listing.infos[:ad_sublocation] %>
+        <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
+        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.where(:url => "miami"), :sublocations, :name, :id, :name)%>
       </span>
     </div>
     <% if ["apa", "rea"].include?(@customer.craigslist_type) %>

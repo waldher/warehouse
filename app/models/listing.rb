@@ -3,6 +3,8 @@ class Listing < ActiveRecord::Base
 
   has_many :listing_infos
 
+  has_one :sublocation, :dependent => :destroy
+
   belongs_to :location
   belongs_to :sublocation
 
@@ -15,6 +17,13 @@ class Listing < ActiveRecord::Base
   before_create :set_threading_number
   before_update :new_images_threading_number
   before_save :update_infos
+  before_save :set_location_id
+
+  def set_location_id
+    sub = Sublocation.where(:id => self.sublocation).first
+    loc = sub.location
+    self.location_id = loc
+  end
 
   def set_threading_number
     self.listing_images.each_with_index { |image, index|  image.threading = index + 1 }
