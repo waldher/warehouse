@@ -42,7 +42,7 @@
         <%= infos.text_field :ad_sublocation, :value => @listing.infos[:ad_sublocation] %>
       </span>
     </div>
-    <% if @customer.craigslist_type == "apa" %>
+    <% if ["apa", "rea"].include?(@customer.craigslist_type) %>
       <div>
         <span class="field">
           <%= infos.label :ad_address, "Address" %><br />
