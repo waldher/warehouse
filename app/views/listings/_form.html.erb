@@ -1,5 +1,22 @@
+<style>
+  .tooltip {
+    background-color:#000;
+    border:1px solid #fff;
+    padding:10px 15px;
+    width:200px;
+    display:none;
+    color:#fff;
+    text-align:left;
+    font-size:12px;
+
+    /* outline radius for mozilla/firefox only */
+    -moz-box-shadow:0 0 10px #000;
+    -webkit-box-shadow:0 0 10px #000;
+  }
+</style>
 <script type="text/javascript">
   $(document).ready(function(){
+      $("[title]").tooltip({effect: "fade", opacity: 0.8, offset: [-15,0], position: "top center"});
     $('#real_estate_ad_description').tinymce({
       script_url: '<%= javascript_path("tiny_mce/tiny_mce.js") %>',
       theme: 'advanced',
@@ -31,11 +48,11 @@
     <div>
       <span class="field">
         <%= infos.label :ad_title, "Ad Title" %><br />
-        <%= infos.text_field :ad_title, :maxlength => 70, :size => 70, :value => @listing.infos[:ad_title] %>
+        <%= infos.text_field :ad_title, :maxlength => 70, :size => 70, :value => @listing.infos[:ad_title], :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
       <span class="field">
         <%= infos.label :ad_location, "Location Description" %><br />
-        <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location] %>
+        <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
       </span>
       <span class="field">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
@@ -84,7 +101,7 @@
     </div>
     <div class="field">
       <%= infos.label :ad_keywords, "Keywords" %><br />
-      <%= infos.text_field :ad_keywords, :maxlength => '160', :value => @listing.infos[:ad_keywords] %>
+      <%= infos.text_field :ad_keywords, :maxlength => '160', :value => @listing.infos[:ad_keywords], :title => "Think of the perfect client of yours. What keywords would they use if they we're looking for this property?" %>
     </div>
     <% if @customer.craigslist_type == "apa" %>
       <div>
