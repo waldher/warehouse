@@ -31,5 +31,12 @@ class CustomersController < ApplicationController
     flash.notice = "Customer updated successfully" if @customer.update_attributes!(params[:customer])
     redirect_to(admin_index_path)
   end
+  
+  def destroy
+    @customer = Customer.find(params[:id])
+    @customer.delete
+    flash.notice = "Customer with email address #{@customer.email_address} deleted successfully."
+    redirect_to(admin_index_path)
+  end
 
 end
