@@ -202,7 +202,7 @@ class ListingsController < ApplicationController
         listing.foreign_active ? 'Updated' : 'Outdated'
       ]
     }
-    elsif @customer.craigslist_type == "apa"
+    elsif ["apa", "rea"].include?(@customer.craigslist_type)
       aaData =  @data.map {|listing| 
       [
         listing.infos[:ad_address],
