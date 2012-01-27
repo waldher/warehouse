@@ -191,9 +191,11 @@ class ListingsController < ApplicationController
     }
 
     aaData = []
-    if @customer.craigslist_type == "ctd"
+    if @customer.craigslist_type == "apa"
       aaData =  @data.map {|listing| 
       [
+        listing.infos[:ad_address],
+        listing.infos[:ad_price],
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
         listing.active ? 'Active' : 'Inactive',
@@ -202,11 +204,9 @@ class ListingsController < ApplicationController
         listing.foreign_active ? 'Updated' : 'Outdated'
       ]
     }
-    elsif @customer.craigslist_type == "apa"
+    else
       aaData =  @data.map {|listing| 
       [
-        listing.infos[:ad_address],
-        listing.infos[:ad_price],
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
         listing.active ? 'Active' : 'Inactive',
