@@ -3,7 +3,7 @@
 <table class="dataTable" style="width: 100%;">
   <thead>
     <tr>
-      <% if @customer.craigslist_type == "apa" %>
+      <% if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea'  %>
         <th>Address</th>
         <th>Price</th>
       <% end %>
@@ -19,7 +19,7 @@
   <tbody>
     <% @listings.each do |listing| %>
       <tr>
-        <% if @customer.craigslist_type == "apa" %>
+        <% if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea' %>
           <td><%= listing.infos[:ad_address] %></td>
           <td><%= listing.infos[:ad_price] %></td>
         <% end %>
@@ -40,7 +40,7 @@
   <%= link_to 'New Listing', new_customer_listing_path(@customer), :style => "font-size: 40px; text-align: center;" %>
 </div>
 
-<% index = @customer.craigslist_type == "apa" ? 4 : 2%>
+<% index = @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea' ? 4 : 2 %>
 
 <script type="text/javascript">
   $(document).ready(function(){
@@ -68,7 +68,7 @@
         });
       },
       sAjaxSource: '<%= customer_listings_path(@customer) %>',
-      <% if @customer.craigslist_type == "apa" %>
+      <% if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea' %>
         "aaSorting" : [[4, 'asc'],[3, 'desc']],
         "aoColumns": [ 
         /* Address */ null,

@@ -191,7 +191,7 @@ class ListingsController < ApplicationController
     }
 
     aaData = []
-    if @customer.craigslist_type == "apa"
+    if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea'
       aaData =  @data.map {|listing| 
       [
         listing.infos[:ad_address],
