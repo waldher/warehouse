@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Email</th>
+      <th>Craigslist Type</th>
       <th>Key</th>
       <th>Link</th>
       <th></th>
@@ -13,6 +14,7 @@
   <% @customers.each do |customer| %>
     <tr>
       <td><%= link_to customer.email_address, customer_listings_path(customer) %></td>
+      <td><%= customer.craigslist_type %></td>
       <td><%= customer.key %></td>
       <td><%= raw(auto_link("http://#{request.host_with_port}/first_login/#{customer.setup_nonce}")) if customer.setup_nonce.present? %></td>
       <td><%= link_to "Delete", customer, :method => :delete, :cofirm => "Are you sure you wanna delete customer?" %></td>
