@@ -39,4 +39,10 @@ class CustomersController < ApplicationController
     redirect_to(admin_index_path)
   end
 
+  def reset_password
+    @customer = Customer.find(params[:customer_id])
+    @customer.set_setup_nonce.save!
+    redirect_to admin_index_url
+  end
+
 end

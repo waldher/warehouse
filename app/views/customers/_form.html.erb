@@ -22,7 +22,9 @@
     <%= f.select :craigslist_type, Customer::AVAILABLE_CRAIGSLIST_TYPES, :disabled => disabled %>
   </p>
   <p>
-    <%= f.submit %>
+    <%= f.submit %> 
+    <% should_show =  @customer.persisted? && @customer.setup_nonce.nil? %>
+    <%= should_show ? link_to('regenerate reset password link', customer_reset_password_url(f.object)) : "" %>
   </p>
 
 

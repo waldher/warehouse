@@ -17,7 +17,9 @@
       <td><%= customer.craigslist_type %></td>
       <td><%= customer.key %></td>
       <td><%= raw(auto_link("http://#{request.host_with_port}/first_login/#{customer.setup_nonce}")) if customer.setup_nonce.present? %></td>
-      <td><%= link_to "Delete", customer, :method => :delete, :confirm => "Are you sure you wanna delete customer?" %></td>
+      <td>
+        <%= link_to "Edit", edit_customer_path(customer) %> | 
+        <%= link_to "Delete", customer, :method => :delete, :confirm => "Are you sure you wanna delete customer?" %></td>
     </tr>
   <% end %>
   </tbody>

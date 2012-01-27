@@ -38,6 +38,7 @@ class Customer < ActiveRecord::Base
 
   def set_setup_nonce
     self.setup_nonce = (0...8).map{97.+(rand(25)).chr}.join
+    self
   end
 
   def update_key

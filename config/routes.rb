@@ -8,6 +8,7 @@ Marsala::Application.routes.draw do
   
   get '/customers/:key/listings/sync' => 'listings#sync'
   resources :customers do
+    get :reset_password
     resources :listings
   end
 
