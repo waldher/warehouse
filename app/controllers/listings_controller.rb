@@ -40,13 +40,18 @@ class ListingsController < ApplicationController
   end
 
   def image_update
-    logger.debug params
     listing = Listing.find(params[:id])
-    logger.debug params[:threading]
-    listing.listing_images.each_with_index do |item, index|
-      logger.debug "Replacing #{item.threading} with #{params[:threading][index]}"
-      item.update_attribute(:threading, params[:threading][index])
+    objects = []
+    params[:threading].each_with_index do |item, index|
+      img = listing.listing_images.where(:threading => item.to_i).first
+      img.threading = index + 1
+      objects << img
     end
+
+    objects.each do |object|
+      object.save
+    end
+
     render :text => params
   end
 

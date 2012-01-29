@@ -23,11 +23,14 @@ $(function() {
     start: function(e, ui) {
       ui.placeholder.height(ui.item.height());
     },
-    update: function(e, ui) {
+    stop: function(e, ui) {
       id = $(this).attr('id');
       data = $(this).sortable('serialize');
       url = " /listings/image_update/"+id;
       $.post(url, data);
+    },
+    update: function(e, ui) {
+      window.location = window.location;
     }
   });
 
