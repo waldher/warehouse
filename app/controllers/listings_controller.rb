@@ -5,7 +5,7 @@ class ListingsController < ApplicationController
   # GET /listings.xml
   def index
     if(request.format.to_s.match(/json/))
-      @listings = Listing.where(:customer_id => @customer.id)
+      @listings = Listing.where(:customer_id => @customer.id).order("id DESC")
     else
       @listings = Listing.where(:customer_id => @customer.id).order("id DESC").limit(10)
     end
@@ -18,7 +18,11 @@ class ListingsController < ApplicationController
 
   def sync
     if @customer
-      @listings = Listing.where(:customer_id => @customer.id, :active => true, :foreign_active => true).includes(:listing_infos, :listing_images)
+      # ("listings"."manual_enabled" = 't' OR "listings"."manual_enabled" IS NULL AND "listings"."foreign_active" = 't')
+      t = Listing.arel_table
+      query = t[:manual_enabled].eq(true).or(t[:manual_enabled].eq(nil).and(t[:foreign_active].eq(true)))
+      @listings = Listing.where(:customer_id => @customer.id).where(query).
+        includes(:listing_infos, :listing_images)
       data = []
       time = Time.now
       @listings.each do |listing|
@@ -26,9 +30,7 @@ class ListingsController < ApplicationController
         infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
         data << listing.attributes.merge(:ad_image_urls => images, :listing_infos => infos, :location => (!listing.location.nil? ? listing.location.url : "miami"), :sublocation => (!listing.sublocation.nil? ? listing.sublocation.url : "mdc"), :ad_foreign_id => listing.foreign_id)
       end
-      logger.debug "It took #{Time.now-time} to iterate through listings"
       render :json => JSON.generate(data) 
-      logger.debug "Total Time: #{Time.now-time} (after JSON.generate)"
       #render :json => @listings.to_json(
       #  :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
       #  :methods => :ad_image_urls )
@@ -117,7 +119,7 @@ class ListingsController < ApplicationController
   # DELETE /listings/1.xml
   def destroy
     @listing = Listing.find(params[:id])
-    @listing.update_attributes(:active => !@listing.active)
+    @listing.toggle!(:manual_enabled)
 
     respond_to do |format|
       format.html { redirect_to(customer_listings_url(@customer)) }
@@ -138,7 +140,7 @@ class ListingsController < ApplicationController
   def get_json
     # Columns which we need to sort in order 
     # and the are in order as they appear on view page
-    columns = ['', 'updated_at', 'active', "", "", 'foreign_active']
+    columns = ['', 'updated_at', 'manual_enabled', "", "", 'foreign_active']
     # add additional empty fields though no necessary cuz they are dynamic field
     # and yet can't sort or order based on keys
     columns = ['', ''] + columns if @customer.craigslist_type == "apa"
@@ -180,9 +182,6 @@ class ListingsController < ApplicationController
     offset = params[:iDisplayStart].to_i
     limit = params[:iDisplayLength].to_i
     @data =  @listings.offset(offset).limit(limit)
-    logger.debug "==========================="
-    logger.debug @data.to_sql
-    logger.debug "==========================="
     datatable_data = {
       sEcho: params[:sEcho],
       iTotalRecords: Listing.where(:customer_id => @customer.id).count,
@@ -198,10 +197,9 @@ class ListingsController < ApplicationController
         listing.infos[:ad_price],
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.active ? 'Active' : 'Inactive',
+        listing.manual_enabled ? 'Active' : 'Inactive',
         act_de(listing),
         edit_it(listing),
-        listing.foreign_active ? 'Updated' : 'Outdated'
       ]
     }
     else
@@ -209,10 +207,9 @@ class ListingsController < ApplicationController
       [
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.active ? 'Active' : 'Inactive',
+        listing.manual_enabled ? 'Active' : 'Inactive',
         act_de(listing),
         edit_it(listing),
-        listing.foreign_active ? 'Updated' : 'Outdated'
       ]
     }
     end
@@ -223,14 +220,14 @@ class ListingsController < ApplicationController
   def act_de(listing)
     link = '<a rel="nofollow" data-method="delete" data-confirm="Are you sure you want to stop posting this ad?" href="'
     link += "/customers/#{@customer.id}/listings/#{listing.id}" + '">' 
-    link += (listing.active ? 'Deactivate' : 'Activate') + '</a>'
+    link += (listing.manual_enabled ? 'Deactivate' : 'Activate') + '</a>'
   end
 
   def edit_it(listing)
 
     link = '<a  href="'
     link += "/customers/#{@customer.id}/listings/#{listing.id}/edit" + '">' 
-    link += (listing.active ? 'Edit' : 'Edit') + '</a>'
+    link += (listing.manual_enabled ? 'Edit' : 'Edit') + '</a>'
     return link
   end
 
