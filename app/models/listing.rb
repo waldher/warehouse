@@ -20,9 +20,9 @@ class Listing < ActiveRecord::Base
   before_save :set_location_id
 
   def set_location_id
-    sub = Sublocation.where(:id => self.sublocation).first
-    loc = sub.location
-    self.location_id = loc
+    if sublocation
+      self.location_id = sublocation.location_id
+    end
   end
 
   def set_threading_number
