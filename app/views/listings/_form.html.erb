@@ -56,7 +56,7 @@
       </span>
       <span class="field">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.where(:url => "miami"), :sublocations, :name, :id, :name)%>
+        <%= f.grouped_collection_select(:sublocation_id, Location.where(:url => "miami"), :sublocations, :name, :id, :name) %>
       </span>
     </div>
     <% if ["apa", "rea"].include?(@customer.craigslist_type) %>
