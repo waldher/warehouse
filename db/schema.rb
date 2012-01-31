@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120129142117) do
+ActiveRecord::Schema.define(:version => 20120131094905) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -86,6 +86,8 @@ ActiveRecord::Schema.define(:version => 20120129142117) do
     t.datetime "updated_at"
     t.string   "craigslist_type", :default => "apa", :null => false
     t.string   "setup_nonce"
+    t.integer  "location_id"
+    t.integer  "sublocation_id"
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"

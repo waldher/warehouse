@@ -13,11 +13,14 @@ class Customer < ActiveRecord::Base
     attr['key'].blank? && attr['value'].blank?
   }
 
+  belongs_to :location
+  belongs_to :sublocation
+
   validates :email_address, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :on => :create }
   validates_uniqueness_of :email_address
 
   attr_accessor :password
-  attr_accessible :email_address, :password, :password_confirmation, :key, :craigslist_type
+  attr_accessible :email_address, :password, :password_confirmation, :key, :craigslist_type, :location_id, :sublocation_id
 
   validates :password, :confirmation => true, :on => :update
 
@@ -29,12 +32,23 @@ class Customer < ActiveRecord::Base
 
   before_create :set_setup_nonce
 
+  before_save :set_locations
+
   AVAILABLE_CRAIGSLIST_TYPES = {
     'Apartments / Housing' => 'apa',
     'Cars & Trucks - By Dealer' => 'ctd',
     'Gigs' => 'ggg',
     'Real Estate for Sale' => 'rea'
   }
+
+  def set_locations
+    p "-----------------------------"
+    p self.to_yaml
+    sub = Sublocation.where(:id => self.sublocation_id).first
+    loc = sub.location
+    self.location_id = loc
+    p "-----------------------------"
+  end
 
   def set_setup_nonce
     self.setup_nonce = (0...8).map{97.+(rand(25)).chr}.join

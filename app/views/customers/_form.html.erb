@@ -17,6 +17,10 @@
     <%= f.text_field :key %>
   </p>
   <p>
+    <%= f.label :sublocation %><br />
+    <%= f.grouped_collection_select :sublocation_id, Location.all, :sublocations, :name, :id,:name %>
+  </p>
+  <p>
   <% disabled = @customer.new_record? ? false : true %>
     <%= f.label :craigslist_type %><br />
     <%= f.select :craigslist_type, Customer::AVAILABLE_CRAIGSLIST_TYPES, :disabled => disabled %>
