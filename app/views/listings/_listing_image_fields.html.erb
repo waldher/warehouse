@@ -4,6 +4,7 @@
   </div>
 <% else %>
   <li id="<%= "threading_#{f.object.threading}" %>">
+  <%= f.hidden_field(:threading, :class => :threading) %>
   <span class="fields image"  style="display: block;">
     <a href="#" id="sort-icon"><img src="/images/sort_neutral_green.png" /></a>
     <a href="<%= f.object.image.url %>" class="thumb">
