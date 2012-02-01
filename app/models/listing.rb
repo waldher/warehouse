@@ -47,6 +47,10 @@ class Listing < ActiveRecord::Base
     return infos[:ad_title]
   end
 
+  def active
+    return manual_enabled or (manual_enabled.nil? and foreign_active)
+  end
+
   def postable
     # Return false if no images?
 
