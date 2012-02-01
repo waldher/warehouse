@@ -5,7 +5,7 @@ class ListingsController < ApplicationController
   # GET /listings.xml
   def index
     if(request.format.to_s.match(/json/))
-      @listings = Listing.where(:customer_id => @customer.id).order("id DESC")
+      @listings = Listing.where(:customer_id => @customer.id)
     else
       @listings = Listing.where(:customer_id => @customer.id).order("id DESC").limit(10)
     end
@@ -152,10 +152,10 @@ class ListingsController < ApplicationController
   def get_json
     # Columns which we need to sort in order 
     # and the are in order as they appear on view page
-    columns = ['', 'updated_at', 'manual_enabled', "", "", 'foreign_active']
+    columns = ['', 'updated_at', 'manual_enabled', "", ""]
     # add additional empty fields though no necessary cuz they are dynamic field
     # and yet can't sort or order based on keys
-    columns = ['', ''] + columns if @customer.craigslist_type == "apa"
+    columns = ['', ''] + columns if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea'
     # Sort one of the column
     params[:iSortingCols].to_i.times do |i|
       if(params["bSortable_#{i}"] == "true")
