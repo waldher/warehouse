@@ -56,7 +56,7 @@
       </span>
       <span class="field">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.where(:url => "miami"), :sublocations, :name, :id, :name)%>
+        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id || @customer.sublocation_id) %>
       </span>
     </div>
     <% if ["apa", "rea"].include?(@customer.craigslist_type) %>
@@ -133,8 +133,8 @@
     </div>
 
     <div class="field">
-      <%= f.label :active, "Activate this listing" %>
-      <%= f.check_box :active %>
+      <%= f.label :manual_enabled, "Activate this listing" %>
+      <%= f.check_box :manual_enabled %>
     </div>
     <div class="actions">
       <%= f.submit %>

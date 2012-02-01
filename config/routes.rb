@@ -1,6 +1,12 @@
 Marsala::Application.routes.draw do
 
 
+  resources :directories, :only => :none do
+    collection do 
+      get :clicks, :formats => [:json]
+    end
+  end
+
   resources :locations do 
     resources :sublocations
   end
