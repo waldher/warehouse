@@ -190,7 +190,7 @@ namespace :rentjuicer do
           print "|#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = leadadvo_id
-          listing.active = true
+          listing.manual_active = true
           new = true
         end
         puts "#{customer[:name]}#{ec}"
