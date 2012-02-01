@@ -48,7 +48,7 @@ class Listing < ActiveRecord::Base
   end
 
   def active
-    return manual_enabled or (manual_enabled.nil? and foreign_active)
+    return (manual_enabled or (manual_enabled.nil? and foreign_active))
   end
 
   def postable
