@@ -76,7 +76,6 @@ namespace :plumpads do
           print "#{listing_attr[multiline_label]} => #{multiline_body}\n"
         end
         
-        listing.active = true
         listing.foreign_active = true
         listing.location = location
         listing.sublocation = sublocation
