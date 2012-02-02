@@ -80,7 +80,7 @@ class MlxScrape
           listing = Listing.new
           listing.customer_id = customer_id
           listing.foreign_id = foreign_id
-          listing.active = true
+          listing.manual_enabled = true
           save = true
         end 
         special_puts pre_message+"#{customer_key}#{ec}"
