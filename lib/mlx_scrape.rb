@@ -15,6 +15,9 @@ class MlxScrape
   def ec; "\x1b[0m"; end
 
 #Info is a hash with:
+# :urls => ['array of mlx scrape urls']
+# :key => 'customer_key'
+# :location => 'default location' (Nil if - autodetect required or location unknown)
   def mlx_import(info)
     @running = true
     Kernel.trap("INT"){
