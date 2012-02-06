@@ -29,7 +29,6 @@ class MlxScrape
 
     agent = Mechanize.new
 
-    #This saves the need to query and loop through the Listings table for each customer.
     customer_key = info[:key]
     begin
       customer_id = Customer.where("key like ?",customer_key).first.id 
