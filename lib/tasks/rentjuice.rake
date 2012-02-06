@@ -266,7 +266,7 @@ end
 ############# Disable Check
 ###########################################################
 def disable(listing)
-  if listing.info[:ad_title].nil? or listing.info[:ad_title].empty?
+  if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
     puts "|#{c(red)}Disabled due to empty title#{ec}"
     return true
   end
@@ -377,7 +377,7 @@ def update_vars(listing, rentjuicer)
         save = true
       end
       next #For each info that requires special processing a next is needed (to avoid that end of the loop)
-    elsif key_symbol == :ad_title and (listing.info[:ad_title].nil? or listing.info[:ad_title].empty?)
+    elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
       titles = []
       (0..2).each{
         title = ListingTitle.generate(
