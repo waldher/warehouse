@@ -100,8 +100,8 @@ class MlxScrape
 
         ########################## LOCATION ############################
         location = nil
-        if !info[:location].nil?
-          location = info[:location]
+        if !info[:ad_location].nil?
+          location = info[:ad_location]
         else
           building = nil
           $listing_page.body.split("\n").each{|l| building = l if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/) }
