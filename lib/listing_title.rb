@@ -52,6 +52,6 @@ class ListingTitle
                       LOCATION_ADJECTIVES.sample,
                       location,
                       amenities.empty? ? nil : WITHS.sample,
-                      amenities.empty? ? nil : amenities].reject{|word| word.nil? }.join(" "))[0..69]
+                      amenities.empty? ? nil : amenities].reject{|word| word.nil? }.join(" "))[0..69].gsub(/  /,' ')
   end
 end
