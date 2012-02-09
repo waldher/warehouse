@@ -5,9 +5,9 @@ gem 'rails', '3.0.9'
 
 gem 'pg'
 gem 'sqlite3'
-gem 'aws-s3', :require => 'aws/s3'
+gem 'aws-sdk'
 
-gem 'paperclip', '~> 2.3'
+gem 'paperclip', '~>2.5.2'
 
 gem 'jquery-rails'
 
