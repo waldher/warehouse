@@ -190,7 +190,7 @@ namespace :rentjuicer do
           print "|#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = leadadvo_id
-          listing.active = true
+          listing.manual_enabled = true
           new = true
         end
         puts "#{customer[:name]}#{ec}"
@@ -370,15 +370,13 @@ def update_vars(listing, rentjuicer)
     #Deal with special symbols
     if key_symbol == :ad_rent
       key_symbol = :ad_price
-    #elsif key_symbol == :ad_features
-    #  key_symbol == :ad_keywords
     elsif key_symbol == :ad_rentjuice_id
       if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
         print_change(key_symbol, listing.foreign_id.nil? ? "": listing.foreign_id, val)
         listing.foreign_id = val.to_s
         save = true
       end
-      next
+      next #For each info that requires special processing a next is needed (to avoid that end of the loop)
     elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
       titles = []
       (0..2).each{

@@ -22,3 +22,5 @@ gem 'hirb'
 gem 'rentjuicer', :git => 'git://github.com/lgbr/rentjuicer.git'
 
 gem 'whenever', :require => false
+
+gem 'selenium-webdriver'
