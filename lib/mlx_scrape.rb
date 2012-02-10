@@ -197,6 +197,7 @@ class MlxScrape
         images.rotate!(-3)
         load_images(listing, images)
 
+        ########################## STATUS ##############################
         temp_active = nil
         $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
         temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
@@ -210,16 +211,15 @@ class MlxScrape
         special_puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
         print "`-----------------------------------------------------------------------\n"
         if !@running
-          special_puts "#{active.count} listings seen."
-          activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
-          special_puts "#{activate} listings were activated."
-
-          deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
-          special_puts "#{deactivate} listing(s) were deactivated."
+          activate_listings(customer_id, active)
           return
         end
       end
     end
+    activate_listings(customer_id, active)
+  end
+  
+  def acitvate_listings(customer_id, active)
     special_puts "#{active.count} listings seen."
     activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
     special_puts "#{activate} listings were activated."
@@ -248,8 +248,8 @@ class MlxScrape
     #Assumption being, images never change.
     if !photos.empty? and listing.ad_image_urls.empty?
 
-      for photo in photos
-        if !photo.include?("/images/original/missing.png")
+      for photo_uri in photos
+        if !photo_uri.include?("/images/original/missing.png")
 
           attempts = 5
           while attempts > 0
@@ -257,9 +257,7 @@ class MlxScrape
 
               photo_uri = ""
               #Some listings don't have fullsize versions of the photos
-              if !photo.nil?
-                photo_uri = photo
-              else
+              if photo_uri.nil?
                 break
               end
 
