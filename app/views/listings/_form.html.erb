@@ -46,9 +46,9 @@
     <% end %>
 
     <div>
-      <span class="field">
+      <span class="field title">
         <%= infos.label :ad_title, "Ad Title" %><br />
-        <%= infos.text_field :ad_title, :maxlength => 70, :size => 70, :value => @listing.infos[:ad_title], :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
+        <%= infos.text_field "ad_title[1]", :maxlength => 70, :size => 70, :value => @listing.infos[:ad_title].try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
       <span class="field">
         <%= infos.label :ad_location, "Location Description" %><br />
@@ -58,6 +58,14 @@
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
         <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id || @customer.sublocation_id) %>
       </span>
+      <% unless @listing.new_record? %>
+        <% @listing.infos[:ad_title].each_with_index do |title, index| %>
+          <span class="field title">
+            <%= infos.label :ad_title, "Ad Title" %><br />
+            <%= infos.text_field "ad_title[#{index+2}]", :maxlength => 70, :size => 70, :value => title, :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
+          </span>
+        <% end %>
+      <% end %>
     </div>
     <% if ["apa", "rea"].include?(@customer.craigslist_type) %>
       <div>

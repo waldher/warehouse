@@ -88,9 +88,7 @@ class ListingsController < ApplicationController
   def create
     @listing = Listing.new(params[:listing])
     @listing.customer_id = @customer.id
-
-    @listing.infos = params[:listing][:infos]
-
+    @listing.infos = get_attributes
 
     respond_to do |format|
       if @listing.save
@@ -108,6 +106,7 @@ class ListingsController < ApplicationController
   def update
     @listing = Listing.find(params[:id])
     @listing.customer_id = @customer.id
+    params[:listing][:infos] = get_attributes
 
     respond_to do |format|
       if @listing.update_attributes(params[:listing])
@@ -234,6 +233,15 @@ class ListingsController < ApplicationController
     link += "/customers/#{@customer.id}/listings/#{listing.id}/edit" + '">' 
     link += (listing.manual_enabled ? 'Edit' : 'Edit') + '</a>'
     return link
+  end
+
+  def get_attributes
+    titles_ary = []
+    titles = params[:listing][:infos].delete(:ad_title)
+    titles.each { |key, value| titles_ary << value }
+    titles_ary.select! { |item| item.present? }
+    params[:listing][:infos][:ad_title] = titles_ary
+    params[:listing][:infos]
   end
 
 end

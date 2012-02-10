@@ -35,4 +35,56 @@ $(function() {
     console.log(content);
     $(this).fancybox({content: content});
   });
+
+  $(".title").live('keyup', function(event) {
+    var self = this;
+    // check if user have type some title or not
+    haveTitle = $(self).parent().find('.title').last().find('input').val();
+    // if have title we need a new empty title field
+    if(haveTitle) {
+      // clone the element else it will only change the position
+      var content = $(self).clone();
+      // get the element string so can search for num(regex need string)
+      var html_content = content.html();
+      // ad_title[1] it will capture '1' as string
+      var regex = new RegExp(/ad_title\[(\d+)\]/);
+      // parse it to get integer 
+      var num = parseInt(html_content.match(regex)[1], 10);
+      // replace any occurance of regex_pattern 
+      html_content = html_content.replace(/ad_title\[(\d+)\]/g, "ad_title["+ ++num + "]");
+      html_content = $("<span></span>").attr("class", "field title").html(html_content);
+
+      // convert it back to jquery element
+      content = $(html_content);
+
+      // reset value of new to input to empty 
+      content.find('input').val('');
+      // append it to parent node
+      var node = $(this).parent().append(content);
+      //$('span.title').last().css('display','none');
+      // for animation hiding and then showing
+      $('span.title').last().hide().slideDown("slow");
+
+      // add event blur to new elements so if the are blank remove from the list
+      $(".title").find('input').blur(function() {
+        if(!$(this).val().trim()) {
+          $(this).closest('.title').slideUp("normal", function() {
+            $(this).remove();
+          });
+        }
+      });
+
+      //content.appendTo($(this).parent());
+      node.find('input').attr('title', " Make your ad titles as eye-catching and appealing to prospective clients as possible");
+      node.find('input').tooltip();
+    }
+  });
+
+  // it will be applied to first element
+  // though I'm not using it
+
+  $(".title input").blur(function() {
+  });
+
+
 });
