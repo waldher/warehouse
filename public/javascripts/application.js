@@ -52,7 +52,7 @@ $(function() {
       var num = parseInt(html_content.match(regex)[1], 10);
       // replace any occurance of regex_pattern 
       html_content = html_content.replace(/ad_title\[(\d+)\]/g, "ad_title["+ ++num + "]");
-      html_content = $("<span></span>").attr("class", "field title").html(html_content);
+      html_content = $("<span></span>").attr({"class": "field title", "style": "display:block;"}).html(html_content);
 
       // convert it back to jquery element
       content = $(html_content);
@@ -84,6 +84,11 @@ $(function() {
   // though I'm not using it
 
   $(".title input").blur(function() {
+        if(!$(this).val().trim()) {
+          $(this).closest('.title').slideUp("normal", function() {
+            $(this).remove();
+          });
+        }
   });
 
 
