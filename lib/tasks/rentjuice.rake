@@ -1,4 +1,4 @@
-require 'uri'
+require 'open-uri'
 require 'rentjuicer'
 require 'listing_title'
 
@@ -426,12 +426,12 @@ def get_location(listing, rentjuicer)
 
   old_address.gsub!(/'/,' ')
   new_address.gsub!(/'/,' ')
+  puts "|Old Address: #{old_address}"
+  puts "|New Address: #{new_address}"
 
   done = false
   fail_attempts = 0
   while !done and (listing.infos[:ad_location].nil? or old_address != new_address)
-    puts "|Old Address: #{old_address}"
-    puts "|New Address: #{new_address}"
 
     begin
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true").read
