@@ -52,17 +52,13 @@ namespace :rentjuicer do
       print " *****************************\n"
     }
 
-#Some Neighborhood Options
-["Miami Beach", "North Miami Beach", "Key Biscayne", "Miami", "South Beach", "Surfside", "Sunny Isles Beach", "Brickell", "Bal Harbour", "Coconut Grove", "South Miami", "Midtown Miami", "Coral Gables", "Downtown Miami", "Venetian Islands", "Bay Harbor Islands", "North Miami", "North Bay Village"] 
-
-
     kanga_neighborhoods = [
     "Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", 
     "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", 
     "North Palm Beach", "Royal Palm Beach", "Stuart", "Tequesta", "Wellington", "West Palm Beach"] * ", "
     kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1, :featured => 1}]
 
-    casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"]
+    casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"] * ", "
 
     maf = [
     {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
@@ -71,7 +67,7 @@ namespace :rentjuicer do
     elizabeth_neighborhoods = ["Miami Beach", "Brickell", "Surfside"] * ", "
     paola_neighborhoods     = [               "Brickell", "Coral Gables", "Coconut Grove", "Downtown Miami"] * ", "
     ronda_neighborhoods     = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
-    luis_neighborhoods      = [               "Brickell", "Midtown Miami"]
+    luis_neighborhoods      = [               "Brickell", "Midtown Miami"] * ", "
 
     customers = [
     {:name => 'maf_elizabeth',
@@ -205,15 +201,25 @@ namespace :rentjuicer do
           listing.location = customer[:location]
           location_changed = true
         end
-        if listing.sublocation.nil? or listing.sublocation.id != customer[:sublocation].id
+        hoods = rentjuicer.as_json["neighborhoods"]
+        subloc = nil
+        for hood in hoods
+          temp_subloc = detect_sublocation(hood)
+          if !temp_subloc.nil? and temp_subloc != subloc
+            print "|#{c(red)}Error two sublocations detected: #{hoods.to_s}"
+          end
+          subloc = temp_subloc
+        end
+        subloc = Sublocation.find_by_url(subloc)
+        if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.sublocation = customer[:sublocation]
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc || customer[:sublocation].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          listing.sublocation = subloc || customer[:sublocation]
           location_changed = true
         end
 
-        if update_vars(listing, rentjuicer) or new or location_changed#(New implies updated_vars returns true but, just for clarity I have included it.)
+        if update_vars(listing, rentjuicer) or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
@@ -376,7 +382,7 @@ def update_vars(listing, rentjuicer)
         listing.foreign_id = val.to_s
         save = true
       end
-      next #For each info that requires special processing a next is needed (to avoid that end of the loop)
+      next
     elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
       titles = []
       (0..2).each{
@@ -456,6 +462,43 @@ def get_location(listing, rentjuicer)
   return false
 end
 
+###########################################################
+############# Get_SubLocation
+###########################################################
+def detect_sublocation(neighborhood)
+  if neighborhood == "Lakeworth"
+    neighborhood = "Lake Worth"
+  end
+  puts "|Neighborhood: #{neighborhood}"
+  search_address = neighborhood + ", FL"
+
+  done = false
+  attempts = 0
+  while !done
+    begin
+      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(search_address)}&sensor=true").read
+      sleep(0.1)
+
+      parsed_json = ActiveSupport::JSON.decode(json_string)
+      location1 = parsed_json["results"].first["address_components"][1]["short_name"] rescue location1 = nil
+      location2 = parsed_json["results"].first["address_components"][2]["short_name"] rescue location2 = nil
+      mdc = ["Miami-Dade","Miami"].to_h{"mdc"}
+      brw = ["Broward"].to_h{"brw"}
+      pbc = ["Palm Beach"].to_h{"pbc"}
+      locations = {}.merge(mdc).merge(brw).merge(pbc)
+      return locations[location1] if locations.keys.include?(location1)
+      return locations[location2] if locations.keys.include?(location2)
+
+      done = true
+    rescue => e
+      puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{attempts += 1}#{ec}"
+      done = true if attempts > 5
+      sleep(0.5)
+    end
+  end
+  return false
+end
+
 def blue; 4; end
 def gray; 8; end
 def l_blue; 6; end
@@ -465,6 +508,14 @@ def green; 2; end
 def red; 1; end
 def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
 def ec; "\x1b[0m"; end
+
+class Array
+  def to_h(&block)
+    Hash[*self.collect { |v|
+      [v, block.call(v)]
+    }.flatten]
+  end
+end
 
 def find_dupe_vals (rentjuice_listings)
   key_map = {}
