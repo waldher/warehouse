@@ -208,7 +208,7 @@ namespace :rentjuicer do
           if !subloc.nil? and temp_subloc != subloc
             puts "|#{c(red)}Error multiple sublocations detected: #{hoods.to_s}: #{temp_subloc} #{subloc}#{ec}"
           end
-          subloc = temp_subloc
+          subloc ||= temp_subloc
         end
         subloc = Sublocation.find_by_url(subloc)
         if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
