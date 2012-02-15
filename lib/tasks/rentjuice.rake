@@ -124,6 +124,15 @@ namespace :rentjuicer do
     :sublocation => Sublocation.find_by_url("pbc")
     },
 
+    {:name => 'gus_b',
+    :rj_id => '82eb9663329da2a97ca111496c4ae8a1',
+    :hoods => {:neighborhoods => []},
+    :filter => [{:include_mls => 1, :featured => 1}],
+    :email => {:agent => "GusBergamini@yahoo.com"},
+    :location => Location.find_by_url("miami"),
+    :sublocation => Sublocation.find_by_url("brw")
+    },
+
     {:name => 'sea_rea_test',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
     :hoods => {:neighborhoods => casa_neighborhoods},
