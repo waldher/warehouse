@@ -206,7 +206,7 @@ namespace :rentjuicer do
         for hood in hoods
           temp_subloc = detect_sublocation(hood)
           if !subloc.nil? and temp_subloc != subloc
-            puts "|#{c(red)}Error multiple sublocations detected: #{hoods.to_s}: #{temp_subloc} #{subloc}#{ec}"
+            puts "|#{c(red)}Error multiple sublocations detected: #{hoods.to_s}: #{temp_subloc || "nil"} #{subloc || "nil"}#{ec}"
           end
           subloc ||= temp_subloc
         end
