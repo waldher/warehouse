@@ -196,8 +196,8 @@ namespace :rentjuicer do
         location_changed = false
         if listing.location.nil? or listing.location.id != customer[:location].id
           print "|#{c(yellow)}Location   Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          print "  Was #{c(blue)}<#{ec}#{listing.location.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.location = customer[:location]
           location_changed = true
         end
@@ -205,16 +205,16 @@ namespace :rentjuicer do
         subloc = nil
         for hood in hoods
           temp_subloc = detect_sublocation(hood)
-          if !temp_subloc.nil? and temp_subloc != subloc
-            print "|#{c(red)}Error two sublocations detected: #{hoods.to_s}"
+          if !subloc.nil? and temp_subloc != subloc
+            puts "|#{c(red)}Error multiple sublocations detected: #{hoods.to_s}: #{temp_subloc} #{subloc}#{ec}"
           end
           subloc = temp_subloc
         end
         subloc = Sublocation.find_by_url(subloc)
         if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc || customer[:sublocation].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.sublocation = subloc || customer[:sublocation]
           location_changed = true
         end
@@ -426,12 +426,12 @@ def get_location(listing, rentjuicer)
 
   old_address.gsub!(/'/,' ')
   new_address.gsub!(/'/,' ')
-  puts "|Old Address: #{old_address}"
-  puts "|New Address: #{new_address}"
 
   done = false
   fail_attempts = 0
   while !done and (listing.infos[:ad_location].nil? or old_address != new_address)
+    puts "|Old Address: #{old_address}"
+    puts "|New Address: #{new_address}"
 
     begin
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true").read
