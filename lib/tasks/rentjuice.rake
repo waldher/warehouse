@@ -70,41 +70,41 @@ namespace :rentjuicer do
     luis_neighborhoods      = [               "Brickell", "Midtown Miami"] * ", "
 
     customers = [
-    {:name => 'maf_elizabeth',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => elizabeth_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "elizabeth@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_elizabeth',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => elizabeth_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "elizabeth@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
-    {:name => 'maf_ronda',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => ronda_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "ronda@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_ronda',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => ronda_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "ronda@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
-    {:name => 'maf_paola',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => paola_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "paola@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_paola',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => paola_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "paola@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
-    {:name => 'maf_luis',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => luis_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "luis@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_luis',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => luis_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "luis@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
     {:name => 'kangarent',
     :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
@@ -131,25 +131,25 @@ namespace :rentjuicer do
     :email => {:agent => "GusBergamini@yahoo.com"},
     :location => Location.find_by_url("miami"),
     :sublocation => Sublocation.find_by_url("brw")
-    },
-
-    {:name => 'sea_rea_test',
-    :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1, :featured => 1}],
-    :email => {:agent => "brendan@leadadvo.com"},
-    :location => Location.find_by_url("seattle"),
-    :sublocation => Sublocation.find_by_url("see")
-    },
-
-    {:name => 'mdc_rea_test',
-    :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1, :featured => 1}],
-    :email => {:agent => "brendan@leadadvo.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
     }
+
+    #{:name => 'sea_rea_test',
+    #:rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
+    #:hoods => {:neighborhoods => casa_neighborhoods},
+    #:filter => [{:include_mls => 1, :featured => 1}],
+    #:email => {:agent => "brendan@leadadvo.com"},
+    #:location => Location.find_by_url("seattle"),
+    #:sublocation => Sublocation.find_by_url("see")
+    #},
+
+    #{:name => 'mdc_rea_test',
+    #:rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
+    #:hoods => {:neighborhoods => casa_neighborhoods},
+    #:filter => [{:include_mls => 1, :featured => 1}],
+    #:email => {:agent => "brendan@leadadvo.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #}
     ]
 
     @connections = {}
@@ -507,6 +507,7 @@ def detect_sublocation(neighborhood)
   end
   return nil
 end
+c
 
 def blue; 4; end
 def gray; 8; end
