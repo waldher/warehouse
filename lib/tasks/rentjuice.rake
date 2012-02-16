@@ -153,7 +153,7 @@ namespace :rentjuicer do
     #}
     ]
 
-    proxy_addr = ["74.221.217.34","74.221.217.28"].sample
+    proxy_addr = ["74.221.217.34"].sample
     proxy_port = (4001..4020).to_a.sample
     @proxy = proxy_addr + ":" + proxy_port.to_s
 
