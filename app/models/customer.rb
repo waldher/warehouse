@@ -8,6 +8,7 @@ class Customer < ActiveRecord::Base
   }
 
   has_and_belongs_to_many :capabilities
+  accepts_nested_attributes_for :customer_infos
 
   accepts_nested_attributes_for :latest_infos, :allow_destroy => true, :reject_if => proc { |attr|
     attr['key'].blank? && attr['value'].blank?
@@ -21,6 +22,7 @@ class Customer < ActiveRecord::Base
 
   attr_accessor :password
   attr_accessible :email_address, :password, :password_confirmation, :key, :craigslist_type, :location_id, :sublocation_id
+  attr_accessible :customer_infos, :customer_infos_attributes
 
   validates :password, :confirmation => true, :on => :update
 
@@ -42,12 +44,11 @@ class Customer < ActiveRecord::Base
   }
 
   def set_locations
-    p "-----------------------------"
-    p self.to_yaml
-    sub = Sublocation.where(:id => self.sublocation_id).first
-    loc = sub.location
-    self.location_id = loc
-    p "-----------------------------"
+    if(self.sublocation_id)
+      sub = Sublocation.where(:id => self.sublocation_id).first
+      loc = sub.location
+      self.location_id = loc
+    end
   end
 
   def set_setup_nonce

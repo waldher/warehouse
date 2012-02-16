@@ -8,6 +8,27 @@
     </ul>
   <% end %>
 
+    <p>
+      <%= label_tag "Rentjuicer ID" %><br />
+      <%= @ids.present? ? hidden_field_tag("customer[customer_infos_attributes][0][id]", @ids[:rj_id]) : "" %>
+      <%= hidden_field_tag "customer[customer_infos_attributes][0][key]", "rj_id" %>
+      <%= text_field_tag "customer[customer_infos_attributes][0][value]", @info[:rj_id], :size => 30  %>
+    </p>
+
+    <p>
+      <%= label_tag "Neighborhoods" %><br />
+      <%= @ids.present? ? hidden_field_tag("customer[customer_infos_attributes][1][id]", @ids[:neighborhoods]) : "" %>
+      <%= hidden_field_tag "customer[customer_infos_attributes][1][key]", "neighborhoods" %>
+      <%= text_area_tag "customer[customer_infos_attributes][1][value]", @info[:neighborhoods]  %>
+    </p>
+
+    <p>
+      <%= label_tag "Filters(JSON string goes here and keys should be double quoted)" %><br />
+      <%= @ids.present? ? hidden_field_tag("customer[customer_infos_attributes][2][id]", @ids[:filter]) : "" %>
+      <%= hidden_field_tag "customer[customer_infos_attributes][2][key]", "filter" %>
+      <%= text_area_tag "customer[customer_infos_attributes][2][value]", @info[:filter]  %>
+    </p>
+
   <p>
     <%= f.label :email_address %><br />
     <%= f.email_field :email_address %>
