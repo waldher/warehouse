@@ -44,7 +44,7 @@ class Listing < ActiveRecord::Base
   end
 
   def title
-    return infos[:ad_title]
+    return infos[:ad_title].kind_of?(String) ? [infos[:ad_title]] : infos[:ad_title]
   end
 
   def active

@@ -206,7 +206,7 @@ class ListingsController < ApplicationController
       [
         listing.infos[:ad_address],
         listing.infos[:ad_price],
-        listing.title,
+        view_context.truncate(listing.title.join(", "), :radius => 25),
         listing.updated_at.strftime("%m/%d %I:%M %p"),
         listing.manual_enabled ? 'Active' : 'Inactive',
         act_de(listing),
