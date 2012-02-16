@@ -219,12 +219,12 @@ namespace :rentjuicer do
           end
           subloc ||= temp_subloc
         end
-        subloc = Sublocation.find_by_url(subloc)
+        subloc = Sublocation.find_by_url(subloc) || customer[:sublocation]
         if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
           print "|#{c(yellow)}Sublocaion Changed#{ec}"
           print "  Was #{c(blue)}<#{ec}#{listing.sublocation.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
           print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.sublocation = subloc || customer[:sublocation]
+          listing.sublocation = subloc
           location_changed = true
         end
 
