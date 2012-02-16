@@ -153,6 +153,10 @@ namespace :rentjuicer do
     #}
     ]
 
+    proxy_addr = ["74.221.217.34","74.221.217.28"].sample
+    proxy_port = (4001..4020).to_a.sample
+    @proxy = proxy_address + ":" + proxy_port
+
     @connections = {}
     @neighborhood_map = {}
   
@@ -429,7 +433,7 @@ def get_location(listing, rentjuicer)
     puts "|New Address: #{new_address}"
 
     begin
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true").read
+      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true",@proxy).read
       #0.1 sec is the minimum wait between request but, with all the other code the total time between requests should be >> 0.1
       #Thus, cutting it close ought to be safe.
       sleep(0.1)
@@ -475,7 +479,7 @@ def detect_sublocation(listing, rentjuicer, customer)
       attempts = 0
       while !done
         begin
-          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(search_address)}&sensor=true").read
+          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(search_address)}&sensor=true",@proxy).read
           sleep(0.1)
 
           parsed_json = ActiveSupport::JSON.decode(json_string)
