@@ -1,4 +1,5 @@
 require 'open-uri'
+require 'uri'
 require 'rentjuicer'
 require 'listing_title'
 
@@ -126,8 +127,8 @@ namespace :rentjuicer do
 
     {:name => 'gus_b',
     :rj_id => '82eb9663329da2a97ca111496c4ae8a1',
-    :hoods => {:neighborhoods => []},
-    :filter => [{:include_mls => 1, :featured => 1}],
+    :hoods => {:neighborhoods => ["Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", "Margate", "North Lauderdale", "Parkland", "Pompano Beach"]},
+    :filter => [{:include_mls => 1, :min_beds => 1, :max_beds => 4, :min_rent => 850, :max_rent => 2500}],
     :email => {:agent => "GusBergamini@yahoo.com"},
     :location => Location.find_by_url("miami"),
     :sublocation => Sublocation.find_by_url("brw")
@@ -153,6 +154,7 @@ namespace :rentjuicer do
     ]
 
     @connections = {}
+    @neighborhood_map = {}
   
     for customer in customers.shuffle
       puts ",============================================="
@@ -210,25 +212,12 @@ namespace :rentjuicer do
           listing.location = customer[:location]
           location_changed = true
         end
-        hoods = rentjuicer.as_json["neighborhoods"]
-        subloc = nil
-        for hood in hoods
-          temp_subloc = detect_sublocation(hood)
-          if !subloc.nil? and temp_subloc != subloc
-            puts "|#{c(red)}Error multiple sublocations detected: #{hoods.to_s}: #{temp_subloc || "nil"} #{subloc || "nil"}#{ec}"
-          end
-          subloc ||= temp_subloc
-        end
-        subloc = Sublocation.find_by_url(subloc) || customer[:sublocation]
-        if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
-          print "|#{c(yellow)}Sublocaion Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.sublocation = subloc
-          location_changed = true
-        end
+        save = false
+        save = true if detect_sublocation(listing,rentjuicer,customer)
+        save = true if get_location(listing,rentjuicer)
+        save = true if update_vars(listing,rentjuicer)
 
-        if update_vars(listing, rentjuicer) or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
+        if save or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
@@ -258,7 +247,7 @@ namespace :rentjuicer do
          
           deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active).update_all("foreign_active = 'f'")
           puts "#{deactivate} listing(s) were deactivated."
-          return
+          exit
         end
       end
       
@@ -270,7 +259,7 @@ namespace :rentjuicer do
       puts "#{deactivate} listing(s) were deactivated."
       
       if !@running
-        return
+        exit
       end
 
     end
@@ -368,10 +357,7 @@ end
 #Requires the listing object to store the values locally
 def update_vars(listing, rentjuicer)
   save = false
-  #Need to run the location before the infos are set
-  if get_location(listing, rentjuicer)
-    save = true
-  end
+
   rJson = rentjuicer.as_json
   #Convert the rentjuicer into json so it's easy to access the key, val pairs
   rJson.each{| key, val |
@@ -419,7 +405,7 @@ def update_vars(listing, rentjuicer)
 end
 
 def print_change(symbol, was, now)
-  print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
+  print "|#{c(yellow)}#{symbol.to_s.ljust(21," ")} Changed#{ec}"
   print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
   print "|  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
 end
@@ -474,38 +460,60 @@ end
 ###########################################################
 ############# Get_SubLocation
 ###########################################################
-def detect_sublocation(neighborhood)
-  if neighborhood == "Lakeworth"
-    neighborhood = "Lake Worth"
-  end
-  puts "|Neighborhood: #{neighborhood}"
-  search_address = neighborhood + ", FL"
-
-  done = false
-  attempts = 0
-  while !done
-    begin
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(search_address)}&sensor=true").read
-      sleep(0.1)
-
-      parsed_json = ActiveSupport::JSON.decode(json_string)
-      location1 = parsed_json["results"].first["address_components"][1]["short_name"] rescue location1 = nil
-      location2 = parsed_json["results"].first["address_components"][2]["short_name"] rescue location2 = nil
-      mdc = ["Miami-Dade","Miami"].to_h{"mdc"}
-      brw = ["Broward"].to_h{"brw"}
-      pbc = ["Palm Beach"].to_h{"pbc"}
-      locations = {}.merge(mdc).merge(brw).merge(pbc)
-      return locations[location1] if locations.keys.include?(location1)
-      return locations[location2] if locations.keys.include?(location2)
-
-      done = true
-    rescue => e
-      puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{attempts += 1}#{ec}"
-      done = true if attempts > 5
-      sleep(0.5)
+def detect_sublocation(listing, rentjuicer, customer)
+  subloc = nil
+  for neighborhood in rentjuicer.as_json["neighborhoods"] do
+    if neighborhood == "Lakeworth"
+      neighborhood = "Lake Worth"
     end
+    puts "|Neighborhood: #{neighborhood}"
+    
+    if @neighborhood_map[neighborhood].nil?
+      search_address = neighborhood + ", " + rentjuicer.state
+
+      done = false
+      attempts = 0
+      while !done
+        begin
+          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(search_address)}&sensor=true").read
+          sleep(0.1)
+
+          parsed_json = ActiveSupport::JSON.decode(json_string)
+          location1 = parsed_json["results"].first["address_components"][1]["short_name"] rescue location1 = nil
+          location2 = parsed_json["results"].first["address_components"][2]["short_name"] rescue location2 = nil
+          mdc = ["Miami-Dade","Miami"].to_h{"mdc"}
+          brw = ["Broward"].to_h{"brw"}
+          pbc = ["Palm Beach"].to_h{"pbc"}
+          locations = {}.merge(mdc).merge(brw).merge(pbc)
+          (@neighborhood_map[neighborhood] = locations[location1]; temp_subloc = locations[location1]) if locations.keys.include?(location1)
+          (@neighborhood_map[neighborhood] = locations[location2]; temp_subloc = locations[location2]) if locations.keys.include?(location2)
+
+          done = true
+        rescue => e
+          puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{attempts += 1}#{ec}"
+          done = true if attempts > 5
+          sleep(0.5)
+        end
+      end
+    else
+      temp_subloc = @neighborhood_map[neighborhood]
+    end
+    
+    if !subloc.nil? and temp_subloc != subloc
+      puts "|#{c(red)}Error multiple sublocations detected: #{rentjuicer.as_json["neighborhoods"].to_s}: #{temp_subloc || "nil"} #{subloc || "nil"}#{ec}"
+    end
+    subloc ||= temp_subloc
   end
-  return nil
+  
+  subloc = Sublocation.find_by_url(subloc) || customer[:sublocation]
+  if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
+    print "|#{c(yellow)}Sublocaion Changed#{ec}"
+    print "  Was #{c(blue)}<#{ec}#{listing.sublocation.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
+    print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
+    listing.sublocation = subloc
+    return true
+  end
+  return false
 end
 
 def blue; 4; end
