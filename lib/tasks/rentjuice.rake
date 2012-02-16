@@ -507,7 +507,6 @@ def detect_sublocation(neighborhood)
   end
   return nil
 end
-c
 
 def blue; 4; end
 def gray; 8; end
