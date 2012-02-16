@@ -5,7 +5,7 @@ class RenameActiveToManualEnabled < ActiveRecord::Migration
     # Iterate over all listings to get listing_infos
     Listing.includes(:listing_infos).where(:listing_infos => {:key => 'ad_foreign_id'}).each do |listing|
       listing.listing_infos.where(:key => 'ad_foreign_id').each do |info|
-        info.update_attribute(:value => nil)
+        info.destroy
       end
     end
   end

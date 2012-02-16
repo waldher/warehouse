@@ -15,6 +15,9 @@ class MlxScrape
   def ec; "\x1b[0m"; end
 
 #Info is a hash with:
+# :urls => ['array of mlx scrape urls']
+# :key => 'customer_key'
+# :location => 'default location' (Nil if - autodetect required or location unknown)
   def mlx_import(info)
     @running = true
     Kernel.trap("INT"){
@@ -26,7 +29,6 @@ class MlxScrape
 
     agent = Mechanize.new
 
-    #This saves the need to query and loop through the Listings table for each customer.
     customer_key = info[:key]
     begin
       customer_id = Customer.where("key like ?",customer_key).first.id 
@@ -65,6 +67,7 @@ class MlxScrape
         foreign_id = foreign_id.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
         foreign_id.strip!
 
+        save = {:save => false, :why => []}
         #Detect an old listing
         listings = nil
         listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
@@ -80,8 +83,9 @@ class MlxScrape
           listing = Listing.new
           listing.customer_id = customer_id
           listing.foreign_id = foreign_id
-          listing.active = true
-          save = true
+          listing.manual_enabled = true
+          save[:save] = true
+          save[:why] << "New Listing"
         end 
         special_puts pre_message+"#{customer_key}#{ec}"
         special_puts "MLX ID: #{foreign_id}"
@@ -93,7 +97,8 @@ class MlxScrape
         $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
         address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
         if val_update(listing, :ad_address, address)
-          save = true
+          save[:save] = true
+          save[:why] << "New Address"
         end
 
         ########################## LOCATION ############################
@@ -119,7 +124,8 @@ class MlxScrape
           location = parsed_json["results"].first["address_components"][2]["short_name"]
         end
         if val_update(listing, :ad_location, location)
-          save = true
+          save[:save] = true
+          save[:why] << "New Location"
         end
 
         ########################## PRICE ###############################
@@ -127,7 +133,8 @@ class MlxScrape
         $listing_page.body.split("\n").each{ |l| (price = l ) if l =~ /120px;height:22px;left:608px;width:152px;font:bold 12pt.*\$/ }
         price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
         if val_update(listing, :ad_price, price)
-          save = true
+          save[:save] = true
+          save[:why] << "New Prive"
         end
 
         ########################## BEDROOMS ############################
@@ -142,7 +149,8 @@ class MlxScrape
           end
         }
         if val_update(listing, :ad_bedrooms, bedrooms)
-          save = true
+          save[:save] = true
+          save[:why] << "New Bedrooms"
         end
 
         ########################## DESCRIPTION #########################
@@ -150,7 +158,8 @@ class MlxScrape
         $listing_page.body.split("\n").each{|l| desc = l if l =~ /.*552.*224,224,224.*/ }
         desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
         if val_update(listing, :ad_description, desc)
-          save = true
+          save[:save] = true
+          save[:why] << "New Description"
         end
 
         ########################## TITLES ##############################
@@ -168,12 +177,13 @@ class MlxScrape
             end
           }
           if val_update(listing, :ad_title, (titles * ",").gsub(/  /,' '))
-            save = true
+            save[:save] = true
+            save[:why] << "New Title"
           end
         end
 
-        if save
-          special_puts "#{c(l_blue)}Saving Listing#{ec}"
+        if save[:save]
+          special_puts "#{c(l_blue)}Saving Listing#{ec}: #{save[:why].join(", ")}"
           listing.save
         end
 
@@ -187,6 +197,7 @@ class MlxScrape
         images.rotate!(-3)
         load_images(listing, images)
 
+        ########################## STATUS ##############################
         temp_active = nil
         $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
         temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
@@ -200,16 +211,15 @@ class MlxScrape
         special_puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
         print "`-----------------------------------------------------------------------\n"
         if !@running
-          special_puts "#{active.count} listings seen."
-          activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
-          special_puts "#{activate} listings were activated."
-
-          deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
-          special_puts "#{deactivate} listing(s) were deactivated."
+          activate_listings(customer_id, active)
           return
         end
       end
     end
+    activate_listings(customer_id, active)
+  end
+  
+  def acitvate_listings(customer_id, active)
     special_puts "#{active.count} listings seen."
     activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
     special_puts "#{activate} listings were activated."
@@ -238,8 +248,8 @@ class MlxScrape
     #Assumption being, images never change.
     if !photos.empty? and listing.ad_image_urls.empty?
 
-      for photo in photos
-        if !photo.include?("/images/original/missing.png")
+      for photo_uri in photos
+        if !photo_uri.include?("/images/original/missing.png")
 
           attempts = 5
           while attempts > 0
@@ -247,9 +257,7 @@ class MlxScrape
 
               photo_uri = ""
               #Some listings don't have fullsize versions of the photos
-              if !photo.nil?
-                photo_uri = photo
-              else
+              if photo_uri.nil?
                 break
               end
 

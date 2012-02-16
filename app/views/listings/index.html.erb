@@ -9,8 +9,8 @@
       <% end %>
       <th>Title</th>
       <th>Last Updated</th>
-      <th>Status</th>
-      <th>Enable/Disable</th>
+      <th style="width: 35px;">Status</th>
+      <th style="width: 35px;">Enable/Disable</th>
       <th></th>
     </tr>
   </thead>
@@ -22,7 +22,7 @@
           <td><%= listing.infos[:ad_address] %></td>
           <td><%= listing.infos[:ad_price] %></td>
         <% end %>
-        <td><%= listing.title %></td>
+        <td><%= truncate(listing.title, :radius => 25) %></td>
         <td><%= listing.updated_at.strftime("%m/%d %I:%M %p") %></td>
         <td class="<%= listing.manual_enabled ? "postedGreen" : "postedRed" %>" style="text-align: center;"><%= listing.manual_enabled ? 'Active' : 'Inactive' %></td>
         <td><%= link_to (listing.manual_enabled ? 'Deactivate' : 'Activate'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.manual_enabled ? "stop" : "start"} posting this ad?" %></td>

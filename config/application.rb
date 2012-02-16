@@ -39,10 +39,10 @@ module Marsala
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
-    AWS::S3::Base.establish_connection!(
-      :access_key_id     => 'AKIAJ6UXVVBVZN52TSAQ',
-      :secret_access_key => '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'
-    )
-    BUCKET = "heathrow_logging"
+#    AWS::S3::Base.establish_connection!(
+#      :access_key_id     => 'AKIAJ6UXVVBVZN52TSAQ',
+#      :secret_access_key => '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'
+#    )
+#    BUCKET = "heathrow_logging"
   end
 end

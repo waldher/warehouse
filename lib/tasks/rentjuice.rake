@@ -1,3 +1,4 @@
+require 'open-uri'
 require 'uri'
 require 'rentjuicer'
 require 'listing_title'
@@ -52,17 +53,13 @@ namespace :rentjuicer do
       print " *****************************\n"
     }
 
-#Some Neighborhood Options
-["Miami Beach", "North Miami Beach", "Key Biscayne", "Miami", "South Beach", "Surfside", "Sunny Isles Beach", "Brickell", "Bal Harbour", "Coconut Grove", "South Miami", "Midtown Miami", "Coral Gables", "Downtown Miami", "Venetian Islands", "Bay Harbor Islands", "North Miami", "North Bay Village"] 
-
-
     kanga_neighborhoods = [
     "Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", 
     "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", 
     "North Palm Beach", "Royal Palm Beach", "Stuart", "Tequesta", "Wellington", "West Palm Beach"] * ", "
     kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1, :featured => 1}]
 
-    casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"]
+    casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"] * ", "
 
     maf = [
     {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
@@ -71,44 +68,44 @@ namespace :rentjuicer do
     elizabeth_neighborhoods = ["Miami Beach", "Brickell", "Surfside"] * ", "
     paola_neighborhoods     = [               "Brickell", "Coral Gables", "Coconut Grove", "Downtown Miami"] * ", "
     ronda_neighborhoods     = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
-    luis_neighborhoods      = [               "Brickell", "Midtown Miami"]
+    luis_neighborhoods      = [               "Brickell", "Midtown Miami"] * ", "
 
     customers = [
-    {:name => 'maf_elizabeth',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => elizabeth_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "elizabeth@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_elizabeth',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => elizabeth_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "elizabeth@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
-    {:name => 'maf_ronda',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => ronda_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "ronda@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_ronda',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => ronda_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "ronda@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
-    {:name => 'maf_paola',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => paola_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "paola@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_paola',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => paola_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "paola@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
-    {:name => 'maf_luis',
-    :rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    :hoods => {:neighborhoods => luis_neighborhoods},
-    :filter => maf,
-    :email => {:agent => "luis@miamiapartmentfinders.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
-    },
+    #{:name => 'maf_luis',
+    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
+    #:hoods => {:neighborhoods => luis_neighborhoods},
+    #:filter => maf,
+    #:email => {:agent => "luis@miamiapartmentfinders.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #},
 
     {:name => 'kangarent',
     :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
@@ -128,45 +125,40 @@ namespace :rentjuicer do
     :sublocation => Sublocation.find_by_url("pbc")
     },
 
-    {:name => 'sea_rea_test',
-    :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1, :featured => 1}],
-    :email => {:agent => "brendan@leadadvo.com"},
-    :location => Location.find_by_url("seattle"),
-    :sublocation => Sublocation.find_by_url("see")
-    },
-
-    {:name => 'mdc_rea_test',
-    :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1, :featured => 1}],
-    :email => {:agent => "brendan@leadadvo.com"},
+    {:name => 'gus_b',
+    :rj_id => '82eb9663329da2a97ca111496c4ae8a1',
+    :hoods => {:neighborhoods => ["Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", "Margate", "North Lauderdale", "Parkland", "Pompano Beach"]},
+    :filter => [{:include_mls => 1, :min_beds => 1, :max_beds => 4, :min_rent => 850, :max_rent => 2500}],
+    :email => {:agent => "GusBergamini@yahoo.com"},
     :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("mdc")
+    :sublocation => Sublocation.find_by_url("brw")
     }
+
+    #{:name => 'sea_rea_test',
+    #:rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
+    #:hoods => {:neighborhoods => casa_neighborhoods},
+    #:filter => [{:include_mls => 1, :featured => 1}],
+    #:email => {:agent => "brendan@leadadvo.com"},
+    #:location => Location.find_by_url("seattle"),
+    #:sublocation => Sublocation.find_by_url("see")
+    #},
+
+    #{:name => 'mdc_rea_test',
+    #:rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
+    #:hoods => {:neighborhoods => casa_neighborhoods},
+    #:filter => [{:include_mls => 1, :featured => 1}],
+    #:email => {:agent => "brendan@leadadvo.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("mdc")
+    #}
     ]
 
-
-    rj_customers = Customer.includes([:customer_infos, :location, :sublocation]).
-      where(:customer_infos => { :key => ['rj_id', 'filter', 'neighborhoods']})
-    customers = []
-    rj_customers.each do |customer|
-      customer_hash = {}
-      tmp_hash = {}
-      customer.customer_infos.each { |info| tmp_hash[info.key.to_sym] = info.value }
-      customer_hash[:name] = customer.key
-      customer_hash[:rj_id] = tmp_hash[:rj_id]
-      customer_hash[:hoods] = {:neightborhoods => tmp_hash[:neighborhoods]}
-      customer_hash[:filter] = JSON.parse(tmp_hash[:filter])
-      customer_hash[:email] = {:agent => customer.email_address }
-      customer_hash[:location] = customer.location
-      customer_hash[:sublocation] = customer.sublocation
-      customers << customer_hash
-    end 
-
+    proxy_addr = ["http://74.221.217.34","http://74.221.217.28"].sample
+    proxy_port = (47001..47020).to_a.sample
+    @proxy = proxy_addr + ":" + proxy_port.to_s
 
     @connections = {}
+    @neighborhood_map = {}
   
     for customer in customers.shuffle
       puts ",============================================="
@@ -209,7 +201,7 @@ namespace :rentjuicer do
           print "|#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = leadadvo_id
-          listing.active = true
+          listing.manual_enabled = true
           new = true
         end
         puts "#{customer[:name]}#{ec}"
@@ -219,20 +211,17 @@ namespace :rentjuicer do
         location_changed = false
         if listing.location.nil? or listing.location.id != customer[:location].id
           print "|#{c(yellow)}Location   Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.location.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          print "  Was #{c(blue)}<#{ec}#{listing.location.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
+          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
           listing.location = customer[:location]
           location_changed = true
         end
-        if listing.sublocation.nil? or listing.sublocation.id != customer[:sublocation].id
-          print "|#{c(yellow)}Sublocaion Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.sublocation.id.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:sublocation].id.to_s[0..100]}#{c(blue)}>#{ec}\n"
-          listing.sublocation = customer[:sublocation]
-          location_changed = true
-        end
+        save = false
+        save = true if detect_sublocation(listing,rentjuicer,customer)
+        save = true if get_location(listing,rentjuicer)
+        save = true if update_vars(listing,rentjuicer)
 
-        if update_vars(listing, rentjuicer) or new or location_changed#(New implies updated_vars returns true but, just for clarity I have included it.)
+        if save or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
           puts "|#{c(l_blue)}Saving Listing#{ec}"
           listing.save
         end
@@ -262,7 +251,7 @@ namespace :rentjuicer do
          
           deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active).update_all("foreign_active = 'f'")
           puts "#{deactivate} listing(s) were deactivated."
-          return
+          exit
         end
       end
       
@@ -274,7 +263,7 @@ namespace :rentjuicer do
       puts "#{deactivate} listing(s) were deactivated."
       
       if !@running
-        return
+        exit
       end
 
     end
@@ -372,10 +361,7 @@ end
 #Requires the listing object to store the values locally
 def update_vars(listing, rentjuicer)
   save = false
-  #Need to run the location before the infos are set
-  if get_location(listing, rentjuicer)
-    save = true
-  end
+
   rJson = rentjuicer.as_json
   #Convert the rentjuicer into json so it's easy to access the key, val pairs
   rJson.each{| key, val |
@@ -389,8 +375,6 @@ def update_vars(listing, rentjuicer)
     #Deal with special symbols
     if key_symbol == :ad_rent
       key_symbol = :ad_price
-    #elsif key_symbol == :ad_features
-    #  key_symbol == :ad_keywords
     elsif key_symbol == :ad_rentjuice_id
       if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
         print_change(key_symbol, listing.foreign_id.nil? ? "": listing.foreign_id, val)
@@ -425,7 +409,7 @@ def update_vars(listing, rentjuicer)
 end
 
 def print_change(symbol, was, now)
-  print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
+  print "|#{c(yellow)}#{symbol.to_s.ljust(21," ")} Changed#{ec}"
   print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
   print "|  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
 end
@@ -449,7 +433,7 @@ def get_location(listing, rentjuicer)
     puts "|New Address: #{new_address}"
 
     begin
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true").read
+      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true", :proxy => @proxy).read
       #0.1 sec is the minimum wait between request but, with all the other code the total time between requests should be >> 0.1
       #Thus, cutting it close ought to be safe.
       sleep(0.1)
@@ -477,6 +461,65 @@ def get_location(listing, rentjuicer)
   return false
 end
 
+###########################################################
+############# Get_SubLocation
+###########################################################
+def detect_sublocation(listing, rentjuicer, customer)
+  subloc = nil
+  for neighborhood in rentjuicer.as_json["neighborhoods"] do
+    if neighborhood == "Lakeworth"
+      neighborhood = "Lake Worth"
+    end
+    puts "|Neighborhood: #{neighborhood}"
+    
+    if @neighborhood_map[neighborhood].nil?
+      search_address = neighborhood + ", " + rentjuicer.state
+
+      done = false
+      attempts = 0
+      while !done
+        begin
+          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(search_address)}&sensor=true",:proxy => @proxy).read
+          sleep(0.1)
+
+          parsed_json = ActiveSupport::JSON.decode(json_string)
+          location1 = parsed_json["results"].first["address_components"][1]["short_name"] rescue location1 = nil
+          location2 = parsed_json["results"].first["address_components"][2]["short_name"] rescue location2 = nil
+          mdc = ["Miami-Dade","Miami"].to_h{"mdc"}
+          brw = ["Broward"].to_h{"brw"}
+          pbc = ["Palm Beach"].to_h{"pbc"}
+          locations = {}.merge(mdc).merge(brw).merge(pbc)
+          (@neighborhood_map[neighborhood] = locations[location1]; temp_subloc = locations[location1]) if locations.keys.include?(location1)
+          (@neighborhood_map[neighborhood] = locations[location2]; temp_subloc = locations[location2]) if locations.keys.include?(location2)
+
+          done = true
+        rescue => e
+          puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{attempts += 1}#{ec}"
+          done = true if attempts > 5
+          sleep(0.5)
+        end
+      end
+    else
+      temp_subloc = @neighborhood_map[neighborhood]
+    end
+    
+    if !subloc.nil? and temp_subloc != subloc
+      puts "|#{c(red)}Error multiple sublocations detected: #{rentjuicer.as_json["neighborhoods"].to_s}: #{temp_subloc || "nil"} #{subloc || "nil"}#{ec}"
+    end
+    subloc ||= temp_subloc
+  end
+  
+  subloc = Sublocation.find_by_url(subloc) || customer[:sublocation]
+  if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
+    print "|#{c(yellow)}Sublocaion Changed#{ec}"
+    print "  Was #{c(blue)}<#{ec}#{listing.sublocation.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
+    print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
+    listing.sublocation = subloc
+    return true
+  end
+  return false
+end
+
 def blue; 4; end
 def gray; 8; end
 def l_blue; 6; end
@@ -486,6 +529,14 @@ def green; 2; end
 def red; 1; end
 def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
 def ec; "\x1b[0m"; end
+
+class Array
+  def to_h(&block)
+    Hash[*self.collect { |v|
+      [v, block.call(v)]
+    }.flatten]
+  end
+end
 
 def find_dupe_vals (rentjuice_listings)
   key_map = {}
