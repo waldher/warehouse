@@ -17,7 +17,9 @@
   'bnrfn_homestead' => 'nhozien@buynrentfreenow.com',
   'sea_rea_test' => 'brendan@leadadvo.com',
   'mdc_rea_test' => 'brendan@leadadvo.com',
-  'gus_b' => 'GusBergamini@yahoo.com',
+  'gus_b' => 'gusbergamini@yahoo.com',
+  'jennifer_homes' => 'jenniferhomes@gmail.com',
+  'majestic_properties' => 'justinmrubin@gmail.com',
   'plumpads' => 'mike.thinking@gmail.com'
 }.each{ |key, val|
   if Customer.where("key like ?", key).count == 0
