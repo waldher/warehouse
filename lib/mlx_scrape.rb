@@ -72,7 +72,6 @@ def mlx_import(info)
         listing = Listing.new
         listing.customer_id = customer_id
         listing.foreign_id = foreign_id
-        listing.manual_enabled = true
         save[:save] = true
         save[:why] << "New Listing"
       end 
