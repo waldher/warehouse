@@ -164,7 +164,7 @@ def mlx_import(info)
             titles << title
           end
         }
-        if value_update(listing, :ad_title, (titles * ",").gsub(/  /,' '))
+        if value_update(listing, :ad_title, (titles * "||").gsub(/  /,' '))
           save[:save] = true
           save[:why] << "New Title"
         end

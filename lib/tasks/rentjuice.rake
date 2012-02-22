@@ -394,7 +394,7 @@ def update_vars(listing, rentjuicer)
           titles << title
         end
       }
-      val = titles * ","
+      val = titles * "||"
     end
 
     #If the value is new then update the infos
