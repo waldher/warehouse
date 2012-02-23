@@ -61,7 +61,7 @@
       },
       sAjaxSource: '<%= customer_listings_path(@customer) %>',
       <% if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea' %>
-        "aaSorting" : [[4, 'asc'],[3, 'desc']],
+        "aaSorting" : [[4, 'desc'],[3, 'desc']],
         "aoColumns": [ 
         /* Address */ null,
         /* Price */   null,
