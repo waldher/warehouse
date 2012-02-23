@@ -1,7 +1,8 @@
 namespace :log do
   desc "Read heathrow_logging bucket and extract request data from each file and fill database for statistics"
   task :import => :environment do
-    puts bucket =  AWS::S3::Bucket.find("heathrow_logging")
+    #puts bucket =  AWS::S3::Bucket.find("heathrow_logging")
+    bucket = $s3.buckets['heathrow_logging']
 
     bucket.objects.each do |object|
 
@@ -16,13 +17,13 @@ namespace :log do
       log_file.save!
 
       # Get data of read file and decompress it
-      gz = Zlib::GzipReader.new(StringIO.new(object.value))
+      gz = Zlib::GzipReader.new(StringIO.new(object.read))
 
       # Read string(data) from the decompress file(data)
       unzipped = gz.read
 
       # Separate Version, Header and Request information
-      unzip_to_array = unzipped.split("\n")
+       unzip_to_array = unzipped.split("\n")
 
       # Version 
       version = unzip_to_array[0]
