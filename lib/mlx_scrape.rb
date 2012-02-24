@@ -80,6 +80,15 @@ def mlx_import(info)
       special_puts "record_id = \"#{record_id}\""
       special_puts "Current listing is #{index += 1} of #{$record_ids.count}"
 
+      ########################## CITY ################################
+      city = ""
+      $listing_page.body.split("\n").each{ |l| city = l if l =~ /120px;height:22px;left:24px;width:168px;font:bold 12pt/ }
+      city = city.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
+      if value_update(listing, :ad_city, city)
+        save[:save] = true
+        save[:why] << "New City"
+      end
+
       ########################## ADDRESS #############################
       address = ""
       $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
@@ -106,12 +115,16 @@ def mlx_import(info)
       #If, for whatever reason, location is nil it ought to be detected.
       if location.nil?
         query_address = address.gsub(/# *[^ ,]*/, '')
-        query_address += ", FL"
+        query_address += ", #{city}, FL"
         special_puts "Querying Google for address location: #{query_address}"
         json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(query_address)}&sensor=true").read
         sleep(0.1)
         parsed_json = ActiveSupport::JSON.decode(json_string)
-        location = parsed_json["results"].first["address_components"][2]["short_name"]
+        begin
+          location = parsed_json["results"].first["address_components"][2]["short_name"]
+        rescue => e
+          location = city
+        end
       end
       if value_update(listing, :ad_location, location)
         save[:save] = true
