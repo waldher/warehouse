@@ -229,8 +229,11 @@ class ListingsController < ApplicationController
   end
 
   def act_de(listing)
-    link = '<a rel="nofollow" data-method="delete" data-confirm="Are you sure you want to ' + (listing.manual_enabled ? "stop" : "start") +  ' posting this ad?" href="'
-    link += "/customers/#{@customer.id}/listings/#{listing.id}" + '">' 
+    link = '<a rel="nofollow" data-method="delete" '
+    unless listing.manual_enabled.nil?
+      link += 'data-confirm="Are you sure you want to ' + (listing.manual_enabled ? "stop" : "start") +  ' posting this ad?"'
+    end
+    link += "href=/customers/#{@customer.id}/listings/#{listing.id}" + '">' 
     link += (listing.manual_enabled ? 'Deactivate' : 'Activate') + '</a>'
   end
 
