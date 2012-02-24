@@ -190,7 +190,7 @@ def mlx_import(info)
         if l =~ /Courtesy Of:/
           courtesy = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
           if value_update(listing, :ad_courtesy, courtesy)
-            save[:save]
+            save[:save] = true
             save[:why] << "New Courtesy"
           end
         end
