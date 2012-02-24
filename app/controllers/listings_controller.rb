@@ -208,7 +208,7 @@ class ListingsController < ApplicationController
         listing.infos[:ad_price],
         view_context.truncate(listing.title.join(", "), :radius => 25),
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? 'NaN' : 'Inactive'),
+        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),
         act_de(listing),
         edit_it(listing),
       ]
@@ -218,7 +218,7 @@ class ListingsController < ApplicationController
       [
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? 'NaN' : 'Inactive'),
+        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),
         act_de(listing),
         edit_it(listing),
       ]
