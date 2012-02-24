@@ -106,6 +106,7 @@ def mlx_import(info)
       #If, for whatever reason, location is nil it ought to be detected.
       if location.nil?
         address += ", FL"
+        special_puts "Querying Google for address location: #{address}"
         json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true").read
         sleep(0.1)
         parsed_json = ActiveSupport::JSON.decode(json_string)
