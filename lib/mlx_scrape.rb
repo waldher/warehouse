@@ -184,6 +184,17 @@ def mlx_import(info)
       }
       images.rotate!(-3)
       load_images(listing, images)
+      
+      ########################## COURTESY ############################
+      $listing_page.body.split("\n").each{|l|
+        if l =~ /Courtesy Of:/
+          courtesy = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
+          if value_update(listing, :ad_courtesy, courtesy)
+            save[:save]
+            save[:why] << "New Courtesy"
+          end
+        end
+      }
 
       ########################## STATUS ##############################
       temp_active = nil
