@@ -38,15 +38,15 @@ $(function() {
 
   $(".title").live('keyup', function(event) {
     var self = this;
-    // check if user have type some title or not
+    // check to see if the user added a new title
     haveTitle = $(self).parent().find('.title').last().find('input').val();
-    // if have title we need a new empty title field
+    // if they added a title we need a new empty title field
     if(haveTitle) {
       // clone the element else it will only change the position
       var content = $(self).clone();
-      // get the element string so can search for num(regex need string)
+      // get the element string so we can search for num(regex need string)
       var html_content = content.html();
-      // ad_title[1] it will capture '1' as string
+      // e.g. regex given 'ad_title[1]', will capture '1' (as string)
       var regex = new RegExp(/ad_title\[(\d+)\]/);
       // parse it to get integer 
       var num = parseInt(html_content.match(regex)[1], 10);
@@ -57,7 +57,7 @@ $(function() {
       // convert it back to jquery element
       content = $(html_content);
 
-      // reset value of new to input to empty 
+      // clear the cloned element's input string
       content.find('input').val('');
       // append it to parent node
       var node = $(this).parent().append(content);
@@ -65,7 +65,7 @@ $(function() {
       // for animation hiding and then showing
       $('span.title').last().hide().slideDown("slow");
 
-      // add event blur to new elements so if the are blank remove from the list
+      // add event blur to the new element. So that, if the are blank they are removed from the list
       $(".title").find('input').blur(function() {
         if(!$(this).val().trim()) {
           $(this).closest('.title').slideUp("normal", function() {
