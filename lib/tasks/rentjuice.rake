@@ -153,6 +153,25 @@ namespace :rentjuicer do
     #}
     ]
 
+    rj_customers = Customer.includes([:customer_infos, :location, :sublocation]).
+      where(:customer_infos => { :key => ['rj_id', 'filter', 'neighborhoods']})
+    # here can add one more condition as enabled or disabled so we have more control 
+    # on customers for whom we have to run this rake task for.....
+    customers = []
+    rj_customers.each do |customer|
+      customer_hash = {}
+      tmp_hash = {}
+      customer.customer_infos.each { |info| tmp_hash[info.key.to_sym] = info.value }
+      customer_hash[:name] = customer.key
+      customer_hash[:rj_id] = tmp_hash[:rj_id]
+      customer_hash[:hoods] = {:neightborhoods => tmp_hash[:neighborhoods]}
+      customer_hash[:filter] = JSON.parse(tmp_hash[:filter])
+      customer_hash[:email] = {:agent => customer.email_address }
+      customer_hash[:location] = customer.location
+      customer_hash[:sublocation] = customer.sublocation
+      customers << customer_hash
+    end 
+
     proxy_addr = ["http://74.221.217.34","http://74.221.217.28"].sample
     proxy_port = (47001..47020).to_a.sample
     @proxy = proxy_addr + ":" + proxy_port.to_s

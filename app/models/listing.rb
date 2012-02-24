@@ -44,7 +44,7 @@ class Listing < ActiveRecord::Base
   end
 
   def title
-    return infos[:ad_title]
+    return infos[:ad_title].kind_of?(String) ? [infos[:ad_title]] : infos[:ad_title]
   end
 
   def active
@@ -69,13 +69,21 @@ class Listing < ActiveRecord::Base
     @infos = {}
 
     for listing_info in self.listing_infos
-      @infos[listing_info.key.to_sym] = listing_info.value
+      begin 
+        @infos[listing_info.key.to_sym] = ActiveSupport::JSON.decode(listing_info.value)
+      rescue 
+        @infos[listing_info.key.to_sym] = listing_info.value
+      end
     end
   end
 
   def create_infos
     for key, value in @infos
-      ListingInfo.create(:listing_id => id, :key => key, :value => value)
+      if(value.kind_of?(Array) || value.kind_of?(Hash))
+        ListingInfo.create(:listing_id => id, :key => key, :value => ActiveSupport::JSON.encode(value))
+      else
+        ListingInfo.create(:listing_id => id, :key => key, :value => value)
+      end
     end
   end
 
@@ -87,14 +95,23 @@ class Listing < ActiveRecord::Base
         if !@infos.include?(listing_info.key)
           listing_info.delete
         else
-          listing_info.update_attributes(:value => @infos[listing_info.key])
+          item_value = @infos[listing_info.key]
+          if(item_value.kind_of?(Array) || item_value.kind_of?(Hash))
+            listing_info.update_attributes(:value => ActiveSupport::JSON.encode(@infos[listing_info.key]))
+          else
+            listing_info.update_attributes(:value => @infos[listing_info.key])
+          end
           updated << listing_info.key
         end
       end
 
       for key, value in @infos
         if !updated.to_s.include?(key.to_s)
-          ListingInfo.create(:listing_id => id, :key => key, :value => value)
+          if(value.kind_of?(Array) || value.kind_of?(Hash))
+            ListingInfo.create(:listing_id => id, :key => key, :value => ActiveSupport::JSON.encode(value))
+          else
+            ListingInfo.create(:listing_id => id, :key => key, :value => value)
+          end
         end
       end
     end

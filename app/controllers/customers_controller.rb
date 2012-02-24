@@ -3,6 +3,7 @@ class CustomersController < ApplicationController
   respond_to :html, :xml, :json
 
   before_filter :authenticate_admin!
+  before_filter :info_hash, :only => [:new, :edit, :create, :update]
 
   def index
   end
@@ -24,6 +25,7 @@ class CustomersController < ApplicationController
 
   def edit
     @customer = Customer.find(params[:id])
+    @customer.customer_infos.each  { |c| @info[c.key.to_sym], @ids[c.key.to_sym] = c.value, c.id }
   end
 
   def update
@@ -43,6 +45,11 @@ class CustomersController < ApplicationController
     @customer = Customer.find(params[:customer_id])
     @customer.set_setup_nonce.save!
     redirect_to admin_index_url
+  end
+
+  def info_hash
+    @info = {}
+    @ids = {}
   end
 
 end
