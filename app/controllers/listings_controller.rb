@@ -208,7 +208,7 @@ class ListingsController < ApplicationController
         listing.infos[:ad_price],
         view_context.truncate(listing.title.join(", "), :radius => 25),
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? 'NaN' : 'Inactive'),
+        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),
         act_de(listing),
         edit_it(listing),
       ]
@@ -218,7 +218,7 @@ class ListingsController < ApplicationController
       [
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? 'NaN' : 'Inactive'),
+        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),
         act_de(listing),
         edit_it(listing),
       ]
@@ -229,8 +229,11 @@ class ListingsController < ApplicationController
   end
 
   def act_de(listing)
-    link = '<a rel="nofollow" data-method="delete" data-confirm="Are you sure you want to stop posting this ad?" href="'
-    link += "/customers/#{@customer.id}/listings/#{listing.id}" + '">' 
+    link = '<a rel="nofollow" data-method="delete" '
+    unless listing.manual_enabled.nil?
+      link += 'data-confirm="Are you sure you want to ' + (listing.manual_enabled ? "stop" : "start") +  ' posting this ad?"'
+    end
+    link += "href=/customers/#{@customer.id}/listings/#{listing.id}" + '">' 
     link += (listing.manual_enabled ? 'Deactivate' : 'Activate') + '</a>'
   end
 

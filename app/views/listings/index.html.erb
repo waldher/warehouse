@@ -54,10 +54,10 @@
           var td = $($(element.nTr).find('td').get(<%= index %>));
           if(td.text() == "Active") {
             td.addClass('postedGreen');
-            } else if(td.text() == 'NaN') {
-              td.addClass('postedBlue');
+            } else if(td.text() == 'Inactive') {
+              td.addClass('postedRed');
             } else {
-            td.addClass('postedRed');
+            td.addClass('postedBlue');
             }
         });
       },
