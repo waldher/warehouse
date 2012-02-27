@@ -220,7 +220,6 @@ namespace :rentjuicer do
           print "|#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = leadadvo_id
-          listing.manual_enabled = true
           new = true
         end
         puts "#{customer[:name]}#{ec}"
@@ -414,7 +413,7 @@ def update_vars(listing, rentjuicer)
           titles << title
         end
       }
-      val = titles * ","
+      val = titles * "||"
     end
 
     #If the value is new then update the infos
