@@ -66,6 +66,10 @@
             <%= infos.text_field "ad_title[#{index+2}]", :maxlength => 70, :size => 70, :value => title, :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
           </span>
         <% end %>
+          <span class="field title" style="display:block;">
+            <%= infos.label :ad_title, "Ad Title" %><br />
+            <%= infos.text_field "ad_title[100]", :maxlength => 70, :size => 70, :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
+          </span>
       <% end %>
     </div>
     <% if ["apa", "rea"].include?(@customer.craigslist_type) %>
