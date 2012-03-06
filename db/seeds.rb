@@ -36,7 +36,7 @@
   end
 }
 
-kanga_neighborhoods = [
+  kanga_neighborhoods = [
   "Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", 
   "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", 
   "North Palm Beach", "Royal Palm Beach", "Stuart", "Tequesta", "Wellington", "West Palm Beach"] * ", "
@@ -130,6 +130,8 @@ kanga_neighborhoods = [
 
   customers.each do |cst|
     customer = Customer.find_or_create_by_key_and_email_address(cst[:name], cst[:email][:agent])
+    puts "Key   : " + customer.key
+    puts "Email : " + customer.email_address
     if customer && customer.valid?
       customer.customer_infos.create(:key => "rj_id", :value => cst[:rj_id])
       customer.customer_infos.create(:key => "neighborhoods", :value => cst[:hoods][:neighborhoods])
