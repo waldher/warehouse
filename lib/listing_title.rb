@@ -74,7 +74,7 @@ class ListingTitle
     else
       title_parts = [bedrooms, location, amenities].shuffle
     end
-    puts "Parts : #{title_parts.to_s}"
+    #puts "Parts : #{title_parts.to_s}"
 
     title = [ 
               title_parts[0][1],
@@ -88,12 +88,12 @@ class ListingTitle
                ]
     end
     
-    puts "Pre replace : #{title.to_s}"
+    #puts "Pre replace : #{title.to_s}"
     title = title.join(" ").gsub(/[ ]*([ ,;])/,'\1')
 
     title = TRANSFORMS.sample.call(title)
 
-    puts "Pre truncated : \"#{title}\""
+    #puts "Pre truncated : \"#{title}\""
     while title.length > 70
       title = title.split(/ /)[0..-2].join(' ')
     end
@@ -108,7 +108,7 @@ class ListingTitle
       index += 1
       break if index >= max
 
-      puts "(#{index} of #{max})"
+      #puts "(#{index} of #{max})"
       (title = title + " "; next) if (index == 0 and title.last  != " ")
       (title = " " + title; next) if (index == 1 and title.first != " ")
       
