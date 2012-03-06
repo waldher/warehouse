@@ -200,6 +200,9 @@ def mlx_import(info)
       if save[:save]
         special_puts "#{c(l_blue)}Saving Listing#{ec}: #{save[:why].join(", ")}"
         listing.save
+        if !listing.errors.empty?
+          special_puts "#{c(red)}#{listing.errors}#{ec}"
+        end
       end
 
       ########################## IMAGES ##############################
