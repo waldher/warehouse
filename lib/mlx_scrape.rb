@@ -137,7 +137,7 @@ def mlx_import(info)
       price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
       if value_update(listing, :ad_price, price)
         save[:save] = true
-        save[:why] << "New Prive"
+        save[:why] << "New Price"
       end
 
       ########################## BEDROOMS ############################
@@ -175,7 +175,7 @@ def mlx_import(info)
             :type => "",
             :amenities => "")
           if title.length > 20
-            #special_puts "New title generated: #{c(pink)}#{title}#{ec}"
+            special_puts "New title generated: #{c(pink)}#{title}#{ec}"
             titles << title
           end
         }
@@ -191,7 +191,7 @@ def mlx_import(info)
           attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
           if value_update(listing, :ad_attribution, attribution)
             save[:save] = true
-            save[:why] << "New Courtesy"
+            save[:why] << "New Attribution"
           end
         end
       }
@@ -216,7 +216,7 @@ def mlx_import(info)
       temp_active = nil
       $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
       temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-      if temp_active =="Active-Available" and  !disable(listing)
+      if temp_active =="Active-Available" and !disable(listing)
         special_puts "Rental Status #{c(green)}Active #{ec}: #{temp_active}"
         active << listing.id
       else
