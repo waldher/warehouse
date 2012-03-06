@@ -188,8 +188,8 @@ def mlx_import(info)
       ########################## COURTESY ############################
       $listing_page.body.split("\n").each{|l|
         if l =~ /Courtesy Of:/
-          courtesy = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
-          if value_update(listing, :ad_courtesy, courtesy)
+          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
+          if value_update(listing, :ad_attribution, attribution)
             save[:save] = true
             save[:why] << "New Courtesy"
           end
