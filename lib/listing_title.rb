@@ -11,50 +11,114 @@ class ListingTitle
 
   TRANSFORMS = [UPCASE, TITLECASE, DOWNCASE]
 
-  WITHS = ["with", "w/", "has", "featuring", "features", "feat.", "incl.", "includes", "included", nil]
+  WITHS = ["with", "w/", "has", "features", "feat.", "incl.", "includes"]
 
-  #
-  #Real Estate
-  #
+  POST = ["included", "available", "featured"]
+
   INS = ["in", ","]
 
-  LISTING_ADJECTIVES = ["beautiful", "gorgeous", "classy", "attractive", "lovely", "marvelous", "radiant", "wonderful", "comfortable", "excellent", "dazzling", "bewitching", "appealing", "delightful", "divine", "angelic", "enticing", "elegant", "handsome", "grand", "magnificent", "marvelous", "pretty", "radiant", "refined", "splendid", "stunning", "sublime", "superb", "wonderful", "captivating", "charming", "enchanting", "magnetic", "classic", "chic", "exquisite", "fancy", "fassionable", "luxurious", "majestic", "refined", "sumptuous", "superior", "stylish", "adorable", "charming", "glamorous", "georgeous", "inviting", "lovely", "pleasant", "seductive", "stunning", "tantalizing", "enticing", "brilliant", "colorful", "dreamy", "elegant", "enjoyable", "exquisite", "glorious", "impressive", "lavish", "lovely", "opulent", "dashing", "extravagant", "grandiose", "spectacular", "sporty", "swank", "deluxe", "lavish", "luscious", "plush", "luscious", "lush", "ritzy", "fantastic", "flashy", "showy", "dashing", "extravagant", "spectacular", "sporty", "amazing", "breathtaking", "astounding", "astonishing", "eye-catching", "fabulous", "grand", "magnificent", "marvelous", "remarkable", "sensational", "splendid", "striking", "stunning", "stupendous", "wonderous", "fantastic", "mighty", "phenominal", "spectacular", "unreal", "wondorous", "lavish" , "showy", "affluent", "affluent", "enticing", "exuberant", "elating", "exhilirating", "sparkling", "ardent", "desireable", "glowing", "vivacious", "scintillating", "sprightly", "vibrant", "ebullient", "chipper", "elating", "exuberant", "enchanting", "enchanted", "euphoric", "blissful", "arousing", "delighting", "exciting", "exhilarating", "intoxicating", "joyful", "joyous", "jubilant", "effusive", "expansive", "extravagant", "lavish", "ebullient", "blissful", "delighting", "exulting", "exciting", "enchanted", "enchanting", "intoxicating", "jubilant", "sprightly", "dapper", "dashing", "energetic", "jolly", "peppy", "perky", "saucy", "smart", "lucious", "lush", "ritzy", "sumptuous", "brilliant", "fresh", "pointed", "sharp", "shrewd", "keen", "wise", "artful", "modern", "penetrating", "perceptive", "piercing", "prudent", "profound", "savvy", "sensible", "sharky", "sharp" , "slick", "smarth", "wily", "wise", "sagacious", "astute", "canny", "clever", "insightful", "intelligent", "prudent", "rational", "sapient", "contemplative", "discerning", "discriminating", "foxy", "sensible"]
+  LISTING_ADJECTIVES = ["beautiful", "gorgeous", "classy", "attractive", "lovely", "marvelous", "radiant", "wonderful", "comfortable", "excellent", "dazzling", "bewitching"]
   LOCATION_ADJECTIVES = ["alluring", "cozy", "quiet", "comfortable", "attractive", "lovely", "exquisite", "impressive", "classy", "wonderful", "fun", "convenient", "accessible"]
   
-  ADJECTIVES = ["accessible", "adorable", "affluent", "alluring", "amazing", "angelic", "appealing", "ardent", "arousing", "artful", "astonishing", "astounding", "astute", "attractive", "beautiful", "bewitching", "blissful", "breathtaking", "brilliant", "canny", "captivating", "charming", "chic", "classic", "classy", "clever", "colorful", "comfortable", "contemplative", "convenient", "cozy", "dapper", "dashing", "dazzling", "delightful", "delighting", "desirable", "divine", "dreamy", "ebullient", "effusive", "elating", "elegant", "enchanted", "enchanting", "energetic", "enjoyable", "enticing", "euphoric", "excellent", "exciting", "exhilarating", "expansive", "exquisite", "extravagant", "exuberant", "exulting", "eye-catching", "fabulous", "fancy", "fantastic", "fashionable", "flashy", "foxy", "fresh", "fun", "glamorous", "glorious", "glowing", "gorgeous", "grand", "grandiose", "handsome", "impressive", "insightful", "intelligent", "intoxicating", "inviting", "jolly", "joyful", "joyous", "jubilant", "keen", "lavish", "lovely", "luscious", "lush", "luxurious", "magnetic", "magnificent", "majestic", "marvelous", "mighty", "modern", "opulent", "penetrating", "peppy", "perceptive", "perky", "phenomenal", "piercing", "pleasant", "plush", "pointed", "pretty", "profound", "quiet", "radiant", "refined", "remarkable", "ritzy", "sagacious", "sapient", "saucy", "savvy", "scintillating", "seductive", "sensational", "sensible", "sharky", "sharp", "showy", "shrewd", "slick", "smart", "sparkling", "spectacular", "splendid", "sporty", "sprightly", "striking", "stunning", "stupendous", "stylish", "sublime", "sumptuous", "superb", "superior", "swank", "tantalizing", "unreal", "vibrant", "vivacious", "wily", "wise", "wonderful", "wondrous"] 
+  ADJECTIVES = ["accessible", "adorable", "alluring", "amazing", "angelic", "appealing", "ardent", "arousing", "artful", "astonishing", "attractive", "beautiful", "bewitching", "blissful", "breathtaking", "canny", "captivating", "charming", "chic", "classic", "classy", "colorful", "comfortable", "convenient", "cozy", "dapper", "dashing", "dazzling", "delightful", "delighting", "desirable", "divine", "dreamy", "ebullient", "effusive", "elating", "elegant", "enchanted", "enchanting", "energetic", "enjoyable", "enticing", "euphoric", "excellent", "exciting", "exhilarating", "expansive", "exquisite", "extravagant", "exuberant", "exulting", "eye-catching", "fabulous", "fancy", "fantastic", "fashionable", "flashy", "foxy", "fresh", "fun", "glamorous", "glorious", "glowing", "gorgeous", "grand", "grandiose", "handsome", "impressive", "intelligent", "intoxicating", "inviting", "jolly", "joyful", "joyous", "jubilant", "keen", "lavish", "lovely", "luscious", "lush", "luxurious", "magnetic", "magnificent", "majestic", "marvelous", "mighty", "modern", "opulent", "penetrating", "peppy", "perceptive", "perky", "phenomenal", "pleasant", "plush", "pointed", "pretty", "profound", "quiet", "radiant", "refined", "remarkable", "ritzy", "sapient", "saucy", "savvy", "scintillating", "seductive", "sensational", "sensible", "sharky", "sharp", "showy", "shrewd", "slick", "smart", "sparkling", "spectacular", "splendid", "sporty", "sprightly", "striking", "stunning", "stupendous", "stylish", "sublime", "sumptuous", "superb", "superior", "swank", "tantalizing", "vibrant", "vivacious", "wonderful", "wondrous"] 
 
-  LOCATION_NOUNS = ["locale", "area", "community", "neighborhood", "location"]
+  LOCATION_NOUNS = ["locale", "community", "neighborhood", "location"]
 
   AMENITIES = ["balcony", "pool", "gym", "hot tub", "tennis", "basketball"]
-  
+ 
+  BR_PRE = [";"]
+  BR = ["br","bed"]
+
   def self.generate(params={})
     o = { :bedrooms => 0,
-          :type => nil,
-          :location => nil,
+          :type => "",
+          :location => "",
           :amenities => ""}.merge(params)
 
-    br = o[:bedrooms] == 0 ? nil : "#{o[:bedrooms]}br"
+    br = (o[:bedrooms] == 0 or o[:bedrooms].nil?) ? "" : "#{o[:bedrooms]}#{BR.sample}"
     type = (o[:type] or "unit")
     location = (o[:location] or LOCATION_NOUNS.sample)
     amenities_array = []
 
     for potential_amenity in AMENITIES
       if o[:amenities] =~ /#{potential_amenity}/
-        amenities_array << potential_amenity << (["tennis","basketball"].include?(potential_amenity) ? "court" : "")
+        amenities_array << (potential_amenity + (["tennis","basketball"].include?(potential_amenity) ? " court" : ""))
       end
     end
 
-    amenities = amenities_array * ", "
+    amenities = amenities_array.reject{|a| a.nil? or a.empty?}
+    if amenities.size > 1
+      amenities = amenities[0..-2].join(", ") + " and " + amenities[-1]
+    elsif amenities.size == 1
+      amenities = amenities.first
+    else
+      amenities = ""
+    end
 
-    transform = TRANSFORMS.sample
+    bedrooms  = [
+                  [BR_PRE.sample, "#{ADJECTIVES.sample} #{br} #{type}"],
+                  [BR_PRE.sample, "#{ADJECTIVES.sample} #{type}#{", "+br if !br.empty?}"]
+                ].sample
 
-    return transform.call([ADJECTIVES.sample,
-                      br,
-                      type,
-                      INS.sample,
-                      
-                      location,
-                      amenities.empty? ? nil : WITHS.sample,
-                      amenities.empty? ? nil : amenities].reject{|word| word.nil? }.join(" "))[0..69].gsub(/  /,' ')
+    location  = [
+                  [INS.sample, "#{ADJECTIVES.sample} #{location}"]
+                ].sample
+
+    amenities = [
+                  [amenities.empty? ? nil : ","                  , amenities.empty? ? nil : "#{amenities} #{POST.sample}"],
+                  [amenities.empty? ? nil : ", apt " + WITHS.sample, amenities.empty? ? nil : amenities]
+                ].sample
+
+    if amenities[0].nil? or amenities[1].nil?
+      title_parts = [bedrooms, location].shuffle
+    else
+      title_parts = [bedrooms, location, amenities].shuffle
+    end
+    puts "Parts : #{title_parts.to_s}"
+
+    title = [ 
+              title_parts[0][1],
+              title_parts[0][1].nil? ? nil : title_parts[1][0],
+              title_parts[1][1]
+            ]
+    if !amenities[0].nil? and !amenities[1].nil?
+      title += [
+                (title_parts[0][1].nil? and title_parts[1][1].nil?) ? nil : title_parts[2][0],
+                 title_parts[2][1]
+               ]
+    end
+    
+    puts "Pre replace : #{title.to_s}"
+    title = title.join(" ").gsub(/[ ]*([ ,;])/,'\1')
+
+    title = TRANSFORMS.sample.call(title)
+
+    puts "Pre truncated : \"#{title}\""
+    while title.length > 70
+      title = title.split(/ /)[0..-2].join(' ')
+    end
+    
+    #all possible options for surrounding characters
+    brackets = "{} [] ** <> >< ~~ :: -- ++ == '' || __ ## !! $$ () )(".split(" ") << "  " << "\\/" << "/\\"
+    brackets = brackets.collect{|b| b.split('')}.sample
+    max = rand(11)
+    max = max - max % 2 #give even number
+    index = -1
+    while title.length <= 69
+      index += 1
+      break if index >= max
+
+      puts "(#{index} of #{max})"
+      (title = title + " "; next) if (index == 0 and title.last  != " ")
+      (title = " " + title; next) if (index == 1 and title.first != " ")
+      
+      if index % 2 == 0
+        title = title + brackets[1]
+      else
+        title = brackets[0] + title
+      end
+    end
+    
+    return title
   end
 end
