@@ -248,7 +248,9 @@ class ListingsController < ApplicationController
   def get_attributes
     titles_ary = []
     titles = params[:listing][:infos].delete(:ad_title)
-    titles.each { |key, value| titles_ary << value }
+    if titles
+      titles.each { |key, value| titles_ary << value }
+    end
     titles_ary.select! { |item| item.present? }
     params[:listing][:infos][:ad_title] = titles_ary
     params[:listing][:infos]
