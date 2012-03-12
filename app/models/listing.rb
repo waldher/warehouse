@@ -44,7 +44,7 @@ class Listing < ActiveRecord::Base
   end
 
   def title
-    return infos[:ad_title].kind_of?(String) ? [infos[:ad_title]] : infos[:ad_title]
+    return infos["ad_title"].kind_of?(String) ? [infos["ad_title"]] : infos["ad_title"]
   end
 
   def active
@@ -69,10 +69,10 @@ class Listing < ActiveRecord::Base
     @infos = {}
 
     for listing_info in self.listing_infos
-      begin 
-        @infos[listing_info.key.to_sym] = ActiveSupport::JSON.decode(listing_info.value)
-      rescue 
-        @infos[listing_info.key.to_sym] = listing_info.value
+      begin
+        @infos[listing_info.key] = JSON.parse(listing_info.value)
+      rescue
+        @infos[listing_info.key] = listing_info.value
       end
     end
   end
@@ -80,7 +80,7 @@ class Listing < ActiveRecord::Base
   def create_infos
     for key, value in @infos
       if(value.kind_of?(Array) || value.kind_of?(Hash))
-        ListingInfo.create(:listing_id => id, :key => key, :value => ActiveSupport::JSON.encode(value))
+        ListingInfo.create(:listing_id => id, :key => key, :value => value.to_json)
       else
         ListingInfo.create(:listing_id => id, :key => key, :value => value)
       end
@@ -88,30 +88,40 @@ class Listing < ActiveRecord::Base
   end
 
   def update_infos
-    logger.error "Infos: #{infos}"
+    #puts "Listing id: #{id}"
+    logger.error "Infos: #{@infos}"
+    #puts "Updated Infos Hash: #{@infos}"
     if id
       updated = []
       for listing_info in self.listing_infos
+        #If the old info is not in the new info hash, delete.
         if !@infos.include?(listing_info.key)
           listing_info.delete
+        #Update the old info
         else
           item_value = @infos[listing_info.key]
           if(item_value.kind_of?(Array) || item_value.kind_of?(Hash))
-            listing_info.update_attributes(:value => ActiveSupport::JSON.encode(@infos[listing_info.key]))
+            listing_info.update_attribute(:value, item_value.to_json)
           else
-            listing_info.update_attributes(:value => @infos[listing_info.key])
+            listing_info.update_attribute(:value, item_value)
           end
+          #puts "Should be adding info #{listing_info.key.ljust(21,' ')} #{item_value.class} #{item_value}  #{listing_info.errors.to_s}"
           updated << listing_info.key
         end
       end
 
+      #puts ""
+      #puts updated.to_s
+      #Create a new info
       for key, value in @infos
+        #puts key 
         if !updated.to_s.include?(key.to_s)
           if(value.kind_of?(Array) || value.kind_of?(Hash))
-            ListingInfo.create(:listing_id => id, :key => key, :value => ActiveSupport::JSON.encode(value))
+            li=ListingInfo.create(:listing_id => id, :key => key, :value => value.to_json)
           else
-            ListingInfo.create(:listing_id => id, :key => key, :value => value)
+            li=ListingInfo.create(:listing_id => id, :key => key, :value => value)
           end
+          #puts li.errors
         end
       end
     end
