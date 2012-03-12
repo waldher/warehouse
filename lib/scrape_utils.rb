@@ -20,21 +20,22 @@ def value_update(listing, key_symbol, val)
   if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
     print_change(key_symbol, listing.infos[key_symbol], val)
     listing.infos[key_symbol] = val.to_s
+
     return true
   end
   return false
 end
 
 def print_change(symbol, was, now)
-  print "|#{c(yellow)}#{symbol.to_s.ljust(20," ")} Changed#{ec}"
-  print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
-  print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
+  print "|#{c(yellow)}#{":"if symbol.class == Symbol}#{symbol.to_s.ljust(21," ")} Changed#{ec}"
+  print "  #{c(green)}Was #{c(blue)}<#{ec}#{was.to_s[0..89]}#{c(blue)}>#{ec} ".ljust(134,'.') + ".>"
+  print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..89]}#{c(blue)}>#{ec}\n"
 end
 
 def disable(listing)
   pre_msg = "#{c(red)}Disabled due to: "
 
-  if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
+  if listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?
     special_puts pre_msg + "no titles#{ec}"
     return true
   end
