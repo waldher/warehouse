@@ -84,7 +84,7 @@ def mlx_import(info)
       city = ""
       $listing_page.body.split("\n").each{ |l| city = l if l =~ /120px;height:22px;left:24px;width:168px;font:bold 12pt/ }
       city = city.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
-      if value_update(listing, :ad_city, city)
+      if value_update(listing, "ad_city", city)
         save[:save] = true
         save[:why] << "New City"
       end
@@ -93,15 +93,15 @@ def mlx_import(info)
       address = ""
       $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
       address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
-      if value_update(listing, :ad_address, address)
+      if value_update(listing, "ad_address", address)
         save[:save] = true
         save[:why] << "New Address"
       end
 
       ########################## LOCATION ############################
       location = nil
-      if !info[:location].nil?
-        location = info[:location]
+      if !info["location"].nil?
+        location = info["location"]
       else
         building = nil
         $listing_page.body.split("\n").each{|l| building = l if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/) }
@@ -126,7 +126,7 @@ def mlx_import(info)
           location = city
         end
       end
-      if value_update(listing, :ad_location, location)
+      if value_update(listing, "ad_location", location)
         save[:save] = true
         save[:why] << "New Location"
       end
@@ -135,7 +135,7 @@ def mlx_import(info)
       price = ""
       $listing_page.body.split("\n").each{ |l| (price = l ) if l =~ /120px;height:22px;left:608px;width:152px;font:bold 12pt.*\$/ }
       price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
-      if value_update(listing, :ad_price, price)
+      if value_update(listing, "ad_price", price)
         save[:save] = true
         save[:why] << "New Price"
       end
@@ -151,7 +151,7 @@ def mlx_import(info)
           saw_beds = true
         end
       }
-      if value_update(listing, :ad_bedrooms, bedrooms)
+      if value_update(listing, "ad_bedrooms", bedrooms)
         save[:save] = true
         save[:why] << "New Bedrooms"
       end
@@ -160,18 +160,18 @@ def mlx_import(info)
       desc = ""
       $listing_page.body.split("\n").each{|l| desc = l if l =~ /.*552.*224,224,224.*/ }
       desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
-      if value_update(listing, :ad_description, desc)
+      if value_update(listing, "ad_description", desc)
         save[:save] = true
         save[:why] << "New Description"
       end
 
       ########################## TITLES ##############################
       titles = []
-      if listing.infos[:ad_title].nil?
+      if listing.infos["ad_title"].nil?
         (0..2).each{
           title = ListingTitle.generate(
-            :bedrooms => listing.infos[:ad_bedrooms].to_i,
-            :location => listing.infos[:ad_location],
+            :bedrooms => listing.infos["ad_bedrooms"].to_i,
+            :location => listing.infos["ad_location"],
             :type => "",
             :amenities => "")
           if title.length > 20
@@ -179,7 +179,7 @@ def mlx_import(info)
             titles << title
           end
         }
-        if value_update(listing, :ad_title, (titles * "||").gsub(/  /,' '))
+        if value_update(listing, "ad_title", (titles * "||").gsub(/  /,' '))
           save[:save] = true
           save[:why] << "New Title"
         end
@@ -189,7 +189,7 @@ def mlx_import(info)
       $listing_page.body.split("\n").each{|l|
         if l =~ /Courtesy Of:/
           attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
-          if value_update(listing, :ad_attribution, attribution)
+          if value_update(listing, "ad_attribution", attribution)
             save[:save] = true
             save[:why] << "New Attribution"
           end
