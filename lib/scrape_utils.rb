@@ -1,4 +1,3 @@
-
 def special_print(str) print "|#{str}" end 
 def special_puts(str) puts "|#{str}" end
 

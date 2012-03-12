@@ -139,7 +139,7 @@ namespace :rentjuicer do
         save = true if update_vars(listing,rentjuicer)
 
         if save or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
-          specail_puts "#{c(l_blue)}Saving Listing#{ec}"
+          special_puts "#{c(l_blue)}Saving Listing#{ec}"
           listing.save
           if !listing.errors.empty?
             special_puts "#{c(red)}Save Errors: #{listing.errors}#{ec}"
