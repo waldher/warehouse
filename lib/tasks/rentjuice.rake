@@ -2,6 +2,7 @@ require 'open-uri'
 require 'uri'
 require 'rentjuicer'
 require 'listing_title'
+require 'scrape_utils'
 
 def in_memory_file(data, pathname)
   #load up some data
@@ -53,106 +54,6 @@ namespace :rentjuicer do
       print " *****************************\n"
     }
 
-    kanga_neighborhoods = [
-    "Boynton Beach", "Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", 
-    "Delray Beach", "Jupiter", "Lake Park", "Lake Worth", "Palm Beach", "Palm Beach Gardens", 
-    "North Palm Beach", "Royal Palm Beach", "Stuart", "Tequesta", "Wellington", "West Palm Beach"] * ", "
-    kanga = [{:min_rent => 850, :max_rent => 1500, :has_photos => 1, :include_mls => 1, :featured => 1}]
-
-    casa_neighborhoods = ["Boca Raton", "Deerfield Beach", "Delray Beach", "Highland Beach", "Hillsboro Beach", "Parkland"] * ", "
-
-    maf = [
-    {:min_beds => 1, :max_beds => 1, :min_rent => 1800, :max_rent => 2500, :has_photos => 1, :include_mls => 1},
-    {:min_beds => 2, :max_beds => 2, :min_rent => 2000, :max_rent => 5000, :has_photos => 1, :include_mls => 1}
-    ]
-    elizabeth_neighborhoods = ["Miami Beach", "Brickell", "Surfside"] * ", "
-    paola_neighborhoods     = [               "Brickell", "Coral Gables", "Coconut Grove", "Downtown Miami"] * ", "
-    ronda_neighborhoods     = ["Miami Beach", "North Beach", "Bay Harbour"] * ", "
-    luis_neighborhoods      = [               "Brickell", "Midtown Miami"] * ", "
-
-    customers = [
-    #{:name => 'maf_elizabeth',
-    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    #:hoods => {:neighborhoods => elizabeth_neighborhoods},
-    #:filter => maf,
-    #:email => {:agent => "elizabeth@miamiapartmentfinders.com"},
-    #:location => Location.find_by_url("miami"),
-    #:sublocation => Sublocation.find_by_url("mdc")
-    #},
-
-    #{:name => 'maf_ronda',
-    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    #:hoods => {:neighborhoods => ronda_neighborhoods},
-    #:filter => maf,
-    #:email => {:agent => "ronda@miamiapartmentfinders.com"},
-    #:location => Location.find_by_url("miami"),
-    #:sublocation => Sublocation.find_by_url("mdc")
-    #},
-
-    #{:name => 'maf_paola',
-    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    #:hoods => {:neighborhoods => paola_neighborhoods},
-    #:filter => maf,
-    #:email => {:agent => "paola@miamiapartmentfinders.com"},
-    #:location => Location.find_by_url("miami"),
-    #:sublocation => Sublocation.find_by_url("mdc")
-    #},
-
-    #{:name => 'maf_luis',
-    #:rj_id => '868f2445f9f09786e35f8a1b9356a417',
-    #:hoods => {:neighborhoods => luis_neighborhoods},
-    #:filter => maf,
-    #:email => {:agent => "luis@miamiapartmentfinders.com"},
-    #:location => Location.find_by_url("miami"),
-    #:sublocation => Sublocation.find_by_url("mdc")
-    #},
-
-    {:name => 'kangarent',
-    :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
-    :hoods => {:neighborhoods => kanga_neighborhoods},
-    :filter => kanga,
-    :email => {:agent => "leads@kangarent.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("pbc")
-    },
-
-    {:name => 'casabellaboca',
-    :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    :hoods => {:neighborhoods => casa_neighborhoods},
-    :filter => [{:include_mls => 1, :featured => 1}],
-    :email => {:agent => "john@casabellaboca.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("pbc")
-    },
-
-    {:name => 'gus_b',
-    :rj_id => '82eb9663329da2a97ca111496c4ae8a1',
-    :hoods => {:neighborhoods => ["Boca Raton", "Coconut Creek", "Coral Springs", "Deerfield Beach", "Margate", "North Lauderdale", "Parkland", "Pompano Beach"]},
-    :filter => [{:include_mls => 1, :min_beds => 1, :max_beds => 4, :min_rent => 850, :max_rent => 2500}],
-    :email => {:agent => "GusBergamini@yahoo.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("brw")
-    }
-
-    #{:name => 'sea_rea_test',
-    #:rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    #:hoods => {:neighborhoods => casa_neighborhoods},
-    #:filter => [{:include_mls => 1, :featured => 1}],
-    #:email => {:agent => "brendan@leadadvo.com"},
-    #:location => Location.find_by_url("seattle"),
-    #:sublocation => Sublocation.find_by_url("see")
-    #},
-
-    #{:name => 'mdc_rea_test',
-    #:rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
-    #:hoods => {:neighborhoods => casa_neighborhoods},
-    #:filter => [{:include_mls => 1, :featured => 1}],
-    #:email => {:agent => "brendan@leadadvo.com"},
-    #:location => Location.find_by_url("miami"),
-    #:sublocation => Sublocation.find_by_url("mdc")
-    #}
-    ]
-
     rj_customers = Customer.includes([:customer_infos, :location, :sublocation]).
       where(:customer_infos => { :key => ['rj_id', 'filter', 'neighborhoods']})
     # Can add one more condition as enabled or disabled so we have more control 
@@ -179,24 +80,24 @@ namespace :rentjuicer do
     @connections = {}
     @neighborhood_map = {}
   
-    for customer in customers.shuffle
+    for customer in customers
       puts ",============================================="
       leadadvo_id = Customer.where("key = ?",customer[:name]).last.id
-      puts "|Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
+      special_puts "Identified #{customer[:name]}'s Leadadvo ID as #{leadadvo_id}"
 
       find_dupe_ids(leadadvo_id)
 
       @rentjuicer = Rentjuicer::Client.new(customer[:rj_id])
-      puts "|Rentjuice Client Created"
+      special_puts "Rentjuice Client Created"
       @listings = Rentjuicer::Listings.new(@rentjuicer)
-      puts "|Rentjuice Listings Object Created"
+      special_puts "Rentjuice Listings Object Created"
  
       rentjuice_listings = []
       for condition in customer[:filter]
         start = Time.now
         rentjuice_listings += @listings.find_all(condition.merge(customer[:hoods]).merge({:limit => 50, :order_by => "rentjuice_id"}))
-        puts "|Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
-        puts "|Took #{Time.now - start}"
+        special_puts "Downloaded #{customer[:name]}'s Rentjuce listings, #{rentjuice_listings.count} in total"
+        special_puts "Took #{Time.now - start}"
       end
 
       find_dupe_vals(rentjuice_listings)
@@ -209,28 +110,26 @@ namespace :rentjuicer do
         listing = nil
         listings = Listing.where("customer_id = ? and foreign_id = ?", leadadvo_id, rentjuicer.id.to_s)
         if !listings.nil? and listings.count > 1
-          puts "|Duplicate Listings Please Check Advo ID #{leadadvo_id} RJ ID #{rentjuicer_id}."
+          special_puts "Duplicate Listings Please Check Advo ID #{leadadvo_id} RJ ID #{rentjuicer_id}."
           exit
         end
         listing = listings.nil? ? nil : listings[0]
         if !listing.nil?
-          print "|Old Listing Found for "
+          special_print "Old Listing Found for "
           new = false
         else
-          print "|#{c(green)}New Listing Found for "
+          special_print "#{c(green)}New Listing Found for "
           listing = Listing.new
           listing.customer_id = leadadvo_id
           new = true
         end
         puts "#{customer[:name]}#{ec}"
-        puts "|RentJuice ID: #{rentjuicer.id}"
-        puts "|Current listing is #{index += 1} of #{rentjuice_listings.count}"
+        special_puts "RentJuice ID: #{rentjuicer.id}"
+        special_puts "Current listing is #{index += 1} of #{rentjuice_listings.count}"
 
         location_changed = false
         if listing.location.nil? or listing.location.id != customer[:location].id
-          print "|#{c(yellow)}Location   Changed#{ec}"
-          print "  Was #{c(blue)}<#{ec}#{listing.location.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-          print "|  #{c(green)}Now #{c(blue)}<#{ec}#{customer[:location].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
+          print_change("location",(listing.location.url.to_s rescue ""),customer[:location].url_to_s)
           listing.location = customer[:location]
           location_changed = true
         end
@@ -240,8 +139,11 @@ namespace :rentjuicer do
         save = true if update_vars(listing,rentjuicer)
 
         if save or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
-          puts "|#{c(l_blue)}Saving Listing#{ec}"
+          specail_puts "#{c(l_blue)}Saving Listing#{ec}"
           listing.save
+          if !listing.errors.empty?
+            special_puts "#{c(red)}Save Errors: #{listing.errors}#{ec}"
+          end 
         end
 
         #if new #New implies listing.save, so this could be external but, again I like the clarity of: listing.save MUST happen before images are saved.
@@ -250,16 +152,16 @@ namespace :rentjuicer do
         end
       
         if rentjuicer.status == "active"
-          puts "|#{c(green)}Foreign state is #{rentjuicer.status}#{ec}"
+          special_puts "#{c(green)}Foreign state is #{rentjuicer.status}#{ec}"
         else
-          puts "|#{c(red)}Foreign state is #{rentjuicer.status}#{ec}"
+          special_puts "#{c(red)}Foreign state is #{rentjuicer.status}#{ec}"
         end
 
         if rentjuicer.status == "active" and !disable(listing)
           active << listing.id
         end
 
-        puts "|Created/Updated Listing. Leadadvo ID #{listing.id}"
+        special_puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
         puts "`-----------------------------------------"
         if !@running
           #Before bailing disabled what you can.
@@ -286,34 +188,6 @@ namespace :rentjuicer do
 
     end
   end
-end
-
-###########################################################
-############# Disable Check
-###########################################################
-def disable(listing)
-  if listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?
-    puts "|#{c(red)}Disabled due to empty title#{ec}"
-    return true
-  end
-
-  image_urls = listing.ad_image_urls
-  if image_urls.nil? or image_urls.empty?
-    puts "|#{c(red)}Disabled due to empty images#{ec}"
-    return true
-  end
-
-  if listing.ad_image_urls.count < 4
-    puts "|#{c(red)}Disabled due to too few images#{ec}"
-    return true
-  end
-
-  #In theory this should never be seen
-  if image_urls.*(",").include?("/images/original/missing.png")
-    puts "|#{c(red)}Disabled due to missing.png image#{ec}"
-    return true
-  end
-  return false
 end
 
 ###########################################################
@@ -355,11 +229,11 @@ def load_images(listing, photos)
             photo_file = in_memory_file(resp.body, urisplit.last.split("/").last)
 
             ListingImage.create(:listing_id => listing.id, :image => photo_file, :threading => photo.sort_order)
-            puts "|Imported: #{photo_uri}"
+            special_puts "Imported: #{photo_uri}"
 
             attempts = 0
           rescue => e
-            puts "|#{c(red)}Attempt #{6 - attempts} failed: #{e.inspect}#{ec}"
+            special_puts "#{c(red)}Attempt #{6 - attempts} failed: #{e.inspect}#{ec}"
             attempts -= 1
           end
         end
@@ -385,31 +259,32 @@ def update_vars(listing, rentjuicer)
   rJson.each{| key, val |
     #If the value is an array this needs to be converted into a string
     if val.class == Array
-      val = val.join(",") || ""
+      val = val.join(", ") || ""
     end
 
     #Create the infos symbol
-    key_symbol = "ad_#{key}".to_sym
+    key_symbol = "ad_#{key}"
     #Deal with special symbols
-    if key_symbol == :ad_rent
-      key_symbol = :ad_price
-    elsif key_symbol == :ad_rentjuice_id
+    if key_symbol == "ad_rent"
+      key_symbol = "ad_price"
+    elsif key_symbol == "ad_rentjuice_id"
       if !val.nil? and !val.to_s.empty? and (listing.foreign_id.nil? or listing.foreign_id != val.to_s)
         print_change(key_symbol, listing.foreign_id.nil? ? "": listing.foreign_id, val)
         listing.foreign_id = val.to_s
         save = true
       end
       next
-    elsif key_symbol == :ad_title and (listing.infos[:ad_title].nil? or listing.infos[:ad_title].empty?)
+    #length < 25 avoids the occasional title 'Xbr' titles that are going to ghost
+    elsif key_symbol == "ad_title" and (listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty? or (!val.nil? and val.length < 25) )
       titles = []
       (0..2).each{
         title = ListingTitle.generate(
           :bedrooms => rJson["bedrooms"].to_i,
-          :location => listing.infos[:ad_location],
+          :location => listing.infos["ad_location"],
           :type => rJson["property_type"],
           :amenities => rJson["features"]).gsub(/  /, " ")
         if title.length > 20
-          #puts "|,New title generated:#{c(pink)}#{title}#{ec}"
+          special_puts " New title generated:#{c(pink)}#{title}#{ec}"
           titles << title
         end
       }
@@ -426,19 +301,13 @@ def update_vars(listing, rentjuicer)
   return save
 end
 
-def print_change(symbol, was, now)
-  print "|#{c(yellow)}#{symbol.to_s.ljust(21," ")} Changed#{ec}"
-  print "  Was #{c(blue)}<#{ec}#{was.to_s[0..100]}#{c(blue)}>#{ec} "
-  print "|  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..100]}#{c(blue)}>#{ec}\n"
-end
-
 ###########################################################
 ############# Get_Location
 ###########################################################
 #Takes a listing and rentjuice object
 #Returns true or false depending on success of variable setting
 def get_location(listing, rentjuicer)
-  old_address = "#{listing.infos[:ad_street_number]} #{listing.infos[:ad_street]}, #{listing.infos[:ad_city]}, #{listing.infos[:ad_state]} #{listing.infos[:ad_zip_code]}" 
+  old_address = "#{listing.infos["ad_street_number"]} #{listing.infos["ad_street"]}, #{listing.infos["ad_city"]}, #{listing.infos["ad_state"]} #{listing.infos["ad_zip_code"]}" 
   new_address   = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
 
   old_address.gsub!(/'/,' ')
@@ -446,9 +315,9 @@ def get_location(listing, rentjuicer)
 
   done = false
   fail_attempts = 0
-  while !done and (listing.infos[:ad_location].nil? or old_address != new_address)
-    puts "|Old Address: #{old_address}"
-    puts "|New Address: #{new_address}"
+  while !done and (listing.infos["ad_location"].nil? or old_address != new_address)
+    special_puts "Old Address: #{old_address}"
+    special_puts "New Address: #{new_address}"
 
     begin
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true", :proxy => @proxy).read
@@ -459,15 +328,15 @@ def get_location(listing, rentjuicer)
       parsed_json = ActiveSupport::JSON.decode(json_string)
       location = parsed_json["results"].first["address_components"][2]["short_name"]
 
-      puts "|Detected location: #{location}"
-      if listing.infos[:ad_location] != location
-        listing.infos[:ad_location] = location
+      special_puts "Detected location: #{location}"
+      if listing.infos["ad_location"] != location
+        listing.infos["ad_location"] = location
 
         return true
       end
       done = true
     rescue => e
-      puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{fail_attempts += 1}#{ec}"
+      special_puts "#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{fail_attempts += 1}#{ec}"
       if fail_attempts > 5
         return false
       end
@@ -485,11 +354,13 @@ end
 def detect_sublocation(listing, rentjuicer, customer)
   subloc = nil
   for neighborhood in rentjuicer.as_json["neighborhoods"] do
+    #Special cases needed. Customer spelling error.
     if neighborhood == "Lakeworth"
       neighborhood = "Lake Worth"
     end
-    puts "|Neighborhood: #{neighborhood}"
+    special_puts "Neighborhood: #{neighborhood}"
     
+    #Only if the neighborhood is one we haven't seen should we use the Google API
     if @neighborhood_map[neighborhood].nil?
       search_address = neighborhood + ", " + rentjuicer.state
 
@@ -512,7 +383,7 @@ def detect_sublocation(listing, rentjuicer, customer)
 
           done = true
         rescue => e
-          puts "|#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{attempts += 1}#{ec}"
+          special_puts "#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{attempts += 1}#{ec}"
           done = true if attempts > 5
           sleep(0.5)
         end
@@ -522,31 +393,21 @@ def detect_sublocation(listing, rentjuicer, customer)
     end
     
     if !subloc.nil? and temp_subloc != subloc
-      puts "|#{c(red)}Error multiple sublocations detected: #{rentjuicer.as_json["neighborhoods"].to_s}: #{temp_subloc || "nil"} #{subloc || "nil"}#{ec}"
+      special_puts "#{c(red)}Error multiple sublocations detected: #{rentjuicer.as_json["neighborhoods"].to_s}: #{temp_subloc || "nil"} #{subloc || "nil"}#{ec}"
     end
     subloc ||= temp_subloc
   end
   
   subloc = Sublocation.find_by_url(subloc) || customer[:sublocation]
   if listing.sublocation.nil? or listing.sublocation.id != subloc.id 
-    print "|#{c(yellow)}Sublocaion Changed#{ec}"
+    special_print "#{c(yellow)}Sublocaion Changed#{ec}"
     print "  Was #{c(blue)}<#{ec}#{listing.sublocation.url.to_s[0..100] rescue ""}#{c(blue)}>#{ec} "
-    print "|  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
+    special_print "  #{c(green)}Now #{c(blue)}<#{ec}#{subloc.url || customer[:sublocation].url.to_s[0..100]}#{c(blue)}>#{ec}\n"
     listing.sublocation = subloc
     return true
   end
   return false
 end
-
-def blue; 4; end
-def gray; 8; end
-def l_blue; 6; end
-def pink; 5; end
-def yellow; 3; end
-def green; 2; end
-def red; 1; end
-def c( fg, bg = nil ); "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" end 
-def ec; "\x1b[0m"; end
 
 class Array
   def to_h(&block)
@@ -569,7 +430,7 @@ def find_dupe_vals (rentjuice_listings)
 
   for foreign_id, listings in key_map
     if listings.count > 1
-      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{listings.count}. Value differences are as follows:#{ec}"
+      special_puts "#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, count #{listings.count}. Value differences are as follows:#{ec}"
       key_count = {}
       for listing in listings
         for key in listing.as_json.keys
@@ -614,8 +475,8 @@ def find_dupe_vals (rentjuice_listings)
             end
           else
             if vals.uniq.count > 1         
-              puts "|#{key} #{vals.class}"
-              puts "|#{vals * "\n"}"
+              special_puts "#{key} #{vals.class}"
+              special_puts "#{vals * "\n"}"
             end
           end
         end
@@ -635,12 +496,12 @@ def find_dupe_ids (leadadvo_id)
     foreign_id = listing.foreign_id
     if !key_map[foreign_id].nil?
       old_listing = key_map[foreign_id]
-      puts "|#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, local IDs <#{listing.id}> - <#{old_listing.id}>#{ec}"
+      special_puts "#{c(pink)}Found a duplicate foregin ID <#{foreign_id}>, local IDs <#{listing.id}> - <#{old_listing.id}>#{ec}"
       if listing.id > old_listing.id
-        puts "|Tossing the Old"
+        special_puts "Tossing the Old"
         old_listing.destroy
       else
-        puts "|Tossing the New"
+        special_puts "Tossing the New"
         listing.destroy
       end
     end
