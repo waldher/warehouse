@@ -107,14 +107,14 @@ namespace :rentjuicer do
     #:sublocation => Sublocation.find_by_url("mdc")
     #},
 
-    {:name => 'kangarent',
-    :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
-    :hoods => {:neighborhoods => kanga_neighborhoods},
-    :filter => kanga,
-    :email => {:agent => "leads@kangarent.com"},
-    :location => Location.find_by_url("miami"),
-    :sublocation => Sublocation.find_by_url("pbc")
-    },
+    #{:name => 'kangarent',
+    #:rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
+    #:hoods => {:neighborhoods => kanga_neighborhoods},
+    #:filter => kanga,
+    #:email => {:agent => "leads@kangarent.com"},
+    #:location => Location.find_by_url("miami"),
+    #:sublocation => Sublocation.find_by_url("pbc")
+    #},
 
     {:name => 'casabellaboca',
     :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
