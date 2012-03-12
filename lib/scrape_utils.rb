@@ -40,8 +40,14 @@ def disable(listing)
     return true
   end
 
-  if listing.ad_image_urls.nil? or listing.ad_image_urls.empty?
-    special_puts pre_msg + "no images#{ec}"
+  image_urls = listing.ad_image_urls
+  if image_urls.nil? or image_urls.empty?
+    special_puts pre_msg + "empty images#{ec}"
+    return true
+  end 
+
+  if listing.ad_image_urls.count < 4 
+    special_puts pre_msg + "too few images#{ec}"
     return true
   end
 
