@@ -99,7 +99,7 @@ class ListingTitle
     end
     
     #all possible options for surrounding characters
-    brackets = "{} [] ** <> >< ~~ :: -- ++ == __ ## !! $$ () )(".split(" ") << "  " << "\\/" << "/\\"
+    brackets = "{} [] ** ~~ :: -- ++ == __ ## !! $$ () )(".split(" ") << "  " << "\\/" << "/\\"
     brackets = brackets.collect{|b| b.split('')}.sample
     max = rand(11)
     max = max - max % 2 #give even number
