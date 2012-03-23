@@ -204,8 +204,8 @@ class ListingsController < ApplicationController
     if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea'
       aaData =  @data.map {|listing| 
       [
-        listing.infos[:ad_address],
-        listing.infos[:ad_price],
+        listing.infos["ad_address"],
+        listing.infos["ad_price"],
         view_context.truncate(listing.title.join(", "), :radius => 25),
         listing.updated_at.strftime("%m/%d %I:%M %p"),
         listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),

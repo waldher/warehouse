@@ -51,11 +51,11 @@
         <%= infos.label :ad_title, "Ad Title" %><br />
         <%= infos.text_field "ad_title[1]", :maxlength => 70, :size => 70, :value => title.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
-      <span class="field">
+      <span class="field" style="float: right;">
         <%= infos.label :ad_location, "Location Description" %><br />
-        <%= infos.text_field :ad_location, :value => @listing.infos[:ad_location], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
+        <%= infos.text_field :ad_location, :value => @listing.infos["ad_location"], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
       </span>
-      <span class="field">
+      <span class="field" style="float: right;">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
         <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id || @customer.sublocation_id) %>
       </span>
@@ -76,55 +76,55 @@
       <div>
         <span class="field">
           <%= infos.label :ad_address, "Address" %><br />
-          <%= infos.text_field :ad_address, :max_length => 70, :size => 70, :value => @listing.infos[:ad_address]  %>
+          <%= infos.text_field :ad_address, :max_length => 70, :size => 70, :value => @listing.infos["ad_address"]  %>
         </span>
       </div>
       <div>
         <span class="field">
           <%= infos.label :ad_price, "Price" %><br />
-          <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos[:ad_price] %>
+          <%= infos.text_field :ad_price, :maxlength => 7, :size => 7, :value => @listing.infos["ad_price"] %>
         </span>
         <span class="field">
           <%= infos.label :ad_bedrooms, "Bedrooms" %><br />
-          <%= infos.select :ad_bedrooms, 0..8, :selected => @listing.infos[:ad_bedrooms] %>
+          <%= infos.select :ad_bedrooms, 0..8, :selected => @listing.infos["ad_bedrooms"] %>
         </span>
         <% if @customer.has_capability?("bathrooms") %>
           <span class="field">
             <%= infos.label :ad_bathrooms, "Bathrooms" %><br />
-            <%= infos.select :ad_bathrooms, (0..16).collect{|n| n/2.0}, :selected => @listing.infos[:ad_bathrooms] %>
+            <%= infos.select :ad_bathrooms, (0..16).collect{|n| n/2.0}, :selected => @listing.infos["ad_bathrooms"] %>
           </span>
         <% end %>
         <% if @customer.has_capability?("square_footage") %>
           <span class="field">
             <%= infos.label :ad_square_footage, "Square Feet" %><br />
-            <%= infos.text_field :ad_square_footage, :value => @listing.infos[:ad_square_footage], :size => 5 %>
+            <%= infos.text_field :ad_square_footage, :value => @listing.infos["ad_square_footage"], :size => 5 %>
           </span>
         <% end %>
         <% if @customer.has_capability?("style") %>
           <span class="field">
             <%= infos.label :ad_style, "Style" %><br />
-            <%= infos.text_field :ad_style, :value => (@listing.infos[:ad_style] or "Condominium") %>
+            <%= infos.text_field :ad_style, :value => (@listing.infos["ad_style"] or "Condominium") %>
           </span>
         <% end %>
       </div>
     <% end %>
     <div class="field">
       <%= infos.label :ad_description, "Ad Description" %><br />
-      <%= infos.text_area :ad_description, :value => @listing.infos[:ad_description] %>
+      <%= infos.text_area :ad_description, :value => @listing.infos["ad_description"] %>
     </div>
     <div class="field">
       <%= infos.label :ad_keywords, "Keywords" %><br />
-      <%= infos.text_field :ad_keywords, :maxlength => '160', :value => @listing.infos[:ad_keywords], :title => "Think of the perfect client of yours. What keywords would they use if they we're looking for this property?" %>
+      <%= infos.text_field :ad_keywords, :maxlength => '160', :value => @listing.infos["ad_keywords"], :title => "Think of the perfect client of yours. What keywords would they use if they we're looking for this property?" %>
     </div>
     <% if @customer.craigslist_type == "apa" %>
       <div>
         <span class="field">
-          <% checked = @listing.infos[:ad_cats] == "1" ? true : false %>
+          <% checked = @listing.infos["ad_cats"] == "1" ? true : false %>
           <%= infos.label :ad_cats, "Cats" %> 
           <%= infos.check_box :ad_cats, { :checked => checked } %>
         </span>
         <span class="field">
-          <% checked = @listing.infos[:ad_dogs] == "1" ? true : false %>
+          <% checked = @listing.infos["ad_dogs"] == "1" ? true : false %>
           <%= infos.label :ad_dogs, "Dogs" %>
           <%= infos.check_box :ad_dogs, { :checked => checked } %>
         </span>
