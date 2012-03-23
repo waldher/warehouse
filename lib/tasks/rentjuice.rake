@@ -63,13 +63,33 @@ namespace :rentjuicer do
       customer_hash = {}
       tmp_hash = {}
       customer.customer_infos.each { |info| tmp_hash[info.key.to_sym] = info.value }
-      customer_hash[:name] = customer.key
-      customer_hash[:rj_id] = tmp_hash[:rj_id]
-      customer_hash[:hoods] = {:neighborhoods => tmp_hash[:neighborhoods]}
-      customer_hash[:filter] = JSON.parse(tmp_hash[:filter])
-      customer_hash[:email] = {:agent => customer.email_address }
-      customer_hash[:location] = customer.location
-      customer_hash[:sublocation] = customer.sublocation
+
+      begin
+        puts "Customer: #{customer.key}"
+        customer_hash[:name] = customer.key
+
+        puts "Rentjuicer id: #{tmp_hash[:rj_id]}"
+        customer_hash[:rj_id] = tmp_hash[:rj_id]
+
+        puts "Neighborhoods: #{tmp_hash[:neighborhoods]}"
+        customer_hash[:hoods] = {:neighborhoods => tmp_hash[:neighborhoods]}
+
+        puts "Filters : #{tmp_hash[:filter]}"
+        customer_hash[:filter] = JSON.parse(tmp_hash[:filter])
+
+        puts "Email : #{customer.email_address}"
+        customer_hash[:email] = {:agent => customer.email_address }
+
+        puts "Location : #{customer.location.name}"
+        customer_hash[:location] = customer.location
+
+        puts "Sublocation: #{customer.sublocation.name}"
+        customer_hash[:sublocation] = customer.sublocation
+      rescue
+        # JSON on a customer w/o filters cause crashes
+        next
+      end
+
       customers << customer_hash
     end 
 
