@@ -149,7 +149,7 @@ namespace :rentjuicer do
 
         location_changed = false
         if listing.location.nil? or listing.location.id != customer[:location].id
-          print_change("location",(listing.location.url.to_s rescue ""),customer[:location].url_to_s)
+          print_change("location",(listing.location.url.to_s rescue ""),customer[:location].url.to_s)
           listing.location = customer[:location]
           location_changed = true
         end
