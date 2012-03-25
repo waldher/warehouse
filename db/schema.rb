@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120131094905) do
+ActiveRecord::Schema.define(:version => 20120325212311) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -64,11 +64,28 @@ ActiveRecord::Schema.define(:version => 20120131094905) do
     t.string   "setup_nonce"
     t.integer  "location_id"
     t.integer  "sublocation_id"
+    t.string   "import_type"
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"
   add_index "customers", ["role_id"], :name => "index_customers_on_role_id"
   add_index "customers", ["setup_nonce"], :name => "index_customers_on_setup_nonce", :unique => true
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "directories", :force => true do |t|
     t.string   "name"
@@ -93,6 +110,13 @@ ActiveRecord::Schema.define(:version => 20120131094905) do
   add_index "directory_files", ["directory_id"], :name => "index_directory_files_on_directory_id"
   add_index "directory_files", ["requested_at"], :name => "index_directory_files_on_requested_at"
 
+  create_table "keywords", :force => true do |t|
+    t.string   "keyword"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "ignore",     :default => false
+  end
+
   create_table "listing_images", :force => true do |t|
     t.integer  "listing_id"
     t.datetime "created_at"
@@ -116,14 +140,15 @@ ActiveRecord::Schema.define(:version => 20120131094905) do
   add_index "listing_infos", ["listing_id", "key"], :name => "index_listing_infos_on_listing_id_and_key", :unique => true
 
   create_table "listings", :force => true do |t|
-    t.integer  "customer_id",                       :null => false
-    t.boolean  "manual_enabled", :default => true
+    t.integer  "customer_id",                        :null => false
+    t.boolean  "manual_enabled",  :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "foreign_active", :default => false, :null => false
+    t.boolean  "foreign_active",  :default => false, :null => false
     t.string   "foreign_id"
     t.integer  "location_id"
     t.integer  "sublocation_id"
+    t.integer  "neighborhood_id"
   end
 
   create_table "locations", :force => true do |t|
@@ -142,6 +167,13 @@ ActiveRecord::Schema.define(:version => 20120131094905) do
   end
 
   add_index "log_files", ["filename"], :name => "index_log_files_on_filename", :unique => true
+
+  create_table "neighborhoods", :force => true do |t|
+    t.integer  "sublocation_id", :null => false
+    t.string   "name",           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "real_estate_images", :force => true do |t|
     t.integer  "real_estate_id",     :null => false
@@ -167,6 +199,13 @@ ActiveRecord::Schema.define(:version => 20120131094905) do
     t.string   "ad_location"
     t.string   "ad_keywords",    :default => "",    :null => false
   end
+
+  create_table "scraped_links", :force => true do |t|
+    t.string  "url"
+    t.boolean "done"
+  end
+
+  add_index "scraped_links", ["url", "done"], :name => "index_scraped_links_on_url_and_done", :unique => true
 
   create_table "sublocations", :force => true do |t|
     t.string  "name",        :null => false
