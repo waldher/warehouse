@@ -27,8 +27,8 @@ end
 
 def print_change(symbol, was, now)
   print "|#{c(yellow)}#{":"if symbol.class == Symbol}#{symbol.to_s.ljust(21," ")} Changed#{ec}"
-  print "  #{c(green)}Was #{c(blue)}<#{ec}#{was.to_s[0..89]}#{c(blue)}>#{ec} ".ljust(134,'.') + ".>"
-  print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..89]}#{c(blue)}>#{ec}\n"
+  print "  #{c(green)}Was #{c(blue)}<#{ec}#{was.to_s[0..59]}#{c(blue)}>#{ec} ".ljust(104,'.') + ".>"
+  print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..59]}#{c(blue)}>#{ec}\n"
 end
 
 def disable(listing)
