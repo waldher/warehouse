@@ -1,5 +1,5 @@
 def special_print(str) print "|#{str}" end 
-def special_puts(str) puts "|#{str}" end
+def special_puts(str)  puts  "|#{str}" end
 
 def c(fg,bg = nil)
   "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" 
