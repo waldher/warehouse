@@ -61,10 +61,10 @@ end
 
 def activate_listings(customer_id, active)
   special_puts "#{active.count} listings seen."
-  activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
+  activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).each{|l| l.update_attribute(:foreign_active, true) }
   special_puts "#{activate} listings were activated."
 
-  deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
+  deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).each{|l| l.update_attribute(:foreign_active, false) }
   special_puts "#{deactivate} listing(s) were deactivated."
 end
 
