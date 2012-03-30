@@ -6,7 +6,7 @@ namespace :location do
     
     agent = Mechanize.new
     page = agent.get("http://#{subdomain}.craigslist.org")
-    location_name = page.root.css("div#topban h2").text
+    location_name = page.root.css("div#topban h2").text.titlecase
     sublocations = {}
     page.root.css("span.sublinks").children.each{|link|
       sublocations[link["href"].gsub("/","")] = link["title"]
