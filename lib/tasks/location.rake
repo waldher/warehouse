@@ -9,7 +9,7 @@ namespace :location do
     location_name = page.root.css("div#topban h2").text.titlecase
     sublocations = {}
     page.root.css("span.sublinks").children.each{|link|
-      sublocations[link["href"].gsub("/","")] = link["title"]
+      sublocations[link["href"].gsub("/","")] = link["title"].titlecase
     }
 
     location = Location.create(:name => location_name, :url => subdomain)
@@ -19,5 +19,5 @@ namespace :location do
         Sublocation.create(:name => v, :url => k, :location_id => location.id)
       }
     end
-    end
+  end
 end
