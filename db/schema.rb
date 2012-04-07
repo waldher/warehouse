@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120330223613) do
+ActiveRecord::Schema.define(:version => 20120406093453) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -69,6 +69,16 @@ ActiveRecord::Schema.define(:version => 20120330223613) do
   add_index "customers", ["key"], :name => "index_customers_on_key"
   add_index "customers", ["role_id"], :name => "index_customers_on_role_id"
   add_index "customers", ["setup_nonce"], :name => "index_customers_on_setup_nonce", :unique => true
+
+  create_table "definitions", :force => true do |t|
+    t.integer  "wordnet_number",  :null => false
+    t.string   "category",        :null => false
+    t.text     "text_definition"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "definitions", ["wordnet_number"], :name => "index_definitions_on_wordnet_number", :unique => true
 
   create_table "directories", :force => true do |t|
     t.string   "name"
@@ -186,5 +196,25 @@ ActiveRecord::Schema.define(:version => 20120330223613) do
   add_index "sublocations", ["location_id", "name"], :name => "index_sublocations_on_location_id_and_name", :unique => true
   add_index "sublocations", ["location_id", "url"], :name => "index_sublocations_on_location_id_and_url", :unique => true
   add_index "sublocations", ["location_id"], :name => "index_sublocations_on_location_id"
+
+  create_table "synonyms", :force => true do |t|
+    t.integer "definition_id",  :null => false
+    t.integer "wordnet_number", :null => false
+    t.string  "symbol",         :null => false
+  end
+
+  add_index "synonyms", ["definition_id", "wordnet_number"], :name => "index_synonyms_on_definition_id_and_wordnet_number", :unique => true
+  add_index "synonyms", ["definition_id"], :name => "index_synonyms_on_definition_id"
+
+  create_table "words", :force => true do |t|
+    t.integer  "definition_id",                    :null => false
+    t.string   "spelling",                         :null => false
+    t.boolean  "ignore",        :default => false, :null => false
+    t.integer  "sense",                            :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "words", ["spelling"], :name => "index_words_on_spelling"
 
 end

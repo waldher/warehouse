@@ -104,12 +104,17 @@ def mlx_import(info)
         location = info[:location]
       else
         building = nil
-        $listing_page.body.split("\n").each{|l| building = l if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/) }
-        if !building.nil?
-          building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
-          location = building_to_location(building)
-        else
-          location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
+        for l in $listing_page.body.split("\n")
+          if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/)
+            building = l
+            building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+            location = building_to_location(building) if !building_to_location(building).nil?
+          elsif l.match(/top:120px;height:22px;left:24px;width:168px;font:bold 12pt Tahoma;/)
+            location = l
+            location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+          else
+            location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
+          end        
         end
       end
       #If, for whatever reason, location is nil it ought to be detected.
