@@ -194,7 +194,7 @@ def mlx_import(info)
       ########################## COURTESY ############################
       $listing_page.body.split("\n").each{|l|
         if l =~ /Courtesy Of:/
-          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '').sub(/<&nbsp;/, '').strip
+          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '').gsub(/<&nbsp;/, '').strip
           if value_update(listing, "ad_attribution", attribution)
             save[:save] = true
             save[:why] << "New Attribution"
