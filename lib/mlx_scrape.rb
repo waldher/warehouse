@@ -33,6 +33,7 @@ def mlx_import(info)
 
     $record_ids = nil
     $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
+    varlist = $page.frames.first.content.forms.first.field_with(:name => "VarList").value
 
     index = 0
     for record_id in $record_ids
@@ -41,7 +42,7 @@ def mlx_import(info)
       failed = false
       while !failed
         begin
-          $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => "1GdCmTJIpLlcE4KGf5pa5HC6P58ljE1n7BHGsz7yzuG+18HEq2nRnWCJYEeepcbz"} )
+          $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => varlist} )
           failed = true
         rescue => e
           special_puts "#{e.inspect}"
