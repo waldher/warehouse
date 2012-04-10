@@ -222,7 +222,7 @@ def mlx_import(info)
 
       ########################## STATUS ##############################
       temp_active = nil
-      $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
+      $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
       temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
       if temp_active =="Active-Available" and !disable(listing)
         special_puts "Rental Status #{c(green)}Active #{ec}: #{temp_active}"
