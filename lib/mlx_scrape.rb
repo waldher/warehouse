@@ -141,6 +141,8 @@ def mlx_import(info)
               location = city
             end
           end
+        else
+          try_again = false
         end
       end
       if value_update(listing, "ad_location", location)
