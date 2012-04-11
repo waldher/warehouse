@@ -27,7 +27,7 @@ class ListingTitle
   AMENITIES = ["balcony", "pool", "gym", "hot tub", "tennis", "basketball"]
  
   BR_PRE = [";"]
-  BR = ["br","bed"]
+  BR = ["br","bed","bd"]
 
   def self.generate(params={})
     o = { :bedrooms => 0,
