@@ -122,7 +122,7 @@ def mlx_import(info)
       end
       #If, for whatever reason, location is nil it ought to be detected.
       if location.nil?
-        query_address = address.gsub(/# *[^ ,]*/, '').sub(/ [Tt][Ee] /, "Terrace")
+        query_address = address.gsub(/# *[^ ,]*/, '').sub(/ [Tt][Ee] /, " Terrace ")
         query_address += ", FL"
         special_puts "Querying Google for address location: #{query_address}"
         json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(query_address)}&sensor=true").read
