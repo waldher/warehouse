@@ -33,6 +33,7 @@ def mlx_import(info)
 
     $record_ids = nil
     $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
+    varlist = $page.frames.first.content.forms.first.field_with(:name => "VarList").value
 
     index = 0
     for record_id in $record_ids
@@ -41,7 +42,7 @@ def mlx_import(info)
       failed = false
       while !failed
         begin
-          $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => "1GdCmTJIpLlcE4KGf5pa5HC6P58ljE1n7BHGsz7yzuG+18HEq2nRnWCJYEeepcbz"} )
+          $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => varlist} )
           failed = true
         rescue => e
           special_puts "#{e.inspect}"
@@ -52,8 +53,15 @@ def mlx_import(info)
       end
 
       foreign_id = ""
-      $listing_page.body.split("\n").each{ |l| foreign_id = l if l =~ /top:168px;height:15px;left:56px;width:56px;font:8pt/}
-      foreign_id = foreign_id.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+      saw_foreign = false
+      $listing_page.body.split("\n").each{|l|
+        if saw_foreign
+          saw_foreign = false
+          foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif l =~ /REF #:/ or l =~ /ML#:/
+          saw_foreign = true
+        end
+      }
       foreign_id.strip!
 
       save = {:save => false, :why => []}
@@ -80,18 +88,9 @@ def mlx_import(info)
       special_puts "record_id = \"#{record_id}\""
       special_puts "Current listing is #{index += 1} of #{$record_ids.count}"
 
-      ########################## CITY ################################
-      city = ""
-      $listing_page.body.split("\n").each{ |l| city = l if l =~ /120px;height:22px;left:24px;width:168px;font:bold 12pt/ }
-      city = city.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
-      if value_update(listing, "ad_city", city)
-        save[:save] = true
-        save[:why] << "New City"
-      end
-
       ########################## ADDRESS #############################
       address = ""
-      $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ }
+      $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ or l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ }
       address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
       if value_update(listing, "ad_address", address)
         save[:save] = true
@@ -108,19 +107,23 @@ def mlx_import(info)
           if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/)
             building = l
             building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+            puts "Found Building #{building}, referencing neighborhood"
             location = building_to_location(building) if !building_to_location(building).nil?
-          elsif l.match(/top:120px;height:22px;left:24px;width:168px;font:bold 12pt Tahoma;/)
+            break
+          elsif l.match(/text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
             location = l
             location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+            puts "Found Location #{location}"
+            break
           else
             location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
-          end        
+          end 
         end
       end
       #If, for whatever reason, location is nil it ought to be detected.
       if location.nil?
         query_address = address.gsub(/# *[^ ,]*/, '')
-        query_address += ", #{city}, FL"
+        query_address += ", FL"
         special_puts "Querying Google for address location: #{query_address}"
         json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(query_address)}&sensor=true").read
         sleep(0.1)
@@ -137,13 +140,15 @@ def mlx_import(info)
       end
 
       ########################## PRICE ###############################
-      price = ""
-      $listing_page.body.split("\n").each{ |l| (price = l ) if l =~ /120px;height:22px;left:608px;width:152px;font:bold 12pt.*\$/ }
-      price = price.gsub(/.*<NOBR>\$ */, '').gsub(/<\/NOBR>.*/, '')
-      if value_update(listing, "ad_price", price)
-        save[:save] = true
-        save[:why] << "New Price"
-      end
+      $listing_page.body.split("\n").each{|l|
+        if l =~ /\$ / and (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
+          price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '')
+          if value_update(listing, "ad_price", price)
+            save[:save] = true
+            save[:why] << "New Price"
+          end
+        end
+      }
 
       ########################## BEDROOMS ############################
       bedrooms = ""
@@ -152,7 +157,7 @@ def mlx_import(info)
         if saw_beds
           saw_beds = false
           bedrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Bedrooms:/
+        elsif l =~ /Bedrooms:/ or l =~ /Beds:/
           saw_beds = true
         end
       }
@@ -163,7 +168,7 @@ def mlx_import(info)
 
       ########################## DESCRIPTION #########################
       desc = ""
-      $listing_page.body.split("\n").each{|l| desc = l if l =~ /.*552.*224,224,224.*/ }
+      $listing_page.body.split("\n").each{|l| desc = l if l =~ /background-color:rgb\(224,224,224\);border-color:rgb\(128,128,128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ }
       desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
       if value_update(listing, "ad_description", desc)
         save[:save] = true
@@ -193,7 +198,7 @@ def mlx_import(info)
       ########################## COURTESY ############################
       $listing_page.body.split("\n").each{|l|
         if l =~ /Courtesy Of:/
-          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '')
+          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').strip
           if value_update(listing, "ad_attribution", attribution)
             save[:save] = true
             save[:why] << "New Attribution"
@@ -221,14 +226,23 @@ def mlx_import(info)
       load_images(listing, images)
 
       ########################## STATUS ##############################
-      temp_active = nil
-      $listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /192px;height:18px;left:72px;width:120px;font:10pt/ }
-      temp_active = temp_active.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-      if temp_active =="Active-Available" and !disable(listing)
-        special_puts "Rental Status #{c(green)}Active #{ec}: #{temp_active}"
+      status = ""
+      saw_status = false
+      $listing_page.body.split("\n").each{|l|
+        if saw_status
+          saw_status = false
+          status = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif l =~ /Status:/
+          saw_status = true
+        end
+      }
+      #$listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
+
+      if status =="Active-Available" and !disable(listing)
+        special_puts "Rental Status #{c(green)}Active #{ec}: #{status}"
         active << listing.id
       else
-        special_puts "Rental Status #{c(red)}Inactive #{ec}: #{c(red)}#{temp_active}#{ec}"
+        special_puts "Rental Status #{c(red)}Inactive #{ec}: #{c(red)}#{status}#{ec}"
       end
 
       special_puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
