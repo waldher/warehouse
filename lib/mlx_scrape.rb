@@ -120,18 +120,26 @@ def mlx_import(info)
           end 
         end
       end
-      #If, for whatever reason, location is nil it ought to be detected.
-      if location.nil?
-        query_address = address.gsub(/# *[^ ,]*/, '').sub(/ [Tt][Ee] /, " Terrace ")
-        query_address += ", FL"
-        special_puts "Querying Google for address location: #{query_address}"
-        json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(query_address)}&sensor=true").read
-        sleep(0.1)
-        parsed_json = ActiveSupport::JSON.decode(json_string)
-        begin
-          location = parsed_json["results"].first["address_components"][2]["short_name"]
-        rescue => e
-          location = city
+      try_again = true
+      while try_again 
+        #If, for whatever reason, location is nil it ought to be detected.
+        if location.nil?
+          query_address = address.gsub(/# *[^ ,]*/, '').sub(/ [Tt][Ee] /, " Terrace ").sub(//)
+          query_address += ", FL"
+          special_puts "Querying Google for address location: #{query_address}"
+          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(query_address)}&sensor=true").read
+          sleep(0.1)
+          parsed_json = ActiveSupport::JSON.decode(json_string)
+          begin
+            location = parsed_json["results"].first["address_components"][2]["short_name"]
+          rescue => e
+            if try_again
+              query_address = query_address.sub(/ TE /i, " Terrace ").sub(/ POINT /i," pointe ")
+              try_again = false
+            else
+              location = city
+            end
+          end
         end
       end
       if value_update(listing, "ad_location", location)
