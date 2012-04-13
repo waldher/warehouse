@@ -187,6 +187,22 @@ def mlx_import(info)
         save[:why] << "New Bedrooms"
       end
 
+      ########################## COMPLEX ############################
+      complex = nil
+      saw_complex = false
+      $listing_page.body.split("\n").each{|l|
+        if saw_complex
+          saw_complex = false
+          complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif l =~ /Complex Name:/
+          saw_complex = true
+        end
+      }
+      if value_update(listing, "ad_complex", complex)
+        save[:save] = true
+        save[:why] << "New Complex"
+      end
+
       ########################## DESCRIPTION #########################
       desc = ""
       $listing_page.body.split("\n").each{|l| desc = l if l =~ /background-color:rgb\(224,224,224\);border-color:rgb\(128,128,128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ }
