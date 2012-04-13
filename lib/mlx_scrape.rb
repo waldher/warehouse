@@ -29,13 +29,18 @@ def mlx_import(info)
   active = []
   $page = nil
   for url in info[:urls]
-    $page = agent.get(url.chomp.strip)
-    site_code = url.match(/s=(...)/)[1]
-    domain = URI.parse(url).host
+    url = url.chomp.strip
+    $page = agent.get(url)
 
     $record_ids = nil
     $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
-    varlist = $page.frames.first.content.forms.first.field_with(:name => "VarList").value
+    var_list = $page.frames.first.content.forms.first.field_with(:name => "VarList").value
+    site_code = $page.frames.first.content.forms.first.field_with(:name => "SiteCode").value
+    mul_type = $page.frames.first.content.forms.first.field_with(:name => "MULType").value
+    for_print = $page.frames.first.content.forms.first.field_with(:name => "ForPrint").value
+    for_email = $page.frames.first.content.forms.first.field_with(:name => "ForEmail").value
+
+    base_url = url.sub(/EmailView.*/,'GetViewEx.aspx')
 
     index = 0
     for record_id in $record_ids
@@ -44,7 +49,7 @@ def mlx_import(info)
       failed = false
       while !failed
         begin
-          $listing_page = agent.post("http://#{domain}/DotNet/Pub/GetViewEx.aspx", {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => site_code, "VarList" => varlist} )
+          $listing_page = agent.post(base_url, {"ForEmail" => for_email, "RecordIDList" => record_id, "ForPrint" => for_print, "MULType" => mul_type, "SiteCode" => site_code, "VarList" => var_list} )
           failed = true
         rescue => e
           special_puts "#{e.inspect}"
@@ -93,11 +98,12 @@ def mlx_import(info)
       ########################## ADDRESS #############################
       address = ""
       for l in $listing_page.body.split("\n").each
-        if (l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
+        if (l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or 
             l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
             l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
-            l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/)
+            l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
+            l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/)
               address = l
         end
       end
@@ -120,7 +126,8 @@ def mlx_import(info)
             puts "Found Building #{building}, referencing neighborhood"
             location = building_to_location(building) if !building_to_location(building).nil?
             break
-          elsif l.match(/text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
+          elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
+                l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
             location = l
             location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
             puts "Found Location #{location}"
