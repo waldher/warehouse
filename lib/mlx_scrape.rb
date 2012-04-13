@@ -92,7 +92,15 @@ def mlx_import(info)
 
       ########################## ADDRESS #############################
       address = ""
-      $listing_page.body.split("\n").each{ |l| address = l if l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ or l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ }
+      for l in $listing_page.body.split("\n").each
+        if (l =~ /120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
+            l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or 
+            l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
+            l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
+            l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/)
+              address = l
+        end
+      end
       address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
       if value_update(listing, "ad_address", address)
         save[:save] = true
