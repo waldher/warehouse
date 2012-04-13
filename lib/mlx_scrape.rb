@@ -103,7 +103,8 @@ def mlx_import(info)
             l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
             l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
             l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
-            l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/)
+            l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
+            l =~ /top:120px;height:24px;left:208px;width:400px;font:bold 11pt Tahoma;/)
               address = l
         end
       end
@@ -126,8 +127,7 @@ def mlx_import(info)
             puts "Found Building #{building}, referencing neighborhood"
             location = building_to_location(building) if !building_to_location(building).nil?
             break
-          elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
-                l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
+          elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
             location = l
             location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
             puts "Found Location #{location}"
@@ -169,7 +169,9 @@ def mlx_import(info)
 
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
-        if l =~ /\$ / and (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
+        if l =~ /\$ / and 
+          (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
+           l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '')
           if value_update(listing, "ad_price", price)
             save[:save] = true
@@ -212,7 +214,13 @@ def mlx_import(info)
 
       ########################## DESCRIPTION #########################
       desc = ""
-      $listing_page.body.split("\n").each{|l| desc = l if l =~ /background-color:rgb\(224,224,224\);border-color:rgb\(128,128,128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ }
+      for l in $listing_page.body.split("\n")
+        if (l =~ /background-color:rgb\(224,224,224\);border-color:rgb\((0,0|128,128),128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or
+            l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ or
+            l =~ /top:504px;height:105px;left:24px;width:576px;font:9pt Tahoma;/)
+          desc = l
+        end
+      end
       desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
       if value_update(listing, "ad_description", desc)
         save[:save] = true
