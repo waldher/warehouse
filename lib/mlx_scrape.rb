@@ -30,6 +30,8 @@ def mlx_import(info)
   $page = nil
   for url in info[:urls]
     $page = agent.get(url.chomp.strip)
+    site_code = url.match(/s=(...)/)[1]
+    domain = URI.parse(url).host
 
     $record_ids = nil
     $record_ids = $page.frames.first.content.forms.first.field_with(:name => 'RecordIDList').options
@@ -42,7 +44,7 @@ def mlx_import(info)
       failed = false
       while !failed
         begin
-          $listing_page = agent.post('http://sef.mlxchange.com/DotNet/Pub/GetViewEx.aspx', {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => "SEF", "VarList" => varlist} )
+          $listing_page = agent.post("http://#{domain}/DotNet/Pub/GetViewEx.aspx", {"ForEmail" => "1", "RecordIDList" => record_id, "ForPrint" => "false", "MULType" => "2", "SiteCode" => site_code, "VarList" => varlist} )
           failed = true
         rescue => e
           special_puts "#{e.inspect}"
