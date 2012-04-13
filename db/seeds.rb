@@ -24,6 +24,8 @@
   'maf_general' => 'maf@general.com',
   'gcr_apa' => 'gcr@apa.com',
   'gcr_rea' => 'gcr@rea.com',
+  'gary_lits_realty' => 'glr@glr.com',
+  'gary_lits_realty_agents' => 'glra@glra.com',
 }.each{ |key, val|
   if Customer.where("key like ?", key).count == 0
     Customer.create({
