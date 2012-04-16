@@ -106,7 +106,8 @@ def mlx_import(info)
             l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
             l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
-            l =~ /top:120px;height:24px;left:208px;width:400px;font:bold 11pt Tahoma;/)
+            l =~ /top:120px;height:24px;left:208px;width:400px;font:bold 11pt Tahoma;/ or
+            l =~ /top:232px;height:20px;left:200px;width:424px;font:bold 12pt Tahoma;/)
               address = l
         end
       end
@@ -129,7 +130,8 @@ def mlx_import(info)
             special_puts "Found Building #{building}, referencing neighborhood"
             location = building_to_location(building) if !building_to_location(building).nil?
             break
-          elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
+          elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
+                l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/)
             location = l
             location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
             special_puts "Found Location #{location}"
@@ -173,7 +175,8 @@ def mlx_import(info)
       $listing_page.body.split("\n").each{|l|
         if l =~ /\$ / and 
           (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
-           l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/)
+           l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
+           l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '')
           if value_update(listing, "ad_price", price)
             save[:save] = true
@@ -219,7 +222,8 @@ def mlx_import(info)
       for l in $listing_page.body.split("\n")
         if (l =~ /background-color:rgb\(224,224,224\);border-color:rgb\((0,0|128,128),128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or
             l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ or
-            l =~ /top:504px;height:105px;left:24px;width:576px;font:9pt Tahoma;/)
+            l =~ /top:504px;height:105px;left:24px;width:576px;font:9pt Tahoma;/ or
+            l =~ /top:864px;height:112px;left:112px;width:552px;font:10pt Tahoma;/)
           desc = l
         end
       end
@@ -273,23 +277,27 @@ def mlx_import(info)
       images = []
       $listing_page.body.split("\n").each{|l|
         if l =~ /^ViewObject_[0-9]*_List = /
-          images << l.gsub(/^ViewObject_[0-9]*_List = "/, '').gsub(/\|.*/, '')
+          images += l.gsub(/^ViewObject_[0-9]*_List = "(.*)";/, '\1').split('|')
         end
       }
-      images.rotate!(-3)
+      images.uniq!
       load_images(listing, images)
 
       ########################## STATUS ##############################
-      status = ""
-      saw_status = false
-      $listing_page.body.split("\n").each{|l|
-        if saw_status
-          saw_status = false
-          status = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Status:/
-          saw_status = true
-        end
-      }
+      if $listing_page.body =~ /Status:/
+        status = ""
+        saw_status = false
+        $listing_page.body.split("\n").each{|l|
+          if saw_status
+            saw_status = false
+            status = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+          elsif l =~ /Status:/
+            saw_status = true
+          end
+        }
+      else
+        status = "Active-Available"
+      end
       #$listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
 
       if status =="Active-Available" and !disable(listing)
