@@ -32,8 +32,8 @@ class ListingsController < ApplicationController
           :active => listing.active,
           :ad_image_urls => images, 
           :listing_infos => infos, 
-          :location => (!listing.location.nil? ? listing.location.url : "miami"), 
-          :sublocation => (!listing.sublocation.nil? ? listing.sublocation.url : "mdc"), 
+          :location => (listing.location and listing.location.subdomain) or (listing.customer.location and listing.customer.location.subdomain) or "miami", 
+          :sublocation => (listing.sublocation and listing.sublocation.url_identifier) or (listing.customer.sublocation and listing.customer.sublocation.url_identifier) or "mdc", 
           :ad_foreign_id => listing.foreign_id
         )
       end
