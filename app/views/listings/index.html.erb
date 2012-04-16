@@ -16,19 +16,6 @@
   </thead>
 
   <tbody>
-    <% @listings.each do |listing| %>
-      <tr>
-        <% if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea' %>
-          <td><%= listing.infos["ad_address"] %></td>
-          <td><%= listing.infos["ad_price"] %></td>
-        <% end %>
-        <td><%= truncate(listing.title.join(", "), :radius => 25) %></td>
-        <td><%= listing.updated_at.strftime("%m/%d %I:%M %p") %></td>
-        <td class="<%= listing.manual_enabled ? "postedGreen" : (listing.manual_enabled.nil? ? "postedBlue" : "postedRed") %>" style="text-align: center;"><%= listing.active ? 'Active' : 'Inactive' %></td>
-        <td><%= link_to (listing.active ? 'Deactivate' : 'Activate'), [@customer, listing], :method => :delete, :confirm => "Are you sure you want to #{listing.manual_enabled ? "stop" : "start"} posting this ad?" %></td>
-        <td><%= link_to 'Edit', edit_customer_listing_path(@customer, listing) %></td>
-     </tr>
-    <% end %>
   </tbody>
 </table>
 
