@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120406093453) do
+ActiveRecord::Schema.define(:version => 20120417192224) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -136,6 +136,8 @@ ActiveRecord::Schema.define(:version => 20120406093453) do
     t.integer  "sublocation_id"
     t.integer  "neighborhood_id"
   end
+
+  add_index "listings", ["customer_id"], :name => "index_listings_on_customer_id"
 
   create_table "locations", :force => true do |t|
     t.string  "name",    :default => "",    :null => false
