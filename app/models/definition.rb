@@ -1,5 +1,6 @@
 class Definition < ActiveRecord::Base
   has_many :synonyms
+  has_many :words
 
   def self.word_synonyms(spellings)
     query = Word.where("ignore = ?", false)
