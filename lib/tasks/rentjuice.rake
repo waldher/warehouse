@@ -185,27 +185,15 @@ namespace :rentjuicer do
         puts "`-----------------------------------------"
         if !@running
           #Before bailing disabled what you can.
-          puts "#{active.count} listings seen."
-          activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active).update_all("foreign_active = 't'")
-          puts "#{activate} listings were activated."
-         
-          deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active).update_all("foreign_active = 'f'")
-          puts "#{deactivate} listing(s) were deactivated."
+          activate_listings(leadadvo_id, active)
           exit
         end
       end
       
-      puts "#{active.count} listings seen."
-      activate = Listing.where("customer_id = ? and id in (?)", leadadvo_id, active).update_all("foreign_active = 't'")
-      puts "#{activate} listings were activated."
-     
-      deactivate = Listing.where("customer_id = ? and id not in (?)", leadadvo_id, active).update_all("foreign_active = 'f'")
-      puts "#{deactivate} listing(s) were deactivated."
-      
       if !@running
+        activate_listings(leadadvo_id, active)
         exit
       end
-
     end
   end
 end
