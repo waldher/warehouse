@@ -12,7 +12,7 @@ namespace :wordnet do
     end
     
     for line in fp.read.lines
-      matchdata = line.match(/^([0-9]+) [0-9][0-9] (n|v|a|s|r) [0-9a-f][0-9a-f] ([A-Za-z0-9_ '.-]*) [0-9][0-9][0-9] ([^|]*) \| (.*)/)
+      matchdata = line.match(/^([0-9]+) [0-9][0-9] (n|v|a|s|r) [0-9a-f][0-9a-f] ([A-Za-z0-9_ '.\/-]*) [0-9][0-9][0-9] ([^|]*) \| (.*)/)
 
       if matchdata.nil?
         puts "For some reason '#{c(6)}#{line}#{ec}' does not conform to the expected wordnet datafile's format."
