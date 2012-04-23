@@ -131,9 +131,12 @@ class ListingTitle
     bdr = (listing.infos["ad_bedrooms"] == "0" or listing.infos["ad_bedrooms"].nil?) ? "" : "#{listing.infos["ad_bedrooms"]}#{BR.sample}"
     loc = (listing.infos["ad_location"] or "")
     top = ( listing.infos["ad_type"] or 
+            ("townhouse" if (listing.infos["ad_description"] =~ /townhouse/i)) or 
+            ("townhome" if (listing.infos["ad_description"] =~ /townhome/i)) or 
+            ("duplex" if (listing.infos["ad_description"] =~ /duplex/i)) or 
             ("house" if (listing.infos["ad_description"] =~ /house/i)) or 
             ((listing.customer.craigslist_type == "apa" ? "apt" : "condo") if (listing.infos["ad_complex"] or 
-                                                                              (listing.infos["ad_address"] =~ /(#|apt|suite|unit)/i) or 
+                                                                              (listing.infos["ad_address"] =~ /(#|apt|suite|unit| ste )/i) or 
                                                                               (listing.infos["ad_description"] =~ /(apartment|condo)/i))) or 
              "")
     adj = ADJECTIVES.sample
@@ -209,7 +212,7 @@ class ListingTitle
         end
       end
 
-      title = prospect.gsub(/ *\[[^\[\]]*\] */, ' ').gsub(/^ */, '').gsub(/ *$/, '').gsub(/[ ,]*,/, ',')
+      title = TRANSFORMS.sample.call(prospect.gsub(/ *\[[^\[\]]*\] */, ' ').gsub(/  */, ' ').gsub(/^ */, '').gsub(/ *$/, '').gsub(/[ ,]*,/, ','))
     end
     
     return title
