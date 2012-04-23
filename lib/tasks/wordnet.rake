@@ -44,7 +44,7 @@ namespace :wordnet do
       end
 
       for synonym_wordnet_number, symbol in syns
-        Synonym.find_or_create_by_definition_id_and_wordnet_number_and_symbol(definition.id, synonym_wordnet_number, symbol)
+        Synonym.find_or_create_by_definition_id_and_wordnet_number_and_symbol_and_category(definition.id, synonym_wordnet_number, symbol, category)
       end
     end
 
