@@ -14,4 +14,10 @@ class Definition < ActiveRecord::Base
 
     return Word.where("definition_id in (?) and ignore = ?", definition_ids, false).collect(&:spelling)
   end
+
+  def synonymous_definitions
+    wordnet_numbers = synonyms.collect(&:wordnet_number)
+
+    return Definition.where("wordnet_number in (?)", wordnet_numbers)
+  end
 end
