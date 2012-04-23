@@ -1,4 +1,4 @@
-require 'open-uri'
+equire 'open-uri'
 require 'mechanize'
 require 'listing_title'
 require 'scrape_utils'
@@ -201,7 +201,7 @@ def mlx_import(info)
         save[:why] << "New Bedrooms"
       end
 
-      ########################## COMPLEX ############################
+      ########################### COMPLEX ############################
       complex = nil
       saw_complex = false
       $listing_page.body.split("\n").each{|l|
@@ -231,6 +231,19 @@ def mlx_import(info)
       if value_update(listing, "ad_description", desc)
         save[:save] = true
         save[:why] << "New Description"
+      end
+
+      ########################### AMENITIES ##########################
+      amenities = ""
+      for l in $listing_page.body.split("\n")
+        if (l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/)
+          amenities = l
+        end
+      end
+      amenities = amenities.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').split(/ \/ /)
+      if value_update(listing, "ad_amenities", amenities)
+        save[:save] = true
+        save[:why] << "New Amenities"
       end
 
       ########################## TITLES ##############################
