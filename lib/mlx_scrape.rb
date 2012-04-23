@@ -237,11 +237,7 @@ def mlx_import(info)
       titles = []
       if listing.infos["ad_title"].nil?
         (0..2).each{
-          title = ListingTitle.generate(
-            :bedrooms => listing.infos["ad_bedrooms"].to_i,
-            :location => listing.infos["ad_location"],
-            :type => "",
-            :amenities => "")
+          title = ListingTitle.generate(listing)
           if title.length > 20
             special_puts "New title generated: #{c(pink)}#{title}#{ec}"
             titles << title
