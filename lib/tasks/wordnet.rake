@@ -12,10 +12,10 @@ namespace :wordnet do
     end
     
     for line in fp.read.lines
-      matchdata = line.match(/^([0-9]+) [0-9][0-9] (n|v|a|s|r) [0-9a-f][0-9a-f] ([A-Za-z0-9_ -]*) [0-9][0-9][0-9] ([^|]*) \| (.*)/)
+      matchdata = line.match(/^([0-9]+) [0-9][0-9] (n|v|a|s|r) [0-9a-f][0-9a-f] ([A-Za-z0-9_ '.-]*) [0-9][0-9][0-9] ([^|]*) \| (.*)/)
 
       if matchdata.nil?
-        puts "For some reason '#{line}' does not conform to the expected wordnet datafile's format."
+        puts "For some reason '#{c(6)}#{line}#{ec}' does not conform to the expected wordnet datafile's format."
         puts "Please ensure that it is acceptable to exclude the line from the database."
         next
       end
@@ -34,7 +34,7 @@ namespace :wordnet do
         syns[synmatch[1].to_i] = synmatch[0]
       }
 
-      text_definition = matchdata[5]
+      text_definition = matchdata[5].strip
 
       
       definition = Definition.find_or_create_by_wordnet_number_and_category_and_text_definition(wordnet_number, category, text_definition)
@@ -51,3 +51,9 @@ namespace :wordnet do
     fp.close
   end
 end
+
+def ec; "\x1b[0m" end 
+
+def c(fg,bg = nil)
+  "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" 
+end 
