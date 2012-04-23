@@ -1,5 +1,5 @@
 def special_print(str) print "|#{str}" end 
-def special_puts(str) puts "|#{str}" end
+def special_puts(str)  puts  "|#{str}" end
 
 def c(fg,bg = nil)
   "#{fg ? "\x1b[38;5;#{fg}m" : ''}#{bg ? "\x1b[48;5;#{bg}m" : ''}" 
@@ -27,8 +27,8 @@ end
 
 def print_change(symbol, was, now)
   print "|#{c(yellow)}#{":"if symbol.class == Symbol}#{symbol.to_s.ljust(21," ")} Changed#{ec}"
-  print "  #{c(green)}Was #{c(blue)}<#{ec}#{was.to_s[0..89]}#{c(blue)}>#{ec} ".ljust(134,'.') + ".>"
-  print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..89]}#{c(blue)}>#{ec}\n"
+  print "  #{c(green)}Was #{c(blue)}<#{ec}#{was.to_s[0..59]}#{c(blue)}>#{ec} ".ljust(104,'.') + ".>"
+  print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..59]}#{c(blue)}>#{ec}\n"
 end
 
 def disable(listing)
@@ -61,10 +61,10 @@ end
 
 def activate_listings(customer_id, active)
   special_puts "#{active.count} listings seen."
-  activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).update_all("foreign_active = 't'")
+  activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).each{|l| l.update_attribute(:foreign_active, true) }
   special_puts "#{activate} listings were activated."
 
-  deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).update_all("foreign_active = 'f'")
+  deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).each{|l| l.update_attribute(:foreign_active, false) }
   special_puts "#{deactivate} listing(s) were deactivated."
 end
 

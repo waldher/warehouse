@@ -20,7 +20,12 @@
   'gus_b' => 'gusbergamini@yahoo.com',
   'jennifer_homes' => 'jenniferhomes@gmail.com',
   'majestic_properties' => 'justinmrubin@gmail.com',
-  'plumpads' => 'mike.thinking@gmail.com'
+  'plumpads' => 'mike.thinking@gmail.com',
+  'maf_general' => 'maf@general.com',
+  'gcr_apa' => 'gcr@apa.com',
+  'gcr_rea' => 'gcr@rea.com',
+  'gary_lits_realty' => 'glr@glr.com',
+  'gary_lits_realty_agents' => 'glra@glra.com',
 }.each{ |key, val|
   if Customer.where("key like ?", key).count == 0
     Customer.create({

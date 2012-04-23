@@ -32,8 +32,8 @@ class ListingsController < ApplicationController
           :active => listing.active,
           :ad_image_urls => images, 
           :listing_infos => infos, 
-          :location => (!listing.location.nil? ? listing.location.url : "miami"), 
-          :sublocation => (!listing.sublocation.nil? ? listing.sublocation.url : "mdc"), 
+          :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
+          :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
           :ad_foreign_id => listing.foreign_id
         )
       end
@@ -208,7 +208,7 @@ class ListingsController < ApplicationController
         listing.infos["ad_price"],
         view_context.truncate(listing.title.join(", "), :radius => 25),
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),
+        listing.active ? 'Active' : 'Inactive',
         act_de(listing),
         edit_it(listing),
       ]
@@ -218,7 +218,7 @@ class ListingsController < ApplicationController
       [
         listing.title,
         listing.updated_at.strftime("%m/%d %I:%M %p"),
-        listing.manual_enabled ? 'Active' : (listing.manual_enabled.nil? ? '' : 'Inactive'),
+        listing.active ? 'Active' : 'Inactive',
         act_de(listing),
         edit_it(listing),
       ]

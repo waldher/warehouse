@@ -6,18 +6,18 @@ namespace :location do
     
     agent = Mechanize.new
     page = agent.get("http://#{subdomain}.craigslist.org")
-    location_name = page.root.css("div#topban h2").text
+    location_name = page.root.css("div#topban h2").text.titlecase
     sublocations = {}
-    page.root.css("span.sublinks").children.each{|link|
-      sublocations[link["href"].gsub("/","")] = link["title"]
-    }
-
-    location = Location.create(:name => location_name, :url => subdomain)
+    for link in page.root.css("span.sublinks").children
+      sublocations[link["href"].gsub("/","")] = link["title"].titlecase
+    end
+    
+    location = Location.find_or_create_by_name_and_url(location_name, subdomain)
 
     if location.errors.empty?
-      sublocations.each{|k,v|
-        Sublocation.create(:name => v, :url => k, :location_id => location.id)
-      }
+      for k,v in sublocations
+        sublocation = Sublocation.find_or_create_by_name_and_url_and_location_id(v, k, location.id)
+      end
     end
-    end
+  end
 end
