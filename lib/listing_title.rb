@@ -120,17 +120,22 @@ class ListingTitle
 
   BR = ["br","bed","bd"]
 
-  TEMPLATES = [ "[<til>] <rai> <adj> <bdr> [<age>] <top> In [<are>, ]<loc>[, Features <ame>][,<per>]",
-                "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In [<are>, ]<loc>, [<til>]",
-                "<adj> <top>, <bdr>[, <ame>] In [<are>, ]<loc>[, <per>], <rai>, [<age>][<til>]",
-                "<adj> [<age> ] <bdr> <top> in [<are>, ]<loc>[, <per>,] [<til>, ]<rai> [, Features <ame>]",
-                "This [, <age>]<adj> <top> In [<are>, ]<loc>, [Features <ame>][, <per>] <bdr>s[, <til>], <rai>",
+  TEMPLATES = [ "[<til>] <rai> <adj> <bdr> [<age>] <top> In <loc>[, Features <ame>][,<per>]",
+                "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In <loc>, [<til>]",
+                "<adj> <top>, <bdr>[, <ame>] In <loc>[, <per>], <rai>, [<age>][<til>]",
+                "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til>, ]<rai> [, Features <ame>]",
+                "This [, <age>]<adj> <top> In <loc>, [Features <ame>][, <per>] <bdr>s[, <til>], <rai>",
                 ]
 
   def self.generate(listing)
     bdr = (listing.infos["ad_bedrooms"] == "0" or listing.infos["ad_bedrooms"].nil?) ? "" : "#{listing.infos["ad_bedrooms"]}#{BR.sample}"
     loc = (listing.infos["ad_location"] or "")
-    top = (listing.infos["ad_type"] or "")
+    top = ( listing.infos["ad_type"] or 
+            ("house" if (listing.infos["ad_description"] =~ /house/i)) or 
+            ((listing.customer.craigslist_type == "apa" ? "apt" : "condo") if (listing.infos["ad_complex"] or 
+                                                                              (listing.infos["ad_address"] =~ /(#|apt|suite|unit)/i) or 
+                                                                              (listing.infos["ad_description"] =~ /(apartment|condo)/i))) or 
+             "")
     adj = ADJECTIVES.sample
 
     amenities_array = []
@@ -200,10 +205,11 @@ class ListingTitle
       for match in optional_match_list
         if (base_title.size + match.size) <= 70
           base_title = prospect.gsub(/\[#{match}\]/, match).gsub(/ *\[[^\[\]]*\] */, ' ').gsub(/^ */, '').gsub(/ *$/, '')
+          prospect = prospect.gsub(/\[#{match}\]/, match)
         end
       end
 
-      title = prospect.gsub(/ *\[[^\[\]]*\] */, ' ').gsub(/^ */, '').gsub(/ *$/, '')
+      title = prospect.gsub(/ *\[[^\[\]]*\] */, ' ').gsub(/^ */, '').gsub(/ *$/, '').gsub(/[ ,]*,/, ',')
     end
     
     return title
