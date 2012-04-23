@@ -12,9 +12,11 @@ namespace :wordnet do
     end
     
     for line in fp.read.lines
-      matchdata = line.match(/^([0-9]+) [0-9][0-9] (n|v|a|s|r) [0-9a-f][0-9a-f] ([A-Za-z0-9_ ]*) [0-9][0-9][0-9] ([^|]*) \| (.*)/)
+      matchdata = line.match(/^([0-9]+) [0-9][0-9] (n|v|a|s|r) [0-9a-f][0-9a-f] ([A-Za-z0-9_ -]*) [0-9][0-9][0-9] ([^|]*) \| (.*)/)
 
       if matchdata.nil?
+        puts "For some reason '#{line}' does not conform to the expected wordnet datafile's format."
+        puts "Please ensure that it is acceptable to exclude the line from the database."
         next
       end
 
@@ -34,23 +36,15 @@ namespace :wordnet do
 
       text_definition = matchdata[5]
 
-      definition = Definition.find_by_wordnet_number(wordnet_number)
-      if definition.nil?
-        definition = Definition.create(:wordnet_number => wordnet_number, :category => category, :text_definition => text_definition)
-      end
+      
+      definition = Definition.find_or_create_by_wordnet_number_and_category_and_text_definition(wordnet_number, category, text_definition)
 
-      for spelling, sense in words
-        word = Word.where("definition_id = ? and spelling = ?", definition.id, spelling).first
-        if word.nil?
-          word = Word.create(:definition_id => definition.id, :spelling => spelling, :sense => sense)
-        end
+      for spelling, sense in words        
+        Word.find_or_create_by_definition_id_and_spelling_and_sense(definition.id, spelling, sense)
       end
 
       for synonym_wordnet_number, symbol in syns
-        synonym = Synonym.where("definition_id = ? and wordnet_number = ?", definition.id, synonym_wordnet_number).first
-        if synonym.nil?
-          synonym = Synonym.create(:definition_id => definition.id, :wordnet_number => synonym_wordnet_number, :symbol => symbol)
-        end
+        Synonym.find_or_create_by_definition_id_and_wordnet_number_and_symbol(definition.id, synonym_wordnet_number, symbol)
       end
     end
 
