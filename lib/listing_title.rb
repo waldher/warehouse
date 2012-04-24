@@ -46,7 +46,6 @@ class ListingTitle
                           "Ready To Show!",
                           "Check It Out!",
                           "Ready To Move In!",
-                          "Only now!",
                           "Dont wait!",
                           "Chance of a lifetime!",
                           "Pure Joy!",
@@ -191,7 +190,6 @@ class ListingTitle
 
       prospect.gsub!(/  */, ' ') # Remove double spaces
 
-      puts bdr
       base_title = prospect.gsub(/ *\[[^\[\]]*\] */, ' ')
 
       if base_title.length > 70
