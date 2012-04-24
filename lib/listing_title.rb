@@ -123,7 +123,7 @@ class ListingTitle
                 "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In <loc>, [<til>]",
                 "<adj> <top>, <bdr>[, <ame>] In <loc>[, <per>], <rai>, [<age>][<til>]",
                 "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til>, ]<rai> [<ame>]",
-                "This [, <age>]<adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",
+                "This <adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",
                 ]
 
   def self.generate(listing)
