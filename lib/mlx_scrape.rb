@@ -241,7 +241,7 @@ def mlx_import(info)
           amenities = l
         end
       end
-      amenities = amenities.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').split(/ \/ /)
+      amenities = amenities.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').split(/ \/ /).join('||')
       if value_update(listing, "ad_amenities", amenities)
         save[:save] = true
         save[:why] << "New Amenities"
