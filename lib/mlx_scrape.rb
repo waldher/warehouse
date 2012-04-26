@@ -18,6 +18,7 @@ def mlx_import(info)
 
   agent = Mechanize.new
 
+  new_titles = info[:new_titles]
   customer_key = info[:key]
   begin
     customer_id = Customer.where("key like ?",customer_key).first.id 
@@ -248,7 +249,7 @@ def mlx_import(info)
 
       ########################## TITLES ##############################
       titles = []
-      if listing.infos["ad_title"].nil?
+      if listing.infos["ad_title"].nil? or new_titles
         (0..2).each{
           title = ListingTitle.generate(listing)
           if title.length > 20
