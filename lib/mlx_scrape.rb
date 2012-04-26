@@ -1,4 +1,4 @@
-equire 'open-uri'
+require 'open-uri'
 require 'mechanize'
 require 'listing_title'
 require 'scrape_utils'
