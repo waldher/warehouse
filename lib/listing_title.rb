@@ -46,7 +46,6 @@ class ListingTitle
                           "Ready To Show!",
                           "Check It Out!",
                           "Ready To Move In!",
-                          "Only now!",
                           "Dont wait!",
                           "Chance of a lifetime!",
                           "Pure Joy!",
@@ -120,11 +119,11 @@ class ListingTitle
 
   BR = ["br","bed","bd"]
 
-  TEMPLATES = [ "[<til>] <rai> <adj> <bdr> [<age>] <top> In <loc>[, Features <ame>][,<per>]",
+  TEMPLATES = [ "[<til>] <rai> <adj> <bdr> [<age>] <top> In <loc>[<ame>][,<per>]",
                 "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In <loc>, [<til>]",
                 "<adj> <top>, <bdr>[, <ame>] In <loc>[, <per>], <rai>, [<age>][<til>]",
-                "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til>, ]<rai> [, Features <ame>]",
-                "This [, <age>]<adj> <top> In <loc>, [Features <ame>][, <per>] <bdr>s[, <til>], <rai>",
+                "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til>, ]<rai> [<ame>]",
+                "This <adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",
                 ]
 
   def self.generate(listing)
@@ -191,7 +190,6 @@ class ListingTitle
 
       prospect.gsub!(/  */, ' ') # Remove double spaces
 
-      puts bdr
       base_title = prospect.gsub(/ *\[[^\[\]]*\] */, ' ')
 
       if base_title.length > 70
