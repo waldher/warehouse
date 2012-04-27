@@ -238,7 +238,6 @@ def mlx_import(info)
       amenities = ""
       for l in $listing_page.body.split("\n")
         if (l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
-            l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
             l =~ /top:752px;height:32px;left:24px;width:576px;font:10pt Tahoma;/ or
             l =~ /top:824px;height:32px;left:16px;width:432px;font:10pt Tahoma;/ )
           amenities = l
