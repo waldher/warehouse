@@ -16,8 +16,8 @@ def red;    1 end
 def ec; "\x1b[0m" end
 
 def value_update(listing, key_symbol, val)
-  if !val.nil? and !val.to_s.empty? and listing.infos[key_symbol].to_s != val.to_s
-    print_change(key_symbol, listing.infos[key_symbol], val)
+  if !val.nil? and !val.empty? and listing.infos[key_symbol].to_s != val.to_s
+    print_change(key_symbol, listing.infos[key_symbol], val.to_s)
     listing.infos[key_symbol] = val.to_s
 
     return true
