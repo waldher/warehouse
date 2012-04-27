@@ -237,11 +237,14 @@ def mlx_import(info)
       ########################### AMENITIES ##########################
       amenities = ""
       for l in $listing_page.body.split("\n")
-        if (l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/)
+        if (l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
+            l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
+            l =~ /top:752px;height:32px;left:24px;width:576px;font:10pt Tahoma;/ or
+            l =~ /top:824px;height:32px;left:16px;width:432px;font:10pt Tahoma;
           amenities = l
         end
       end
-      amenities = amenities.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').split(/ \/ /).join('||')
+      amenities = amenities.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').split(/ \/ /).split(/\/ /).join('||')
       if value_update(listing, "ad_amenities", amenities)
         save[:save] = true
         save[:why] << "New Amenities"
