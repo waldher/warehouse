@@ -49,7 +49,7 @@ def disable?(listing)
     return true
   end 
 
-  if listing.ad_image_urls.count < 4 
+  if listing.ad_image_urls.count < 3 
     special_puts pre_msg + "too few images#{ec}"
     return true
   end
