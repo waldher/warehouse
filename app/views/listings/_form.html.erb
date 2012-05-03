@@ -106,6 +106,13 @@
             <%= infos.text_field :ad_style, :value => (@listing.infos["ad_style"] or "Condominium") %>
           </span>
         <% end %>
+        <% if @customer.has_capability?("agents") %>
+          <span class="field">
+            <%= infos.label :ad_agent, "Agent" %><br />
+            <% agents = @customer.latest_infos.where("key = 'agents'").first %>
+            <%= infos.select :ad_agent, ((agents and agents.value.split("||")) or []), :selected => @listing.infos["ad_agent"] %>
+          </span>
+        <% end %>
       </div>
     <% end %>
     <div class="field">

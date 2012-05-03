@@ -120,7 +120,7 @@ def mlx_import(info)
 
       ########################## LOCATION ############################
       location = nil
-      if !location.nil?
+      if !global_location.nil?
         location = global_location
       else
         building = nil
