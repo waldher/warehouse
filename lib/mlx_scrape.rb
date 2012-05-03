@@ -70,6 +70,9 @@ def mlx_import(info)
           foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
         elsif l =~ /REF #:/ or l =~ /ML#:/
           saw_foreign = true
+        elsif l =~ /top:78px;height:13px;left:312px;width:96px;font:8pt Tahoma;/
+          foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+          break
         end
       }
       foreign_id.strip!
@@ -108,7 +111,8 @@ def mlx_import(info)
             l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
             l =~ /top:120px;height:24px;left:208px;width:400px;font:bold 11pt Tahoma;/ or
-            l =~ /top:232px;height:20px;left:200px;width:424px;font:bold 12pt Tahoma;/)
+            l =~ /top:232px;height:20px;left:200px;width:424px;font:bold 12pt Tahoma;/ or
+            l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/)
               address = l
         end
       end
@@ -132,7 +136,8 @@ def mlx_import(info)
             location = building_to_location(building) if !building_to_location(building).nil?
             break
           elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
-                l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/)
+                l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
+                l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/)
             location = l
             location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
             special_puts "Found Location #{location}"
@@ -177,7 +182,8 @@ def mlx_import(info)
         if l =~ /\$ / and 
           (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
            l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
-           l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/)
+           l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
+           l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '')
           if value_update(listing, "ad_price", price)
             save[:save] = true
@@ -209,7 +215,7 @@ def mlx_import(info)
         if saw_complex
           saw_complex = false
           complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Complex Name:/
+        elsif l =~ /Complex Name:/ or l =~ /Subdivision:/
           saw_complex = true
         end
       }
@@ -224,11 +230,17 @@ def mlx_import(info)
         if (l =~ /background-color:rgb\(224,224,224\);border-color:rgb\((0,0|128,128),128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or
             l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ or
             l =~ /top:504px;height:105px;left:24px;width:576px;font:9pt Tahoma;/ or
-            l =~ /top:864px;height:112px;left:112px;width:552px;font:10pt Tahoma;/)
+            l =~ /top:864px;height:112px;left:112px;width:552px;font:10pt Tahoma;/ or
+            l =~ /Public remarks:/i)
           desc = l
         end
       end
-      desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
+      desc = desc.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '').gsub(/.*Public remarks:/i, '')
+      for l in $listing_page.body.split("\n")
+        if l =~ /top:882px;height:99px;left:12px;width:756px;font:7pt Tahoma;/
+          desc += l.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
+        end
+      end
       if value_update(listing, "ad_description", desc)
         save[:save] = true
         save[:why] << "New Description"
@@ -267,8 +279,8 @@ def mlx_import(info)
       
       ########################## COURTESY ############################
       $listing_page.body.split("\n").each{|l|
-        if l =~ /Courtesy Of:/
-          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').strip
+        if l =~ /Courtesy Of:/ or l =~ /top:444px;height:13px;left:138px;width:234px;font:8pt Tahoma;/
+          attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').strip
           if value_update(listing, "ad_attribution", attribution)
             save[:save] = true
             save[:why] << "New Attribution"
@@ -312,7 +324,7 @@ def mlx_import(info)
       end
       #$listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
 
-      if status =="Active-Available" and !disable(listing)
+      if (status =="Active-Available" or status == "Active") and !disable(listing)
         special_puts "Rental Status #{c(green)}Active #{ec}: #{status}"
         active << listing.id
       else
