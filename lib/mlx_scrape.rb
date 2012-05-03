@@ -147,30 +147,8 @@ def mlx_import(info)
           end 
         end
       end
-      try_again = true
-      while try_again 
-        #If, for whatever reason, location is nil it ought to be detected.
-        if location.nil?
-          query_address = address.gsub(/# *[^ ,]*/, '')
-          query_address += ", FL"
-          special_puts "Querying Google for address location: #{query_address}"
-          json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(query_address)}&sensor=true").read
-          sleep(0.1)
-          parsed_json = ActiveSupport::JSON.decode(json_string)
-          begin
-            location = parsed_json["results"].first["address_components"][2]["short_name"]
-            try_again = false
-          rescue => e
-            if try_again
-              query_address = query_address.downcase.sub(/ te /i, " terrace ").sub(/ point /i," pointe ")
-              try_again = false
-            else
-              location = city
-            end
-          end
-        else
-          try_again = false
-        end
+      if location.nil?
+        location = location_from_address(address)
       end
       if value_update(listing, "ad_location", location)
         save[:save] = true
@@ -288,7 +266,7 @@ def mlx_import(info)
         end
       }
 
-      ## SAVE INFOS ##
+      ######################## SAVING INFOS ##########################
       if save[:save]
         special_puts "#{c(l_blue)}Saving Listing#{ec}: #{save[:why].join(", ")}"
         listing.save
@@ -324,7 +302,7 @@ def mlx_import(info)
       end
       #$listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
 
-      if (status =="Active-Available" or status == "Active") and !disable(listing)
+      if (status =="Active-Available" or status == "Active") and !disable?(listing)
         special_puts "Rental Status #{c(green)}Active #{ec}: #{status}"
         active << listing.id
       else

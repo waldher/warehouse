@@ -93,10 +93,6 @@ namespace :rentjuicer do
       customers << customer_hash
     end 
 
-    proxy_addr = ["http://74.221.217.34","http://74.221.217.28"].sample
-    proxy_port = (47001..47020).to_a.sample
-    @proxy = proxy_addr + ":" + proxy_port.to_s
-
     @connections = {}
     @neighborhood_map = {}
   
@@ -153,9 +149,21 @@ namespace :rentjuicer do
           listing.location = customer[:location]
           location_changed = true
         end
-        save = false
-        save = true if detect_sublocation(listing,rentjuicer,customer)
-        save = true if get_location(listing,rentjuicer)
+        save = {:save => false, :why => []}
+
+        if detect_sublocation(listing,rentjuicer,customer)
+          save[:save] = true
+          save[:why] = "New Sublocation"
+        end
+
+        ########################## ADDRESS #############################
+        address   = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
+        location = location_from_address(listing, address)
+        if value_update(listing, "ad_location", location)
+          save[:save] = true
+          save[:why] = "New Location"
+        end
+
         save = true if update_vars(listing,rentjuicer)
 
         if save or new or location_changed #(New implies updated_vars returns true but, just for clarity I have included it.)
@@ -177,7 +185,7 @@ namespace :rentjuicer do
           special_puts "#{c(red)}Foreign state is #{rentjuicer.status}#{ec}"
         end
 
-        if rentjuicer.status == "active" and !disable(listing)
+        if rentjuicer.status == "active" and !disable?(listing)
           active << listing.id
         end
 
@@ -286,11 +294,7 @@ def update_vars(listing, rentjuicer)
     elsif key_symbol == "ad_title" and (listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty? or (!val.nil? and val.length < 25) )
       titles = []
       (0..2).each{
-        title = ListingTitle.generate(
-          :bedrooms => rJson["bedrooms"].to_i,
-          :location => listing.infos["ad_location"],
-          :type => rJson["property_type"],
-          :amenities => rJson["features"]).gsub(/  /, " ")
+        title = ListingTitle.generate(listing)
         if title.length > 20
           special_puts " New title generated:#{c(pink)}#{title}#{ec}"
           titles << title
@@ -315,45 +319,7 @@ end
 #Takes a listing and rentjuice object
 #Returns true or false depending on success of variable setting
 def get_location(listing, rentjuicer)
-  old_address = "#{listing.infos["ad_street_number"]} #{listing.infos["ad_street"]}, #{listing.infos["ad_city"]}, #{listing.infos["ad_state"]} #{listing.infos["ad_zip_code"]}" 
-  new_address   = "#{rentjuicer.street_number} #{rentjuicer.street}, #{rentjuicer.city}, #{rentjuicer.state} #{rentjuicer.zip_code}"
 
-  old_address.gsub!(/'/,' ')
-  new_address.gsub!(/'/,' ')
-
-  done = false
-  fail_attempts = 0
-  while !done and (listing.infos["ad_location"].nil? or old_address != new_address)
-    special_puts "Old Address: #{old_address}"
-    special_puts "New Address: #{new_address}"
-
-    begin
-      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(new_address)}&sensor=true", :proxy => @proxy).read
-      #0.1 sec is the minimum wait between request but, with all the other code the total time between requests should be >> 0.1
-      #Thus, cutting it close ought to be safe.
-      sleep(0.1)
-
-      parsed_json = ActiveSupport::JSON.decode(json_string)
-      location = parsed_json["results"].first["address_components"][2]["short_name"]
-
-      special_puts "Detected location: #{location}"
-      if listing.infos["ad_location"] != location
-        listing.infos["ad_location"] = location
-
-        return true
-      end
-      done = true
-    rescue => e
-      special_puts "#{c(red)}Location Error: #{e.inspect}, trying again. Fail Attempt #{fail_attempts += 1}#{ec}"
-      if fail_attempts > 5
-        return false
-      end
-      #If for some reason the minimum is surpased. Make sure to wait a long time before trying again.
-      #(I have seen it border on black listing if there are too many requests.)
-      sleep(0.5)
-    end
-  end
-  return false
 end
 
 ###########################################################

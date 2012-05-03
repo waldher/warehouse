@@ -15,6 +15,10 @@ def red;    1 end
 
 def ec; "\x1b[0m" end
 
+proxy_addr = ["http://74.221.217.34","http://74.221.217.28"].sample
+proxy_port = (47001..47020).to_a.sample
+@proxy = proxy_addr + ":" + proxy_port.to_s
+
 def value_update(listing, key_symbol, val)
   if !val.nil? and !val.empty? and listing.infos[key_symbol].to_s != val.to_s
     print_change(key_symbol, listing.infos[key_symbol], val.to_s)
@@ -31,7 +35,7 @@ def print_change(symbol, was, now)
   print "  #{c(green)}Now #{c(blue)}<#{ec}#{now.to_s[0..59]}#{c(blue)}>#{ec}\n"
 end
 
-def disable(listing)
+def disable?(listing)
   pre_msg = "#{c(red)}Disabled due to: "
 
   if listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?
@@ -59,12 +63,43 @@ def disable(listing)
   return false
 end
 
-def activate_listings(customer_id, active)
-  special_puts "#{active.count} listings seen."
-  activate = Listing.where("customer_id = ? and id in (?)", customer_id, active).each{|l| l.update_attribute(:foreign_active, true) }
-  special_puts "#{activate} listings were activated."
+def activate_listings(customer_id, listing_ids)
+  special_puts "#{listing_ids.count} listings seen."
+  activated = Listing.where("customer_id = ? and id in (?)", customer_id, listing_ids).update_all(:foreign_active => true, :updated_at => Time.now)
+  special_puts "#{activated} listing(s) were activated."
 
-  deactivate = Listing.where("customer_id = ? and id not in (?)", customer_id, active).each{|l| l.update_attribute(:foreign_active, false) }
-  special_puts "#{deactivate} listing(s) were deactivated."
+  deactivated = Listing.where("customer_id = ? and id not in (?)", customer_id, listing_ids).update_all(:foreign_active => true, :updated_at => Time.now)
+  special_puts "#{deactivated} listing(s) were deactivated."
 end
 
+def location_from_address(address)
+  #special_puts "address = '#{address}'"
+  #Remove Unit and apostrophies.
+  address = address.gsub(/# *[^ ,]*/, '').gsub(/'/,'') + ", FL"
+  special_puts "Querying Google for address location: #{address}"
+  #This allows for address detection failures to be tried again.
+  try_again = true
+  while true
+    begin
+      json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true", :proxy => @proxy).read
+      parsed_json = ActiveSupport::JSON.decode(json_string)
+      return parsed_json["results"].first["address_components"][2]["short_name"]
+    rescue => e
+      if try_again
+        #Try to fix some common errors that break the google query.
+        address = address.
+                    downcase.
+                    sub(/ te /i, " terrace ").
+                    sub(/ point /i," pointe ").
+                    sub(/ Unincorporated /i, "")
+        
+        try_again = false
+      else
+        return city
+      end
+      #Sleep 0.5sec in case the error was due to query rate
+      sleep(0.5)
+    end
+  end
+  return "ERR"
+end
