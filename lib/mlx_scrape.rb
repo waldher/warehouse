@@ -157,12 +157,12 @@ def mlx_import(info)
 
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
-        if l =~ /\$ / and 
-          (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
+        if (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
            l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
            l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
-           l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/)
-          price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '')
+           l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/ or
+           l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/)
+          price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
           if value_update(listing, "ad_price", price)
             save[:save] = true
             save[:why] << "New Price"
