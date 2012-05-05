@@ -99,6 +99,7 @@ def mlx_import(info)
       special_puts "Current listing is #{index += 1} of #{$record_ids.count}"
 
       new_infos = {}
+      old_infos = listing.infos
       ########################## ADDRESS #############################
       address = ""
       for l in $listing_page.body.split("\n").each
@@ -278,11 +279,15 @@ def mlx_import(info)
       end
 
       ######################## SAVING INFOS ##########################
-      if new_infos != listing.infos or listing.changed?
+      if new_infos != old_infos or listing.changed?
         special_puts "#{c(l_blue)}Saving Listing#{ec}:"
-        for key, new_value in new_infos.diff(listing.infos)
-          print_change(key, listing.infos[key], new_value)
-          listing.infos[key] = new_value
+        #Hash.diff wont work, I just want new changes looped through not old ones. This is most important when data is removed.
+        keys = (new_infos.keys + old_infos.keys).uniq.sort
+        for key in keys
+          if old_infos[key] != new_infos[key]
+            print_change(key, old_infos[key], new_infos[key])
+            listing.infos[key] = new_infos[key] || ""
+          end
         end
         listing.save
         if !listing.errors.empty?
