@@ -156,7 +156,7 @@ def mlx_import(info)
         if (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
            l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
            l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
-           l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/)
+           l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/) or
            l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
           new_infos["ad_price"] = price if !price.nil? and !price.empty?
