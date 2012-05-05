@@ -279,16 +279,18 @@ def mlx_import(info)
       end
 
       ######################## SAVING INFOS ##########################
-      if new_infos != old_infos or listing.changed?
-        special_puts "#{c(l_blue)}Saving Listing#{ec}:"
-        #Hash.diff wont work, I just want new changes looped through not old ones. This is most important when data is removed.
-        keys = (new_infos.keys + old_infos.keys).uniq.sort
-        for key in keys
-          if old_infos[key] != new_infos[key]
-            print_change(key, old_infos[key], new_infos[key])
-            listing.infos[key] = new_infos[key] || ""
-          end
+      infos_differ = false
+      keys = (new_infos.keys + old_infos.keys).uniq.sort
+      for key in keys
+        new_infos[key] = new_infos[key] || ""
+        if old_infos[key] != new_infos[key]
+          print_change(key, old_infos[key], new_infos[key])
+          listing.infos[key] = new_infos[key]
+          infos_differ = true
         end
+      end
+      if infos_differ or listing.changed?
+        special_puts "#{c(l_blue)}Saving Listing#{ec}"
         listing.save
         if !listing.errors.empty?
           special_puts "#{c(red)}#{listing.errors}#{ec}"
