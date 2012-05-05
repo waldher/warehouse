@@ -113,6 +113,12 @@
             <%= infos.select :ad_agent, ((agents and agents.value.split("||")) or []), :selected => @listing.infos["ad_agent"] %>
           </span>
         <% end %>
+        <% if @customer.has_capability?("construction") %>
+          <span class="field">
+            <%= infos.label :ad_construction, "Construction" %><br />
+            <%= infos.text_field :ad_construction, :value => @listing.infos["ad_construction"] %>
+          </span>
+        <% end %>
       </div>
     <% end %>
     <div class="field">

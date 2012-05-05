@@ -61,11 +61,7 @@ namespace :scrape do
 
       if listing.title.nil?
         titles = (0..2).collect{
-          ListingTitle.generate(
-            :bedrooms => listing.infos[:ad_bedrooms].to_i,
-            :location => listing.infos[:ad_location],
-            :type => "",
-            :amenities => "")}.reject{|title| title.length < 20}.join("||")
+          ListingTitle.generate(listing)}
         save = true if value_update(listing, :ad_title, titles)
       end
 
