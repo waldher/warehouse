@@ -243,7 +243,7 @@ def mlx_import(info)
 
       ########################## TITLES ##############################
       titles = []
-      if listing.infos["ad_title"].nil? or new_titles
+      if new_titles or listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?
         (0..2).each{
           title = ListingTitle.generate(listing)
           if !title.nil? and !title.empty? and title.length > 20
@@ -257,6 +257,8 @@ def mlx_import(info)
         #  save[:save] = true
         #  save[:why] << "New Title"
         #end
+      else #When titles are not regenerated the new_infos hash is going to have them as nil.
+        new_infos["ad_title"] = old_infos["ad_title"]
       end
       
       ########################## COURTESY ############################
