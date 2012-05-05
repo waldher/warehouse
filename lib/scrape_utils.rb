@@ -91,7 +91,8 @@ def location_from_address(address)
                     downcase.
                     sub(/ te /i, " terrace ").
                     sub(/ point /i," pointe ").
-                    sub(/ Unincorporated /i, "")
+                    sub(/ Unincorporated /i, "").
+                    sub(/([0-9]*) TH/i,"\1th")
         
         try_again = false
       else
