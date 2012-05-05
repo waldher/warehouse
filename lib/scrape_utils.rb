@@ -96,7 +96,7 @@ def location_from_address(address)
         
         try_again = false
       else
-        return city
+        raise "Google Maps API doesn't like the address format. Please Check."
       end
       #Sleep 0.5sec in case the error was due to query rate
       sleep(0.5)
