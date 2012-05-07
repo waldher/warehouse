@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120427124939) do
+ActiveRecord::Schema.define(:version => 20120507084850) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -42,6 +42,15 @@ ActiveRecord::Schema.define(:version => 20120427124939) do
     t.integer "capability_id"
     t.integer "customer_id"
   end
+
+  create_table "craigslist_keywords", :force => true do |t|
+    t.string   "spelling",   :null => false
+    t.integer  "frequency",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "craigslist_keywords", ["spelling"], :name => "index_craigslist_keywords_on_spelling", :unique => true
 
   create_table "customer_infos", :force => true do |t|
     t.integer "customer_id"

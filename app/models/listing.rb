@@ -63,6 +63,14 @@ class Listing < ActiveRecord::Base
     return listing_images.where("image_updated_at is not null").collect{|li| li.image_url}
   end
 
+  def ad_autokeywords
+    if infos.has_key?("ad_description")
+      return CraigslistKeyword.filter(Word.synonyms(infos["ad_description"].split(/[ .,&()]+/)))
+    end
+
+    return []
+  end
+
   protected
 
   def init_infos
