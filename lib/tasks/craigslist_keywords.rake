@@ -9,6 +9,7 @@ namespace :craigslist_keywords do
     ad_urls = []
 
     for city in cities
+      puts "Fetching #{city}"
       page = agent.get("http://#{city}.craigslist.org/apa/")
 
       20.times {|i|
@@ -21,7 +22,10 @@ namespace :craigslist_keywords do
     ad_urls.uniq!
 
     words_hash = {}
-
+    
+    puts "Starting fetch of #{ad_urls.size} ads"
+    i = 0
+    print "0"
     ad_urls.each{|ad_url|
       begin
         ad = agent.get(ad_url)
@@ -43,15 +47,17 @@ namespace :craigslist_keywords do
         }
       rescue => e
       end
+      print ("\x08" * i.to_s.length)
+      i += 1
+      print i.to_s
     }
+    puts ""
 
+    puts "Cleaning up unique words"
     words_hash.reject!{|k, v| v == 1}
     sorted = {}
+    puts "Compiling words hash"
     words_hash.each{|k, v|
-      if Word.find_by_spelling(k).nil?
-        next
-      end
-
       if sorted.has_key?(v)
         sorted[v] << k
       else
@@ -59,6 +65,7 @@ namespace :craigslist_keywords do
       end
     }
 
+    puts "Inserting into database"
     sorted.sort.each{|v, k|
       k.each{|word|
         CraigslistKeyword.create(:frequency => v, :spelling => word)
