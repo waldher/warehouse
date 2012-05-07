@@ -12,7 +12,7 @@ namespace :craigslist_keywords do
       puts "Fetching #{city}"
       page = agent.get("http://#{city}.craigslist.org/apa/")
 
-      20.times {|i|
+      10.times {|i|
         ad_links = page.links.reject{|l| !(l.href =~ /[0-9]{5,}[.]html$/) }
         ad_links.each{|l| ad_urls << l.href }
         page = page.link_with(:text => "next 100 postings").click
