@@ -73,29 +73,31 @@ def activate_listings(customer_id, listing_ids)
 end
 
 def location_from_address(address)
-  #special_puts "address = '#{address}'"
   #Remove Unit and apostrophies.
   address = address.gsub(/# *[^ ,]*/, '').gsub(/'/,'') + ", FL"
-  special_puts "Querying Google for address location: #{address}"
-  #This allows for address detection failures to be tried again.
+
   try_again = true
+  #This allows for address detection failures to be tried again.
   while true
     begin
+      special_puts "Querying Google for address = '#{address}'"
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true", :proxy => @proxy).read
       parsed_json = ActiveSupport::JSON.decode(json_string)
       return parsed_json["results"].first["address_components"][2]["short_name"]
     rescue => e
       if try_again
-        #Try to fix some common errors that break the google query.
+        #Trying to fix some common errors that break the google query.
         address = address.
                     downcase.
-                    sub(/ te /i, " terrace ").
-                    sub(/ point /i," pointe ").
-                    sub(/ Unincorporated /i, "")
+                    sub(/ te /i, ' terrace ').
+                    sub(/ point /i, ' pointe ').
+                    sub(/ Unincorporated /i, '').
+                    sub(/([0-9]+) TH/i, '\1th').
+                    sub(/ ca /i, ' cswy ') #Could mess up california - keep an eye on this
         
         try_again = false
       else
-        return city
+        raise "Google Maps API doesn't like the address format. Please Check."
       end
       #Sleep 0.5sec in case the error was due to query rate
       sleep(0.5)

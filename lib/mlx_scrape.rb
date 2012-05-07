@@ -3,10 +3,10 @@ require 'mechanize'
 require 'listing_title'
 require 'scrape_utils'
 
-#Info is a hash with:
-# :urls => ['array of mlx scrape urls']
+#info is a hash in the form:
+# :data => [{:url=>"scrape_url",:infos=>{}},] # One inner hash per url
 # :key => 'customer_key'
-# :location => 'default location' (Nil if - autodetect required or location unknown)
+# :new_titels => bool (generate new titles (true/false)?)
 def mlx_import(info)
   @running = true
   Kernel.trap("INT"){
@@ -23,16 +23,16 @@ def mlx_import(info)
   begin
     customer_id = Customer.where("key like ?",customer_key).first.id 
   rescue 
-    special_puts "#{c(red)}Customer Key (#{customer_key.to_s}) Not Found!#{ec}"
-    return false 
+    special_puts "#{c(red)}Customer Key '#{customer_key.to_s}' Not Found!#{ec}"
+    return false
   end
 
   active = []
   $page = nil
   for data in info[:data]
-    global_location = data[:location]
-
+    external_infos = data[:infos] #Hash
     url = data[:url].chomp.strip
+
     $page = agent.get(url)
 
     $record_ids = nil
@@ -77,7 +77,6 @@ def mlx_import(info)
       }
       foreign_id.strip!
 
-      save = {:save => false, :why => []}
       #Detect an old listing
       listings = nil
       listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
@@ -93,14 +92,14 @@ def mlx_import(info)
         listing = Listing.new
         listing.customer_id = customer_id
         listing.foreign_id = foreign_id
-        save[:save] = true
-        save[:why] << "New Listing"
       end 
       special_puts pre_message+"#{customer_key}#{ec}"
       special_puts "MLX ID: #{foreign_id}"
       special_puts "record_id = \"#{record_id}\""
       special_puts "Current listing is #{index += 1} of #{$record_ids.count}"
 
+      new_infos = {}
+      old_infos = listing.infos
       ########################## ADDRESS #############################
       address = ""
       for l in $listing_page.body.split("\n").each
@@ -117,43 +116,41 @@ def mlx_import(info)
         end
       end
       address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
-      if value_update(listing, "ad_address", address)
-        save[:save] = true
-        save[:why] << "New Address"
-      end
+      new_infos["ad_address"] = address if !address.nil? and !address.empty?
+      #if value_update(listing, "ad_address", address)
+      #  save[:save] = true
+      #  save[:why] << "New Address"
+      #end
 
       ########################## LOCATION ############################
       location = nil
-      if !global_location.nil?
-        location = global_location
-      else
-        building = nil
-        for l in $listing_page.body.split("\n")
-          if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/)
-            building = l
-            building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
-            special_puts "Found Building #{building}, referencing neighborhood"
-            location = building_to_location(building) if !building_to_location(building).nil?
-            break
-          elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
-                l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
-                l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/)
-            location = l
-            location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
-            special_puts "Found Location #{location}"
-            break
-          else
-            location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
-          end 
-        end
+      building = nil
+      for l in $listing_page.body.split("\n")
+        if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/)
+          building = l
+          building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+          special_puts "Found Building #{building}, referencing neighborhood"
+          location = building_to_location(building) if !building_to_location(building).nil?
+          break
+        elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
+              l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
+              l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/)
+          location = l
+          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+          special_puts "Found Location #{location}"
+          break
+        else
+          location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
+        end 
       end
       if location.nil?
         location = location_from_address(address)
       end
-      if value_update(listing, "ad_location", location)
-        save[:save] = true
-        save[:why] << "New Location"
-      end
+      new_infos["ad_location"] = location if !location.nil? and !location.empty?
+      #if value_update(listing, "ad_location", location)
+      #  save[:save] = true
+      #  save[:why] << "New Location"
+      #end
 
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
@@ -163,10 +160,11 @@ def mlx_import(info)
            l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/ or
            l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
-          if value_update(listing, "ad_price", price)
-            save[:save] = true
-            save[:why] << "New Price"
-          end
+          new_infos["ad_price"] = price if !price.nil? and !price.empty?
+          #if value_update(listing, "ad_price", price)
+          #  save[:save] = true
+          #  save[:why] << "New Price"
+          #end
         end
       }
 
@@ -181,26 +179,28 @@ def mlx_import(info)
           saw_beds = true
         end
       }
-      if value_update(listing, "ad_bedrooms", bedrooms)
-        save[:save] = true
-        save[:why] << "New Bedrooms"
-      end
+      new_infos["ad_bedrooms"] = bedrooms if !bedrooms.nil? and !bedrooms.empty?
+      #if value_update(listing, "ad_bedrooms", bedrooms)
+      #  save[:save] = true
+      #  save[:why] << "New Bedrooms"
+      #end
 
       ########################### COMPLEX ############################
       complex = nil
       saw_complex = false
-      $listing_page.body.split("\n").each{|l|
+      for l in $listing_page.body.split("\n")
         if saw_complex
           saw_complex = false
           complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
         elsif l =~ /Complex Name:/ or l =~ /Subdivision:/
           saw_complex = true
         end
-      }
-      if value_update(listing, "ad_complex", complex)
-        save[:save] = true
-        save[:why] << "New Complex"
       end
+      new_infos["ad_complex"] = complex if !complex.nil? and !complex.empty?
+      #if value_update(listing, "ad_complex", complex)
+      #  save[:save] = true
+      #  save[:why] << "New Complex"
+      #end
 
       ########################## DESCRIPTION #########################
       desc = ""
@@ -219,10 +219,11 @@ def mlx_import(info)
           desc += l.gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
         end
       end
-      if value_update(listing, "ad_description", desc)
-        save[:save] = true
-        save[:why] << "New Description"
-      end
+      new_infos["ad_description"] = desc if !desc.nil? and !desc.empty?
+      #if value_update(listing, "ad_description", desc)
+      #  save[:save] = true
+      #  save[:why] << "New Description"
+      #end
 
       ########################### AMENITIES ##########################
       amenities = ""
@@ -234,41 +235,64 @@ def mlx_import(info)
         end
       end
       amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').split(/ *\/ /).join('||')
-      if value_update(listing, "ad_amenities", amenities)
-        save[:save] = true
-        save[:why] << "New Amenities"
-      end
+      new_infos["ad_amenities"] = amenities if !amenities.nil? and !amenities.empty?
+      #if value_update(listing, "ad_amenities", amenities)
+      #  save[:save] = true
+      #  save[:why] << "New Amenities"
+      #end
 
       ########################## TITLES ##############################
       titles = []
-      if listing.infos["ad_title"].nil? or new_titles
+      if new_titles or listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?
         (0..2).each{
           title = ListingTitle.generate(listing)
-          if !title.nil? and title.length > 20
+          if !title.nil? and !title.empty? and title.length > 20
             special_puts "New title generated: #{c(pink)}#{title}#{ec}"
             titles << title
           end
         }
-        if value_update(listing, "ad_title", (titles * "||").gsub(/  /,' '))
-          save[:save] = true
-          save[:why] << "New Title"
-        end
+        titles = (titles * "||").gsub(/  /,' ')
+        new_infos["ad_title"] = titles if !titles.nil? and !titles.empty?
+        #if value_update(listing, "ad_title", (titles * "||").gsub(/  /,' '))
+        #  save[:save] = true
+        #  save[:why] << "New Title"
+        #end
+      else #When titles are not regenerated the new_infos hash is going to have them as nil.
+        new_infos["ad_title"] = old_infos["ad_title"]
       end
       
       ########################## COURTESY ############################
-      $listing_page.body.split("\n").each{|l|
+      for l in $listing_page.body.split("\n")
         if l =~ /Courtesy Of:/ or l =~ /top:444px;height:13px;left:138px;width:234px;font:8pt Tahoma;/
           attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').strip
-          if value_update(listing, "ad_attribution", attribution)
-            save[:save] = true
-            save[:why] << "New Attribution"
-          end
+          new_infos["ad_attribution"] = attribution if !attribution.nil? and !attribution.empty?
+          #if value_update(listing, "ad_attribution", attribution)
+          #  save[:save] = true
+          #  save[:why] << "New Attribution"
+          #end
         end
-      }
+      end
+
+      ################### APPLYING EXTERNAL INFOS ####################
+      if !external_infos.nil?
+        for key, value in external_infos
+          new_infos[key] = value
+        end
+      end
 
       ######################## SAVING INFOS ##########################
-      if save[:save]
-        special_puts "#{c(l_blue)}Saving Listing#{ec}: #{save[:why].join(", ")}"
+      infos_differ = false
+      keys = (new_infos.keys + old_infos.keys).uniq.sort
+      for key in keys
+        new_infos[key] = new_infos[key] || ""
+        if old_infos[key] != new_infos[key]
+          print_change(key, old_infos[key], new_infos[key])
+          listing.infos[key] = new_infos[key]
+          infos_differ = true
+        end
+      end
+      if infos_differ or listing.changed?
+        special_puts "#{c(l_blue)}Saving Listing#{ec}"
         listing.save
         if !listing.errors.empty?
           special_puts "#{c(red)}#{listing.errors}#{ec}"
