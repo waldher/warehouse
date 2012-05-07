@@ -19,19 +19,12 @@ class Word < ActiveRecord::Base
       adj_ids << s.wordnet_number if s.category == 'a'
       nou_ids << s.wordnet_number if s.category == 'n'
       sat_ids << s.wordnet_number if s.category == 's'
-      puts ""
-      puts "#{s.symbol} - #{s.wordnet_number} - #{s.category}"
-      puts Definition.where(:wordnet_number => s.wordnet_number, :category => s.category).sample.text_definition
-      for w in Definition.where(:wordnet_number => s.wordnet_number, :category => s.category).sample.words
-        puts w.spelling
-      end
     }
 
     definition_ids = Definition.where("(wordnet_number in (?) and category = 'a') or
                                        (wordnet_number in (?) and category = 'n') or
                                        (wordnet_number in (?) and category = 's')", adj_ids,nou_ids,sat_ids).collect(&:id)
 
-    Word.where("definition_id in (?) and ignore = ?", definition_ids, false).collect(&:spelling)
-    return
+    return Word.where("definition_id in (?) and ignore = ?", definition_ids, false).collect(&:spelling)
   end
 end
