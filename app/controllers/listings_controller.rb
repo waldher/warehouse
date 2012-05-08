@@ -48,9 +48,9 @@ class ListingsController < ApplicationController
       @listings.each do |listing|
         data << listing.attributes.merge(
           :active => listing.active,
-          :ad_image_urls => CSV.parse(listing.images_array[1..-2]), 
+          :ad_image_urls => (CSV.parse(listing.images_array[1..-2]).first rescue []), 
           :ad_autokeywords => listing.autokeywords,
-          :listing_infos => Hash[CSV.parse(listing.info_keys_array[1..-2]).first.zip CSV.parse(listing.info_values_array[1..-2]).first], 
+          :listing_infos => (Hash[CSV.parse(listing.info_keys_array[1..-2]).first.zip CSV.parse(listing.info_values_array[1..-2]).first] rescue {}), 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
           :ad_foreign_id => listing.foreign_id
