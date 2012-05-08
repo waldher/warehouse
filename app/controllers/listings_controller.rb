@@ -22,7 +22,23 @@ class ListingsController < ApplicationController
       t = Listing.arel_table
       query = t[:manual_enabled].eq(true).or(t[:manual_enabled].eq(nil).and(t[:foreign_active].eq(true)))
       @listings = Listing.where(:customer_id => @customer.id).where(query).
-        includes(:listing_infos, :listing_images)
+        includes(:listing_infos, :listing_images).
+        select("*,
+          array_to_string(array(SELECT DISTINCT craigslist_keywords.spelling FROM craigslist_keywords WHERE craigslist_keywords.spelling IN (
+                  SELECT spelling
+                  FROM words
+                  WHERE definition_id IN (
+                      SELECT DISTINCT definition_id
+                      FROM words
+                      WHERE spelling IN (
+                          SELECT unnest(string_to_array(replace(replace(replace(replace(replace(replace(lower(value), '.', ' '), ',', ' '), '&', ' '), '!', ' '), '(', ' '), ')', ' '), ' '))
+                          FROM listing_infos
+                          WHERE listing_id = listings.id
+                            AND KEY = 'ad_description'
+                          )
+                      )
+                  )), ' ') AS autokeywords 
+        ")
       data = []
       time = Time.now
       @listings.each do |listing|
@@ -31,7 +47,7 @@ class ListingsController < ApplicationController
         data << listing.attributes.merge(
           :active => listing.active,
           :ad_image_urls => images, 
-          :ad_autokeywords => listing.ad_autokeywords,
+          :ad_autokeywords => listing.autokeywords,
           :listing_infos => infos, 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
