@@ -1,3 +1,5 @@
+require 'csv'
+
 class ListingsController < ApplicationController
   before_filter :get_customer
 
