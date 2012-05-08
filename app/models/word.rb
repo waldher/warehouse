@@ -31,7 +31,6 @@ class Word < ActiveRecord::Base
                                        (wordnet_number in (?) and category = 'n') or
                                        (wordnet_number in (?) and category = 's')", adj_ids,nou_ids,sat_ids).collect(&:id)
 
-    Word.where("definition_id in (?) and ignore = ?", definition_ids, false).collect(&:spelling)
-    return
+    return Word.where("definition_id in (?) and ignore = ?", definition_ids, false).collect(&:spelling)
   end
 end

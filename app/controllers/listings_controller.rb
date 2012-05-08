@@ -31,6 +31,7 @@ class ListingsController < ApplicationController
         data << listing.attributes.merge(
           :active => listing.active,
           :ad_image_urls => images, 
+          :ad_autokeywords => listing.ad_autokeywords,
           :listing_infos => infos, 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
