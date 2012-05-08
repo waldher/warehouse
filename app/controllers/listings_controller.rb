@@ -22,8 +22,10 @@ class ListingsController < ApplicationController
       t = Listing.arel_table
       query = t[:manual_enabled].eq(true).or(t[:manual_enabled].eq(nil).and(t[:foreign_active].eq(true)))
       @listings = Listing.where(:customer_id => @customer.id).where(query).
-        includes(:listing_infos, :listing_images).
         select("*,
+          array(select key from listing_infos where listing_id = listings.id order by key) as info_keys_array,
+          array(select value from listing_infos where listing_id = listings.id order by key) as info_values_array,
+          array(select complete_image_url from listing_images where listing_id = listings.id) as images_array,
           array_to_string(array(SELECT DISTINCT craigslist_keywords.spelling FROM craigslist_keywords WHERE craigslist_keywords.spelling IN (
                   SELECT spelling
                   FROM words
@@ -42,13 +44,11 @@ class ListingsController < ApplicationController
       data = []
       time = Time.now
       @listings.each do |listing|
-        images = listing.listing_images.map(&:complete_image_url)
-        infos = listing.listing_infos.map { |obj| {:key => obj.key, :value => obj.value} }
         data << listing.attributes.merge(
           :active => listing.active,
-          :ad_image_urls => images, 
+          :ad_image_urls => CSV.parse(listing.images_array[1..-2]), 
           :ad_autokeywords => listing.autokeywords,
-          :listing_infos => infos, 
+          :listing_infos => Hash[CSV.parse(listing.info_keys_array[1..-2]).first.zip CSV.parse(listing.info_values_array[1..-2]).first], 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
           :ad_foreign_id => listing.foreign_id
