@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120508002537) do
+ActiveRecord::Schema.define(:version => 20120508083655) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(:version => 20120508002537) do
     t.string   "setup_nonce"
     t.integer  "location_id"
     t.integer  "sublocation_id"
+    t.string   "import_type"
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"
@@ -88,6 +89,22 @@ ActiveRecord::Schema.define(:version => 20120508002537) do
   end
 
   add_index "definitions", ["wordnet_number", "category"], :name => "index_definitions_on_wordnet_number_and_category", :unique => true
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "directories", :force => true do |t|
     t.string   "name"
@@ -112,6 +129,13 @@ ActiveRecord::Schema.define(:version => 20120508002537) do
   add_index "directory_files", ["directory_id"], :name => "index_directory_files_on_directory_id"
   add_index "directory_files", ["requested_at"], :name => "index_directory_files_on_requested_at"
 
+  create_table "keywords", :force => true do |t|
+    t.string   "keyword"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "ignore",     :default => false
+  end
+
   create_table "listing_images", :force => true do |t|
     t.integer  "listing_id"
     t.datetime "created_at"
@@ -123,6 +147,8 @@ ActiveRecord::Schema.define(:version => 20120508002537) do
     t.integer  "threading",          :default => 0, :null => false
     t.string   "complete_image_url"
   end
+
+  add_index "listing_images", ["listing_id"], :name => "index_listing_images_on_listing_id"
 
   create_table "listing_infos", :force => true do |t|
     t.integer  "listing_id",                :null => false
@@ -197,6 +223,13 @@ ActiveRecord::Schema.define(:version => 20120508002537) do
     t.string   "ad_location"
     t.string   "ad_keywords",    :default => "",    :null => false
   end
+
+  create_table "scraped_links", :force => true do |t|
+    t.string  "url"
+    t.boolean "done"
+  end
+
+  add_index "scraped_links", ["url", "done"], :name => "index_scraped_links_on_url_and_done", :unique => true
 
   create_table "sublocations", :force => true do |t|
     t.string  "name",        :null => false
