@@ -46,7 +46,8 @@ class ListingsController < ApplicationController
       data = []
       time = Time.now
       @listings.each do |listing|
-        data << listing.attributes.merge(
+        data << {
+          :id => listing.id
           :active => listing.active,
           :ad_image_urls => (CSV.parse(listing.images_array[1..-2]).first rescue []), 
           :ad_autokeywords => listing.autokeywords,
@@ -54,7 +55,7 @@ class ListingsController < ApplicationController
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
           :ad_foreign_id => listing.foreign_id
-        )
+        }
       end
       render :json => JSON.generate(data) 
       #render :json => @listings.to_json(
