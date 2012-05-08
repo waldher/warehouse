@@ -47,7 +47,7 @@ class ListingsController < ApplicationController
       time = Time.now
       @listings.each do |listing|
         data << {
-          :id => listing.id
+          :id => listing.id,
           :active => listing.active,
           :ad_image_urls => (CSV.parse(listing.images_array[1..-2]).first rescue []), 
           :ad_autokeywords => listing.autokeywords,
