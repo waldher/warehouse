@@ -63,11 +63,13 @@ def disable?(listing)
   return false
 end
 
-def activate_listings(customer_id, listing_ids)
+def activate_new_listings(customer_id, listing_ids)
   special_puts "#{listing_ids.count} listings seen."
   activated = Listing.where("customer_id = ? and id in (?)", customer_id, listing_ids).update_all(:foreign_active => true, :updated_at => Time.now)
   special_puts "#{activated} listing(s) were activated."
+end
 
+def deactivate_old_listings(customer_id, listing_ids)
   deactivated = Listing.where("customer_id = ? and id not in (?)", customer_id, listing_ids).update_all(:foreign_active => false, :updated_at => Time.now)
   special_puts "#{deactivated} listing(s) were deactivated."
 end

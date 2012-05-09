@@ -5,8 +5,10 @@ require 'scrape_utils'
 
 #info is a hash in the form:
 # :data => [{:url=>"scrape_url",:infos=>{}},] # One inner hash per url
-# :key => 'customer_key'
-# :new_titels => bool (generate new titles (true/false)?)
+# :customer_key => 'customer_key'
+# :new_titles => bool (generate new titles (true/false)?)
+# :activate_new => bool (activate newly imported listings)
+# :deactivate_old => bool (deactivate old listings)
 def mlx_import(info)
   @running = true
   Kernel.trap("INT"){
@@ -19,7 +21,9 @@ def mlx_import(info)
   agent = Mechanize.new
 
   new_titles = info[:new_titles]
-  customer_key = info[:key]
+  customer_key = info[:customer_key]
+  activate_new = info[:activate_new]
+  deactivate_old = info[:deactivate_old]
   begin
     customer_id = Customer.where("key like ?",customer_key).first.id 
   rescue 
@@ -243,7 +247,7 @@ def mlx_import(info)
 
       ########################## TITLES ##############################
       titles = []
-      if new_titles or listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?
+      if new_titles and (listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?)
         (0..2).each{
           title = ListingTitle.generate(listing)
           if !title.nil? and !title.empty? and title.length > 20
@@ -336,12 +340,14 @@ def mlx_import(info)
       special_puts "Created/Updated Listing. Leadadvo ID #{listing.id}"
       print "`-----------------------------------------------------------------------\n"
       if !@running
-        activate_listings(customer_id, active)
+        activate_new_listings(customer_id, active) if activate_new
+        deactivate_old_listings(customer_id, active) if deactivate_old
         return
       end
     end
   end
-  activate_listings(customer_id, active)
+  activate_new_listings(customer_id, active) if activate_new
+  deactivate_old_listings(customer_id, active) if deactivate_old
 end
 
 @@connections = {}
