@@ -297,6 +297,7 @@ def mlx_import(info)
       end
       if infos_differ or listing.changed?
         special_puts "#{c(l_blue)}Saving Listing#{ec}"
+        listing.updated_at = Time.now #If for some reason the listing doesn't have any change but the info changed we still want the "updated_at" to change (so customers can see)
         listing.save
         if !listing.errors.empty?
           special_puts "#{c(red)}#{listing.errors}#{ec}"
