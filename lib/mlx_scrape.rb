@@ -267,7 +267,9 @@ def mlx_import(info)
       
       ########################## COURTESY ############################
       for l in $listing_page.body.split("\n")
-        if l =~ /Courtesy Of:/ or l =~ /top:444px;height:13px;left:138px;width:234px;font:8pt Tahoma;/
+        if (l =~ /Courtesy Of:/ or 
+            l =~ /top:444px;height:13px;left:138px;width:234px;font:8pt Tahoma;/ or
+            l =~ /top:920px;height:13px;left:8px;width:464px;font:8pt Arial;/)
           attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').strip
           new_infos["ad_attribution"] = attribution if !attribution.nil? and !attribution.empty?
           #if value_update(listing, "ad_attribution", attribution)
