@@ -43,6 +43,11 @@ def disable?(listing)
     return true
   end
 
+  if listing.infos["ad_attribution"].nil or listing.infos["ad_attribution"].empty?
+    special_puts pre_msg + "no attribution#{ec}"
+    return true
+  end
+
   image_urls = listing.ad_image_urls
   if image_urls.nil? or image_urls.empty?
     special_puts pre_msg + "empty images#{ec}"
