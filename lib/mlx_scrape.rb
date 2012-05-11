@@ -6,7 +6,7 @@ require 'scrape_utils'
 #info is a hash in the form:
 # :data => [{:url=>"scrape_url",:infos=>{}},] # One inner hash per url
 # :customer_key => 'customer_key'
-# :new_titles => bool (generate new titles (true/false)?)
+# :disable_new_titles => bool (generate new titles (true/false)?)
 # :activate_new => bool (activate newly imported listings)
 # :deactivate_old => bool (deactivate old listings)
 def mlx_import(info)
@@ -20,7 +20,7 @@ def mlx_import(info)
 
   agent = Mechanize.new
 
-  new_titles = info[:new_titles]
+  disable_new_titles = info[:new_titles]
   customer_key = info[:customer_key]
   activate_new = info[:activate_new]
   deactivate_old = info[:deactivate_old]
@@ -252,7 +252,7 @@ def mlx_import(info)
 
       ########################## TITLES ##############################
       titles = []
-      if new_titles and (listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?)
+      if !disable_new_titles and (listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?)
         (0..2).each{
           title = ListingTitle.generate(listing)
           if !title.nil? and !title.empty? and title.length > 20
