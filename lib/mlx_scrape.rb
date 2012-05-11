@@ -106,7 +106,7 @@ def mlx_import(info)
       old_infos = listing.infos
       ########################## ADDRESS #############################
       address = ""
-      for l in $listing_page.body.split("\n").each
+      for l in $listing_page.body.split("\n")
         if (l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or 
             l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
@@ -148,7 +148,10 @@ def mlx_import(info)
         end 
       end
       if location.nil?
-        location = location_from_address(address)
+        begin
+          location = location_from_address(address)
+        rescue => e
+        end
       end
       new_infos["ad_location"] = location if !location.nil? and !location.empty?
       #if value_update(listing, "ad_location", location)
