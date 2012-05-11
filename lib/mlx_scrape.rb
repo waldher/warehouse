@@ -121,7 +121,7 @@ def mlx_import(info)
               break
         end
       end
-      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;(Address: |)/, '')
+      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Address: )/, '')
       new_infos["ad_address"] = address if !address.nil? and !address.empty?
       #if value_update(listing, "ad_address", address)
       #  save[:save] = true
@@ -143,7 +143,7 @@ def mlx_import(info)
               l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
               l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial;/)
           location = l
-          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;(Address|) */, '')
+          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: ) */, '')
           special_puts "Found Location #{location}"
           break
         else
@@ -200,7 +200,7 @@ def mlx_import(info)
         if saw_complex
           saw_complex = false
           complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Complex Name:/ or l =~ /Subdivision:/
+        elsif l =~ /Complex Name:/
           saw_complex = true
         end
       end
