@@ -141,7 +141,7 @@ def mlx_import(info)
         elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
               l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
               l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
-              l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial')
+              l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial;/)
           location = l
           location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;(Address|) */, '')
           special_puts "Found Location #{location}"
