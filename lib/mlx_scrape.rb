@@ -115,11 +115,13 @@ def mlx_import(info)
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
             l =~ /top:120px;height:24px;left:208px;width:400px;font:bold 11pt Tahoma;/ or
             l =~ /top:232px;height:20px;left:200px;width:424px;font:bold 12pt Tahoma;/ or
-            l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/)
+            l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/ or
+            l =~ /top:64px;height:18px;left:16px;width:688px;font:bold 10pt Arial/)
               address = l
+              break
         end
       end
-      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/, '')
+      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;(Address: |)/, '')
       new_infos["ad_address"] = address if !address.nil? and !address.empty?
       #if value_update(listing, "ad_address", address)
       #  save[:save] = true
@@ -138,9 +140,10 @@ def mlx_import(info)
           break
         elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
               l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
-              l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/)
+              l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
+              l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial')
           location = l
-          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
+          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;(Address|) */, '')
           special_puts "Found Location #{location}"
           break
         else
@@ -148,11 +151,7 @@ def mlx_import(info)
         end 
       end
       if location.nil?
-        begin
-          location = location_from_address(address)
-        rescue => e
-          next
-        end
+        location = location_from_address(address)
       end
       new_infos["ad_location"] = location if !location.nil? and !location.empty?
       #if value_update(listing, "ad_location", location)
@@ -166,7 +165,8 @@ def mlx_import(info)
            l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
            l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
            l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/ or
-           l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/)
+           l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/ or
+           l  =~ /top:112px;height:19px;left:574px;width:127px;font:bold 11pt Arial;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
           new_infos["ad_price"] = price if !price.nil? and !price.empty?
           #if value_update(listing, "ad_price", price)
@@ -217,7 +217,8 @@ def mlx_import(info)
             l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ or
             l =~ /top:504px;height:105px;left:24px;width:576px;font:9pt Tahoma;/ or
             l =~ /top:864px;height:112px;left:112px;width:552px;font:10pt Tahoma;/ or
-            l =~ /Public remarks:/i)
+            l =~ /Public remarks:/i or 
+            l =~ /top:264px;height:112px;left:16px;width:680px;font:10pt Arial;/)
           desc = l
         end
       end
