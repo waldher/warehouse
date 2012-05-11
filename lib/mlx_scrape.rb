@@ -151,6 +151,7 @@ def mlx_import(info)
         begin
           location = location_from_address(address)
         rescue => e
+          next
         end
       end
       new_infos["ad_location"] = location if !location.nil? and !location.empty?
