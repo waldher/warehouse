@@ -199,7 +199,7 @@ def mlx_import(info)
       for l in $listing_page.body.split("\n")
         if saw_complex
           saw_complex = false
-          complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+          complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<&curren;/,'')
         elsif l =~ /Complex Name:/
           saw_complex = true
         end
@@ -243,7 +243,7 @@ def mlx_import(info)
           amenities = l
         end
       end
-      amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').split(/ *\/ /).join('||')
+      amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').split(/ *[\/,] /).join('||')
       new_infos["ad_amenities"] = amenities if !amenities.nil? and !amenities.empty?
       #if value_update(listing, "ad_amenities", amenities)
       #  save[:save] = true
@@ -252,7 +252,7 @@ def mlx_import(info)
 
       ########################## TITLES ##############################
       titles = []
-      if !disable_new_titles and (listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?)
+      if !disable_new_titles
         (0..2).each{
           title = ListingTitle.generate(listing)
           if !title.nil? and !title.empty? and title.length > 20
@@ -262,11 +262,7 @@ def mlx_import(info)
         }
         titles = (titles * "||").gsub(/  /,' ')
         new_infos["ad_title"] = titles if !titles.nil? and !titles.empty?
-        #if value_update(listing, "ad_title", (titles * "||").gsub(/  /,' '))
-        #  save[:save] = true
-        #  save[:why] << "New Title"
-        #end
-      else #When titles are not regenerated the new_infos hash is going to have them as nil.
+      else
         new_infos["ad_title"] = old_infos["ad_title"]
       end
       
