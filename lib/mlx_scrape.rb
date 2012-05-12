@@ -20,7 +20,7 @@ def mlx_import(info)
 
   agent = Mechanize.new
 
-  disable_new_titles = info[:new_titles]
+  disable_new_titles = info[:disable_new_titles]
   customer_key = info[:customer_key]
   activate_new = info[:activate_new]
   deactivate_old = info[:deactivate_old]
