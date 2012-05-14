@@ -269,9 +269,6 @@ def mlx_import(info)
       for key in keys
         new_infos[key] = new_infos[key] || ""
         if key == "ad_agent"
-          puts "n #{new_infos[key]}"
-          puts "o #{old_infos[key]}"
-          puts "(#{old_infos[key]} =~ /.*#{new_infos[key]}.*/)"
           if old_infos[key] and (old_infos[key] =~ /.*#{new_infos[key]}.*/).nil?
             new_info = old_infos[key] + new_infos[key]
             print_change(key, old_infos[key], new_info)
