@@ -116,7 +116,7 @@ end
 #Because Gmaps occasionally misslables.
 def gmaps_api_to_location(detected)
   
-  detected = detected.downcase.strip
+  dcase = detected.downcase.strip
 
   map = { 
     "mid-beach"=>"miami beach",
@@ -131,7 +131,7 @@ def gmaps_api_to_location(detected)
   }
 
   for key in map.keys
-    return map[key].titlecase if detected.match(key) or key.match(detected)
+    return map[key].titlecase if dcase.match(key) or key.match(dcase)
   end
   return detected
 end
