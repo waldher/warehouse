@@ -169,10 +169,6 @@ def mlx_import(info)
            l  =~ /top:112px;height:19px;left:574px;width:127px;font:bold 11pt Arial;/)
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
           new_infos["ad_price"] = price if !price.nil? and !price.empty?
-          #if value_update(listing, "ad_price", price)
-          #  save[:save] = true
-          #  save[:why] << "New Price"
-          #end
         end
       }
 
@@ -188,10 +184,6 @@ def mlx_import(info)
         end
       }
       new_infos["ad_bedrooms"] = bedrooms if !bedrooms.nil? and !bedrooms.empty?
-      #if value_update(listing, "ad_bedrooms", bedrooms)
-      #  save[:save] = true
-      #  save[:why] << "New Bedrooms"
-      #end
 
       ########################### COMPLEX ############################
       complex = nil
@@ -205,10 +197,6 @@ def mlx_import(info)
         end
       end
       new_infos["ad_complex"] = complex if !complex.nil? and !complex.empty?
-      #if value_update(listing, "ad_complex", complex)
-      #  save[:save] = true
-      #  save[:why] << "New Complex"
-      #end
 
       ########################## DESCRIPTION #########################
       desc = ""
@@ -229,10 +217,6 @@ def mlx_import(info)
         end
       end
       new_infos["ad_description"] = desc if !desc.nil? and !desc.empty?
-      #if value_update(listing, "ad_description", desc)
-      #  save[:save] = true
-      #  save[:why] << "New Description"
-      #end
 
       ########################### AMENITIES ##########################
       amenities = ""
@@ -245,10 +229,6 @@ def mlx_import(info)
       end
       amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').split(/ *[\/,] /).join('||')
       new_infos["ad_amenities"] = amenities if !amenities.nil? and !amenities.empty?
-      #if value_update(listing, "ad_amenities", amenities)
-      #  save[:save] = true
-      #  save[:why] << "New Amenities"
-      #end
 
       ########################## TITLES ##############################
       titles = []
@@ -273,10 +253,6 @@ def mlx_import(info)
             l =~ /top:920px;height:13px;left:8px;width:464px;font:8pt Arial;/)
           attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').strip
           new_infos["ad_attribution"] = attribution if !attribution.nil? and !attribution.empty?
-          #if value_update(listing, "ad_attribution", attribution)
-          #  save[:save] = true
-          #  save[:why] << "New Attribution"
-          #end
         end
       end
 
@@ -440,28 +416,4 @@ def in_memory_file(data, pathname)
   end 
 
   return file 
-end
-
-def building_to_location(building)
-
-  building = building.downcase.strip
- 
-  map = { 
-    "icon brickell" => "brickell",
-    "epic" => "downtown miami",
-    "carbonell" => "brickell key",
-    "asia" => "brickell key",
-    "jade" => "brickell",
-    "500 brickell" => "brickell",
-    "plaza" => "brickell",
-    "brickell on the river" => "brickell",
-    "ivy" => "brickell riverfront",
-    "mint" => "brickell riverfront",
-    "wind" => "brickell riverfront"
-  }   
-
-  for key in map.keys
-    return map[key].titlecase if building.match(/#{key}/)
-  end 
-  return nil
 end

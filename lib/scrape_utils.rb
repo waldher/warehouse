@@ -90,7 +90,7 @@ def location_from_address(address)
       special_puts "Querying Google for address = '#{address}'"
       json_string = open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address)}&sensor=true", :proxy => @proxy).read
       parsed_json = ActiveSupport::JSON.decode(json_string)
-      return parsed_json["results"].first["address_components"][2]["short_name"]
+      return gmaps_api_to_location(parsed_json["results"].first["address_components"][2]["short_name"])
     rescue => e
       if try_again
         #Trying to fix some common errors that break the google query.
@@ -112,3 +112,51 @@ def location_from_address(address)
   end
   return "ERR"
 end
+
+#Because Gmaps occasionally misslables.
+def gmaps_api_to_location(detected)
+  
+  detected = detected.downcase.strip
+
+  map = { 
+    "mid-beach"=>"miami beach",
+    "city center"=>"miami beach",
+    "south point"=>"miami beach",
+    "lummus"=>"miami beach",
+    "flamingo"=>"miami beach",
+    "flamingo / lummus"=>"miami beach",
+    "north beach"=>"north miami beach",
+    "douglas"=>"coral gables",
+    "bayshore"=>"miami beach"
+  }
+
+  for key in map.keys
+    return map[key].titlecase if detected.match(key) or key.match(detected)
+  end
+  return detected
+end
+
+def building_to_location(building)
+
+  building = building.downcase.strip
+
+  map = {
+    "icon brickell" => "brickell",
+    "epic" => "downtown miami",
+    "carbonell" => "brickell key",
+    "asia" => "brickell key",
+    "jade" => "brickell",
+    "500 brickell" => "brickell",
+    "plaza" => "brickell",
+    "brickell on the river" => "brickell",
+    "ivy" => "brickell riverfront",
+    "mint" => "brickell riverfront",
+    "wind" => "brickell riverfront"
+  }   
+  
+  for key in map.keys
+    return map[key].titlecase if building.match(key) or key.match(building)
+  end
+  return nil 
+end
+
