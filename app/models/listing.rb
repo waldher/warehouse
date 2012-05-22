@@ -11,6 +11,7 @@ class Listing < ActiveRecord::Base
   has_many :listing_images, :dependent => :destroy, :order => "listing_images.threading"
 
   accepts_nested_attributes_for :listing_images, :allow_destroy => true
+  validates_associated :listing_infos
 
   attr_accessor :infos
   after_initialize :init_infos
@@ -95,7 +96,16 @@ class Listing < ActiveRecord::Base
     end
   end
 
+  def validate_listing_info_title
+    if @infos["ad_title"] == []
+      errors[:base] << "Must have at least one title!"
+      return  true
+    end
+    return false
+  end
+
   def update_infos
+    return false if validate_listing_info_title
     #puts "Listing id: #{id}"
     logger.error "Infos: #{@infos}"
     #puts "Updated Infos Hash: #{@infos}"
