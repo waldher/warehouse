@@ -1,10 +1,11 @@
 class Sublocation < ActiveRecord::Base
   belongs_to :location
   has_many :customers
+  validates_presence_of :name
 
-  after_initialize :caps
+  before_validation :caps
 
   def caps
-    self.name.capitalize!
+    self.name.capitalize! if name
   end
 end
