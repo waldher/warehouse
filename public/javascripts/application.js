@@ -59,6 +59,7 @@ $(function() {
 
       // clear the cloned element's input string
       content.find('input').val('');
+      content.find('input').attr('title', "Make your ad titles as eye-catching and appealing to prospective clients as possible");
       // append it to parent node
       var node = $(this).parent().append(content);
       //$('span.title').last().css('display','none');
@@ -75,8 +76,8 @@ $(function() {
       });
 
       //content.appendTo($(this).parent());
-      node.find('input').attr('title', " Make your ad titles as eye-catching and appealing to prospective clients as possible");
-      node.find('input').tooltip();
+      //node.find('input').attr('title', " Make your ad titles as eye-catching and appealing to prospective clients as possible");
+      //node.find('input').tooltip();
     }
   });
 
