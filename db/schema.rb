@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120522060920) do
+ActiveRecord::Schema.define(:version => 20120508083655) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -31,14 +31,9 @@ ActiveRecord::Schema.define(:version => 20120522060920) do
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
 
   create_table "capabilities", :force => true do |t|
-    t.string   "name",           :null => false
+    t.string   "name",       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "bathrooms"
-    t.string   "style"
-    t.float    "square_footage"
-    t.string   "agents"
-    t.string   "construction"
   end
 
   add_index "capabilities", ["name"], :name => "index_capabilities_on_name", :unique => true
@@ -59,13 +54,9 @@ ActiveRecord::Schema.define(:version => 20120522060920) do
 
   create_table "customer_infos", :force => true do |t|
     t.integer "customer_id"
-    t.integer "version",            :default => 0, :null => false
+    t.integer "version",     :default => 0, :null => false
     t.string  "key"
     t.string  "value"
-    t.boolean "disable_new_titles"
-    t.boolean "active_new"
-    t.boolean "deactivate_old"
-    t.string  "data"
   end
 
   add_index "customer_infos", ["customer_id"], :name => "index_customer_infos_on_customer_id"
