@@ -68,9 +68,11 @@ $(function() {
       // add event blur to the new element. So that, if the are blank they are removed from the list
       $(".title").find('input').blur(function() {
         if(!$(this).val().trim()) {
-          $(this).closest('.title').slideUp("normal", function() {
-            $(this).remove();
-          });
+          if($(".title input").length > 1){
+            $(this).closest('.title').slideUp("normal", function() {
+              $(this).remove();
+            });
+          }
         }
       });
 
@@ -85,9 +87,11 @@ $(function() {
 
   $(".title input").blur(function() {
         if(!$(this).val().trim()) {
-          $(this).closest('.title').slideUp("normal", function() {
-            $(this).remove();
-          });
+          if($(".title input").length > 1){
+            $(this).closest('.title').slideUp("normal", function() {
+              $(this).remove();
+            });
+          }
         }
   });
 
