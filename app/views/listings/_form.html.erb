@@ -49,7 +49,7 @@
       <span class="field title">
         <% title = @listing.title %>
         <%= infos.label :ad_title, "Ad Title" %><br />
-        <%= infos.text_field "ad_title[1]", :maxlength => 70, :size => 70, :value => title.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
+        <%= infos.text_field "ad_title[1]", :class => "length_for_title required",:maxlength => 70, :size => 70, :value => title.try(:shift), :title => "Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
       <span class="field" style="float: right;">
         <%= infos.label :ad_location, "Location Description" %><br />
@@ -57,7 +57,7 @@
       </span>
       <span class="field" style="float: right;">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id || @customer.sublocation_id) %>
+        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id || @customer.sublocation_id) , :class => "required" %>
       </span>
       <% unless @listing.new_record? %>
         <% title.each_with_index do |title, index| %>

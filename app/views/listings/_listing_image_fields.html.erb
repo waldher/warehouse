@@ -1,6 +1,6 @@
 <% if f.object.new_record? %>
   <div class="fields">
-    <%= f.file_field :image %>
+    <%= f.file_field :image, :class=>"required" %>
   </div>
 <% else %>
   <li id="<%= "threading_#{f.object.threading}" %>">

@@ -12,7 +12,6 @@ function remove_fields(link) {
 }
 
 
-
 $(function() {
   $('.sortable').sortable({
     placeholder: "ui-state-highlight",
@@ -68,15 +67,17 @@ $(function() {
       // add event blur to the new element. So that, if the are blank they are removed from the list
       $(".title").find('input').blur(function() {
         if(!$(this).val().trim()) {
-          $(this).closest('.title').slideUp("normal", function() {
-            $(this).remove();
-          });
+          if($(".title input").length > 1){
+            $(this).closest('.title').slideUp("normal", function() {
+              $(this).remove();
+            });
+          }
         }
       });
-
       //content.appendTo($(this).parent());
-      node.find('input').attr('title', " Make your ad titles as eye-catching and appealing to prospective clients as possible");
-      node.find('input').tooltip();
+      //var tTip = "Make your ad titles as eye-catching and appealing to prospective clients as possible"
+      //node.find('input').attr('onmouseover', tip(tTip));
+      //node.find('input').tooltip();
     }
   });
 
@@ -85,9 +86,11 @@ $(function() {
 
   $(".title input").blur(function() {
         if(!$(this).val().trim()) {
-          $(this).closest('.title').slideUp("normal", function() {
-            $(this).remove();
-          });
+          if($(".title input").length > 1){
+            $(this).closest('.title').slideUp("normal", function() {
+              $(this).remove();
+            });  
+          }
         }
   });
 
