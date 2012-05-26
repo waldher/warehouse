@@ -75,7 +75,7 @@ $(function() {
               }
           });
           if(count_blank > 1){
-            $('.title').last().slideUp("normal", function() {
+            $(this).closest('.title').slideUp("normal", function() {
               $(this).remove();
             });
           }
@@ -100,9 +100,8 @@ $(function() {
                 count_blank = count_blank + 1;
               }
           });
-
           if(count_blank > 1){
-            $('.title').last().slideUp("normal", function() {
+            $(this).closest('.title').slideUp("normal", function() {
               $(this).remove();
             });
           }
