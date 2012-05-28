@@ -1,10 +1,3 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Mayor.create(:name => 'Daley', :city => cities.first)i
 #Miami
 {
   'maf_elizabeth' => 'elizabeth@miamiapartmentfinders.com',
@@ -26,19 +19,13 @@
   'gcr_rea' => 'gcr@rea.com',
   'gary_lits_realty' => 'glr@glr.com',
   'gary_lits_realty_agents' => 'glra@glra.com',
-}.each{ |key, val|
-  if Customer.where("key like ?", key).count == 0
-    Customer.create({
-      :email_address => val,
-      :key => key,
-      :craigslist_type => 'apa',
-      :location_id => 1,
-      :sublocation_id => 1
-    })
-    puts "Added customer #{key}, email #{val}"
-  else
-    puts "Customer #{key}, email #{val} exists"
-  end
+}.each{ |key, email|
+  sub = Sublocation.all.sample
+  loc = sub.location
+  Customer.
+    find_or_create_by_email_address_and_key_and_craigslist_type_and_location_id_and_sublocation_id(
+                      email,            key,    'apa',              loc.id,         sub.id)
+  puts "Customer #{key}, email #{email} in database"
 }
 
   kanga_neighborhoods = [
@@ -67,7 +54,6 @@
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("mdc")
   },
-
     {:name => 'maf_ronda',
       :rj_id => '868f2445f9f09786e35f8a1b9356a417',
       :hoods => {:neighborhoods => ronda_neighborhoods},
@@ -76,7 +62,6 @@
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("mdc")
   },
-
     {:name => 'maf_paola',
       :rj_id => '868f2445f9f09786e35f8a1b9356a417',
       :hoods => {:neighborhoods => paola_neighborhoods},
@@ -85,7 +70,6 @@
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("mdc")
   },
-
     {:name => 'maf_luis',
       :rj_id => '868f2445f9f09786e35f8a1b9356a417',
       :hoods => {:neighborhoods => luis_neighborhoods},
@@ -94,7 +78,6 @@
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("mdc")
   },
-
     {:name => 'kangarent',
       :rj_id => '3b97f4ec544152dd3a79ca0c19b32aab',
       :hoods => {:neighborhoods => kanga_neighborhoods},
@@ -103,7 +86,6 @@
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("pbc")
   },
-
     {:name => 'casabellaboca',
       :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
       :hoods => {:neighborhoods => casa_neighborhoods},
@@ -112,7 +94,6 @@
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("pbc")
   },
-
     {:name => 'sea_rea_test',
       :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
       :hoods => {:neighborhoods => casa_neighborhoods},
@@ -121,7 +102,6 @@
       :location => Location.find_by_url("seattle"),
       :sublocation => Sublocation.find_by_url("see")
   },
-
     {:name => 'mdc_rea_test',
       :rj_id => 'e18a66e3f23c9d65e53072fcf0560542',
       :hoods => {:neighborhoods => casa_neighborhoods},
@@ -129,9 +109,8 @@
       :email => {:agent => "brendan@leadadvo.com"},
       :location => Location.find_by_url("miami"),
       :sublocation => Sublocation.find_by_url("mdc")
-  }
+  },
   ]
-
 
   customers.each do |cst|
     customer = Customer.find_or_create_by_key_and_email_address(cst[:name], cst[:email][:agent])
