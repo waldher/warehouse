@@ -3,7 +3,7 @@ $(document).ready(function() {
 	$.validator.addMethod(
 		"length_for_title",
 		function(value,element){
-			return this.optional(element) || (value.length < 70 );
+			return this.optional(element) || (value.length <= 70 );
 
 		},
 		"More than 70 characters are not allowed !"
@@ -13,7 +13,8 @@ $(document).ready(function() {
 	    "listing[sublocation_id]": {
 	      required: true
 	    }
-	  }
+	  },
+	  errorElement: "div"
 	});
 	$(".edit_listing").validate({
 	 rules: {
