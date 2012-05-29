@@ -44,10 +44,10 @@ class Customer < ActiveRecord::Base
   }
 
   def set_locations
-    if(self.sublocation_id)
-      sub = Sublocation.where(:id => self.sublocation_id).first
+    if(self.sublocation)
+      sub = self.sublocation
       loc = sub.location
-      self.location_id = loc
+      self.location = loc
     end
   end
 
