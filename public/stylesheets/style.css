@@ -239,19 +239,10 @@ a.thumb img {
   -webkit-box-shadow:0 0 10px #000;
 }
 
-form label.error
+form div.error
     {
     color: #c00;
-    
     font-size: 100%;
-    font-weight: bold;
-    font-variant:small-caps;
-    
-    /*width:308px; */
-    display: none;
-
-    margin:8px 0px 0px 10px;
-    padding:3px 0px 0px 5px;
-    
-    clear:both;
+    display: none;  
+   /* clear:both; */
     }

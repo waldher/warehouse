@@ -59,7 +59,7 @@ $(function() {
 
       // clear the cloned element's input string
       content.find('input').val('');
-      content.find('input').attr('title', "Make your ad titles as eye-catching and appealing to prospective clients as possible");
+      //content.find('input').attr('title', "Make your ad titles as eye-catching and appealing to prospective clients as possible");
       // append it to parent node
       var node = $(this).parent().append(content);
       //$('span.title').last().css('display','none');
@@ -69,9 +69,18 @@ $(function() {
       // add event blur to the new element. So that, if the are blank they are removed from the list
       $(".title").find('input').blur(function() {
         if(!$(this).val().trim()) {
-          $(this).closest('.title').slideUp("normal", function() {
-            $(this).remove();
+          var count_blank = 0;
+          $(".title input").each(function(){
+              if(!$(this).val().trim()){
+                count_blank = count_blank + 1;
+              }
           });
+          if( $(".title input").length == count_blank ){ $(this).addClass('required');}
+          if(count_blank > 1){
+            $(this).closest('.title').slideUp("normal", function() {
+              $(this).remove();
+            });
+          }
         }
       });
 
@@ -86,9 +95,20 @@ $(function() {
 
   $(".title input").blur(function() {
         if(!$(this).val().trim()) {
-          $(this).closest('.title').slideUp("normal", function() {
-            $(this).remove();
+
+          var count_blank = 0;
+          $(".title input").each(function(){
+              if(!$(this).val().trim()){
+                count_blank = count_blank + 1;
+              }
           });
+          if( $(".title input").length == count_blank ){ $(this).addClass('required');}
+        
+          if(count_blank > 1){
+            $(this).closest('.title').slideUp("normal", function() {
+              $(this).remove();
+            });
+          }
         }
   });
 
