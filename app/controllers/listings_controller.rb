@@ -7,9 +7,10 @@ class ListingsController < ApplicationController
   # GET /listings.xml
   def index
     if(request.format.to_s.match(/json/))
-      @listings = Listing.where(:customer_id => @customer.id)
+      @listings = Listing.includes(:listing_infos).where(:customer_id => @customer.id)
+      
     else
-      @listings = Listing.where(:customer_id => @customer.id).order("id DESC").limit(10)
+      @listings = Listing.includes(:listing_infos).where(:customer_id => @customer.id).order("id DESC").limit(10)
     end
 
     respond_to do |format|
@@ -171,29 +172,33 @@ class ListingsController < ApplicationController
   def get_json
     # Columns which we need to sort in order 
     # and the are in order as they appear on view page
-    columns = ['', 'updated_at', 'manual_enabled', "", ""]
+    columns = ['ad_address', 'ad_price', 'ad_title', 'listings.updated_at']
     # add additional empty fields though no necessary cuz they are dynamic field
     # and yet can't sort or order based on keys
-    columns = ['', ''] + columns if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea'
+
+#    columns = ['', ''] + columns if @customer.craigslist_type == "apa" || @customer.craigslist_type == 'rea'
     # Sort one of the column
-    params[:iSortingCols].to_i.times do |i|
-      if(params["bSortable_#{i}"] == "true")
-        column = columns[params["iSortCol_#{i}"].to_i]
-        next if column.blank? # blank means dynamic field and can't be sorted easily need work around
-        order = (column + " " + params["sSortDir_#{i}"])
-        @listings = @listings.order(order)
-      end
-    end
+
+   #params[:iSortingCols].to_i.times do |i|
+   # if(params["bSortable_#{i}"] == "true")
+   #     column = columns[params["iSortCol_#{i}"].to_i]
+   #     next if column.blank? # blank means dynamic field and can't be sorted easily need work around
+   #     order = ("listing_infos.value" + " " + params["sSortDir_#{i}"])
+   #     @listings = @listings.where("listing_infos.key = '" + column + "'" ).order(order)
+   #   end
+   # end
+
     # searching 
     # this part is not used yet 
-    columns.each_with_index do |column, index|
-      break unless column == 'title' #  only search in title field
-      next if column.blank?
-      if params["bSearchable_#{index}"] == 'true' && params["sSearch_#{index}"].present?
-        where = columns[index] + " LIKE '%" + params["sSearch_#{index}"] + "%'"
-        @listings = @listings.where(where)
-      end
-    end
+
+#    columns.each_with_index do |column, index|
+#      break unless column == 'title' #  only search in title field
+#      next if column.blank?
+#      if params["bSearchable_#{index}"] == 'true' && params["sSearch_#{index}"].present?
+#        where = columns[index] + " LIKE '%" + params["sSearch_#{index}"] + "%'"
+#        @listings = @listings.where(where)
+#      end
+#    end
 
     # searching 
     # this part also not working fine
@@ -203,8 +208,11 @@ class ListingsController < ApplicationController
       orr = 0
       columns.each_with_index do |column, index|
         next if column.blank?
-        column = "listings.updated_at" if column == 'updated_at'
-        where << ((orr == 0) ? column + " LIKE '%" + value.to_s + "%'" : " OR " + column + " LIKE '%" + value.to_s + "%'")
+        if index < 3
+          where << ((orr == 0) ? "listing_infos.key = '" + column + "' AND  listing_infos.value LIKE '%" + value.to_s + "%'" : " OR listing_infos.key = '" + column + "' AND  listing_infos.value LIKE '%" + value.to_s + "%'")
+        elsif index == 3
+          where <<  "OR " + column + " LIKE '%" + value.to_s + "%'"
+        end  
         orr += 1
       end
       @listings = @listings.where(where)
@@ -244,7 +252,6 @@ class ListingsController < ApplicationController
       ]
     }
     end
-    
     datatable_data.merge({aaData: aaData})
   end
 
