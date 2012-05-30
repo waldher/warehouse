@@ -15,6 +15,8 @@
   }
   .title_box_width {width:500px;}
   .keyword_box_width {width:1004px;}
+  .location_box_width {width:260px;}
+  #listing_sublocation_id {width:150px;}
 </style>
 <script type="text/javascript">
   $(document).ready(function(){
@@ -49,17 +51,18 @@
 
     <div>
       <span class="field title">
-        <% titles,counter = @listing.title,@listing.title.try(:count) %>
+        <% titles = @listing.title.delete_if {|obj| obj.blank? } unless @listing.title.blank?  %>
+        <% counter = titles.try(:count) %>
         <%= infos.label :ad_title, "Ad Title" %><br />
-        <%= infos.text_field "ad_title[1]", :class=>"title_box_width length_for_title ",:maxlength => 70, :size => 70, :value => titles.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
+        <%= infos.text_field "ad_title[1]", :class=>"title_box_width length_for_title required ",:maxlength => 70, :size => 70, :value => titles.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
       <span class="field" style="float: right;">
         <%= infos.label :ad_location, "Location Description" %><br />
-        <%= infos.text_field :ad_location, :value => @listing.infos["ad_location"], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
+        <%= infos.text_field :ad_location, :class=>"location_box_width", :value => @listing.infos["ad_location"], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
       </span>
       <span class="field" style="float: right;">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= f.select :sublocation_id, option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id || @customer.sublocation_id) , :class => "required" %>
+        <%= f.select :sublocation_id, "<option></option>\n" +option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id  ) , :class => "required sublocation_box_width" %>
       </span>
       <% if counter.to_i > 0 %>
         <% titles.each_with_index do |title, index| %>
