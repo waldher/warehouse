@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120508083655) do
+ActiveRecord::Schema.define(:version => 20120530062702) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -106,29 +106,6 @@ ActiveRecord::Schema.define(:version => 20120508083655) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
-  create_table "directories", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "directories", ["name"], :name => "index_directories_on_name", :unique => true
-
-  create_table "directory_files", :force => true do |t|
-    t.string   "ip_address"
-    t.integer  "directory_id"
-    t.string   "filename"
-    t.boolean  "click"
-    t.text     "raw"
-    t.datetime "requested_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "directory_files", ["click"], :name => "index_directory_files_on_click"
-  add_index "directory_files", ["directory_id"], :name => "index_directory_files_on_directory_id"
-  add_index "directory_files", ["requested_at"], :name => "index_directory_files_on_requested_at"
-
   create_table "keywords", :force => true do |t|
     t.string   "keyword"
     t.datetime "created_at"
@@ -183,45 +160,12 @@ ActiveRecord::Schema.define(:version => 20120508083655) do
   add_index "locations", ["name"], :name => "index_locations_on_name", :unique => true
   add_index "locations", ["url"], :name => "index_locations_on_url", :unique => true
 
-  create_table "log_files", :force => true do |t|
-    t.string   "filename"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "log_files", ["filename"], :name => "index_log_files_on_filename", :unique => true
-
   create_table "neighborhoods", :force => true do |t|
     t.integer  "sublocation_id", :null => false
     t.string   "name",           :null => false
     t.integer  "craigslist_id",  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "real_estate_images", :force => true do |t|
-    t.integer  "real_estate_id",     :null => false
-    t.string   "image_file_name"
-    t.string   "image_content_type"
-    t.integer  "image_file_size"
-    t.datetime "image_updated_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "real_estates", :force => true do |t|
-    t.integer  "realtor_id",                        :null => false
-    t.text     "ad_title",                          :null => false
-    t.text     "ad_description",                    :null => false
-    t.integer  "bedrooms"
-    t.integer  "price"
-    t.boolean  "cats",           :default => false, :null => false
-    t.boolean  "dogs",           :default => false, :null => false
-    t.boolean  "active",         :default => true,  :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "ad_location"
-    t.string   "ad_keywords",    :default => "",    :null => false
   end
 
   create_table "scraped_links", :force => true do |t|
