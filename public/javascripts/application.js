@@ -59,6 +59,7 @@ $(function() {
 
       // clear the cloned element's input string
       content.find('input').val('');
+      content.find('input').removeClass('required');
       content.find('input').attr('title', "Make your ad titles as eye-catching and appealing to prospective clients as possible");
       content.find('input').tooltip({effect: "fade", opacity: 0.8, offset: [-15,0], position: "top center"});
       // append it to parent node
@@ -80,6 +81,7 @@ $(function() {
           if(count_blank > 1){
             $(this).closest('.title').slideUp("normal", function() {
               $(this).remove();
+              $(".title input").first().addClass('required');
             });
           }
         }
@@ -108,6 +110,7 @@ $(function() {
           if(count_blank > 1){
             $(this).closest('.title').slideUp("normal", function() {
               $(this).remove();
+              $(".title input").first().addClass('required');
             });
           }
         }

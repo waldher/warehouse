@@ -54,7 +54,7 @@
         <% titles = @listing.title.delete_if {|obj| obj.blank? } unless @listing.title.blank?  %>
         <% counter = titles.try(:count) %>
         <%= infos.label :ad_title, "Ad Title" %><br />
-        <%= infos.text_field "ad_title[1]", :class=>"title_box_width length_for_title required ",:maxlength => 70, :size => 70, :value => titles.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
+        <%= infos.text_field "ad_title[1]", :class=>"title_box_width length_for_title required",:maxlength => 70, :size => 70, :value => titles.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
       <span class="field" style="float: right;">
         <%= infos.label :ad_location, "Location Description" %><br />

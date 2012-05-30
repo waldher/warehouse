@@ -112,7 +112,7 @@ class Listing < ActiveRecord::Base
   end
 
   def update_infos
-    #return false if validate_listing_info_title
+    return false if validate_listing_info_title
     #puts "Listing id: #{id}"
     logger.error "Infos: #{@infos}"
     #puts "Updated Infos Hash: #{@infos}"
