@@ -30,6 +30,30 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
   add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
 
+  create_table "agents", :force => true do |t|
+    t.string   "email",                                 :default => "", :null => false
+    t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",                         :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.integer  "customer_id",                                           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "agents", ["confirmation_token"], :name => "index_agents_on_confirmation_token", :unique => true
+  add_index "agents", ["customer_id"], :name => "index_agents_on_customer_id"
+  add_index "agents", ["email"], :name => "index_agents_on_email", :unique => true
+  add_index "agents", ["reset_password_token"], :name => "index_agents_on_reset_password_token", :unique => true
+
   create_table "capabilities", :force => true do |t|
     t.string   "name",       :null => false
     t.datetime "created_at"
@@ -164,6 +188,22 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
     t.integer  "sublocation_id", :null => false
     t.string   "name",           :null => false
     t.integer  "craigslist_id",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "queue_items", :force => true do |t|
+    t.integer  "agent_id",   :null => false
+    t.integer  "listing_id", :null => false
+    t.integer  "post_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "queue_lines", :force => true do |t|
+    t.integer  "agent_id",   :null => false
+    t.integer  "listing_id", :null => false
+    t.integer  "post_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
