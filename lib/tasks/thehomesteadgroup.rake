@@ -46,15 +46,15 @@ namespace :thehomesteadgroup do
     fp = open("http://www.thehomesteadgroup.com/uploads/photos/Craigslist_Export.csv")
     CSV.foreach(fp) do |row|
       status = (row[2] == "Active") ? true : false
-      listing_object = Listing.new(:customer_id => customer_id,:sublocation_id => sublocation_id,:manual_enabled => status)
-      infos = Hash.new
-      infos["ad_address"] = row[3]
-      infos["ad_price"] = row[4]
-      infos["ad_description"] = row[6]
-      infos["ad_bedrooms"] = row[7]
-      infos["ad_style"] = row[18]
-      infos["ad_square_footage"] = row[21]
-      infos["ad_location"] = row[22]
+      listing = Listing.new(:customer_id => customer_id,:sublocation_id => sublocation_id,:manual_enabled => status)
+      listing.infos["ad_address"] = row[3]
+      listing.infos["ad_price"] = row[4]
+      listing.infos["ad_description"] = row[6]
+      listing.infos["ad_bedrooms"] = row[7]
+      listing.infos["ad_style"] = row[18]
+      listing.infos["ad_square_footage"] = row[21]
+      listing.infos["ad_location"] = row[22]
+      listing.infos["ad_title"] = ListingTitle.generate(listing)
 
       image_url_strings = []
       for image_url_string in row[25..30]
@@ -65,14 +65,7 @@ namespace :thehomesteadgroup do
         image_url_strings << image_url_string
       end
 
-      if listing_object.save
-        infos.each do |key, value|
-          listing_info = ListingInfo.create(:listing_id => listing_object.id, :key => key, :value => value )
-        end
-      end
-      ListingInfo.create(:listing_id => listing_object.id, :key => "ad_title", :value => ListingTitle.generate(listing) )
-
-      load_images(listing_object, image_url_strings)
+      load_images(listing, image_url_strings)
     end
     puts "successfully data imported"
     fp.close
