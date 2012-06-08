@@ -96,6 +96,7 @@ namespace :thehomesteadgroup do
         next if image_url_string.nil? or image_url_string.empty?
         image_url_strings << image_url_string
       end
+      listing.foreign_active = false if image_url_strings.count == 0
 
       if listing.changed? or true # (true because we are creating new titles) 
         special_puts "Listing Updated/Created"
@@ -103,6 +104,7 @@ namespace :thehomesteadgroup do
       end
       
       load_images(listing, image_url_strings) if image_url_strings.count > 0
+
       special_puts "Finished"
       puts "`-------------------"
     end
