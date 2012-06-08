@@ -241,7 +241,6 @@ def mlx_import(info)
             titles << title
           end
         }
-        titles = (titles * "||").gsub(/  /,' ')
         new_infos["ad_title"] = titles if !titles.nil? and !titles.empty?
       else
         new_infos["ad_title"] = old_infos["ad_title"]
