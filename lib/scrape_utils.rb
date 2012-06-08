@@ -1,3 +1,5 @@
+require 'net/http'
+
 def special_print(str) print "|#{str}" end 
 def special_puts(str)  puts  "|#{str}" end
 
@@ -160,3 +162,90 @@ def building_to_location(building)
   return nil 
 end
 
+def in_memory_file(data, pathname)
+  #load up some data
+  file = StringIO.new(data)
+
+  #tell the class that it knows about a "name" property,
+  #and assign the filename to it
+  file.class.class_eval { attr_accessor :original_filename } 
+  file.original_filename = pathname 
+  
+  file.class.class_eval { attr_accessor :content_type } 
+  file.content_type = "image/#{pathname.split(".").last }"
+
+  #FPDF uses the rindex and [] funtions on the "filename",
+  #so we'll make our in-memory file object act like a filename
+  #with respect to these functions:
+  def file.rindex arg 
+    name.rindex arg 
+  end 
+
+  #this same pattern could be used to add other metadata
+  #to the file (e.g., creation time)
+  def file.[] arg 
+    name[arg] 
+  end  
+
+  #change open so that it follows the formal behavior
+  #of the original (call a block with data, return
+  #the file-like object, etc.) but alter it so that
+  #it doesn't create a new instance and can be
+  #called multiple times (rewind)
+  def file.open(*mode, &block) 
+    self.rewind 
+    block.call(self) if block 
+    return self 
+  end 
+
+  return file 
+end
+
+@@connections = {}
+def load_images(listing, photos)
+  #Assumption being, images never change.
+  if !photos.empty? and listing.ad_image_urls.empty?
+
+    for photo_uri in photos
+      if !photo_uri.include?("/images/original/missing.png")
+
+        attempts = 3
+        while attempts > 0
+          begin
+
+            #Some listings don't have fullsize versions of the photos
+            if photo_uri.nil?
+              break
+            end
+
+            http = nil
+            special_puts "Importing: #{photo_uri}"
+            urisplit = URI.split(photo_uri).reject{|i| i.nil?}
+            #special_puts "`-> Pieces " + urisplit.join(" - ")
+            domain = urisplit[1]
+            path = urisplit[2..-1] * "/"
+            if @@connections.has_key?(domain)
+              http = @@connections[domain]
+            else
+              http = Net::HTTP.start(domain)
+              @@connections[domain] = http
+            end
+            resp = http.get(path)
+
+            photo_file = in_memory_file(resp.body, urisplit.last.split("/").last)
+
+            ListingImage.create(:listing_id => listing.id, :image => photo_file, :threading => 0)
+
+            attempts = 0
+          rescue => e
+            special_puts "#{c(red)}Attempt #{4 - attempts} failed: #{e.inspect}#{ec}"
+            attempts -= 1
+          end
+        end
+
+      end
+    end
+
+    listing.ad_image_urls.each{|url| special_puts url}
+  end
+end
