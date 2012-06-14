@@ -62,7 +62,17 @@
       </span>
       <span class="field" style="float: right;">
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= f.select :sublocation_id, "<option></option>\n" +option_groups_from_collection_for_select(Location.all, :sublocations, :name, :id, :name, @listing.sublocation_id  ) , :class => "required sublocation_box_width" %>
+        <%= f.hidden_field :location_id %>
+        <%= f.hidden_field :sublocation_id %>
+        <select id="customer_select_location">
+          <option value="-1">select location</option>
+          <% for location in Location.all %>
+            <option value="_<%= location.id %>"<%= location.sublocations.empty? ? "" : " disabled" %><%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
+              <% for sublocation in location.sublocations %>
+                <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>>&nbsp;&nbsp;&nbsp;&nbsp;<%= sublocation.name %></option>
+              <% end %>
+          <% end %>
+        </select>
       </span>
       <% if counter.to_i > 0 %>
         <% titles.each_with_index do |title, index| %>
