@@ -100,6 +100,7 @@ def location_from_address(address)
                     downcase.
                     sub(/ te /i, ' terrace ').
                     sub(/ point /i, ' pointe ').
+                    sub(/ pa /i, ' pl ').
                     sub(/ Unincorporated /i, '').
                     sub(/([0-9]+) TH/i, '\1th').
                     sub(/ ca /i, ' cswy ') #Could mess up california - keep an eye on this
