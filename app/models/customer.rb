@@ -40,7 +40,8 @@ class Customer < ActiveRecord::Base
     'Apartments / Housing' => 'apa',
     'Cars & Trucks - By Dealer' => 'ctd',
     'Gigs' => 'ggg',
-    'Real Estate for Sale' => 'rea'
+    'Real Estate for Sale' => 'rea',
+    'Computer Services' => 'cps'
   }
 
   def set_locations
