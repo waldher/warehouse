@@ -7,6 +7,8 @@ gem 'pg'
 gem 'sqlite3'
 gem 'aws-sdk'
 
+gem 'unicorn', '~>4.2.0'
+
 gem 'paperclip', '~>2.5.2'
 
 gem 'jquery-rails'
@@ -24,3 +26,4 @@ gem 'rentjuicer', :git => 'git://github.com/lgbr/rentjuicer.git'
 gem 'whenever', :require => false
 
 gem 'selenium-webdriver'
+
