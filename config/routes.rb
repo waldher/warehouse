@@ -27,8 +27,8 @@ Marsala::Application.routes.draw do
   resources :realtors, :only => :index 
 
   match "first_login/:setup_nonce" => "session#first_login", :as => "first_login"
-  match "login" => "session#login", :as => "login"
-  match 'logout' => "session#logout", :as => "logout"
+  match "login" => "session#login", :as => "login", :protocol => 'http'
+  match 'logout' => "session#logout", :as => "logout", :protocol => 'http'
 
   resources :real_estates do
     get 'json', :on => :collection
