@@ -67,18 +67,10 @@
         <select id="customer_select_location">
           <option value="-1">select location</option>
           <% for location in Location.all %>
-            <% has_sublocations = !location.sublocations.empty? %>
-            <% if has_sublocations %>
-              <optgroup label="<%= location.name %>">
-            <% else %>
-              <option value="_<%= location.id %>"<%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
-            <% end %>
+            <option value="_<%= location.id %>"<%= location.sublocations.empty? ? "" : " disabled" %><%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
               <% for sublocation in location.sublocations %>
-                <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>><%= @listing.sublocation_id %><%= sublocation.name %></option>
+                <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>>&nbsp;&nbsp;&nbsp;&nbsp;<%= sublocation.name %></option>
               <% end %>
-            <% if has_sublocations %>
-              </optgroup>
-            <% end %>
           <% end %>
         </select>
       </span>
