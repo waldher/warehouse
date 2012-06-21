@@ -58,7 +58,7 @@ class ListingsController < ApplicationController
           :ad_foreign_id => listing.foreign_id
         }
       end
-      render :json => JSON.generate(data) 
+      render :json => JSON.generate(data.force_encoding("UTF-8")) 
       #render :json => @listings.to_json(
       #  :include => { :listing_infos => {:except => [:created_at, :updated_at, :id, :listing_id]} },
       #  :methods => :ad_image_urls )
