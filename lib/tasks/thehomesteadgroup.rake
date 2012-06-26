@@ -1,7 +1,7 @@
 require 'csv'
-require 'in_memory_file'
 require 'open-uri'
- 
+require 'scrape_utils'
+
 namespace :thehomesteadgroup do
   desc "Import listing"
   task :import => :environment do
@@ -43,6 +43,7 @@ namespace :thehomesteadgroup do
     print "Enter sublocation id :"
     sublocation_id = STDIN.gets.strip.to_i
 
+    listing_ids = []
     fp = open("http://www.thehomesteadgroup.com/uploads/photos/Craigslist_Export.csv")
     CSV.foreach(fp) do |row|
       puts ",-------------------"
@@ -102,12 +103,15 @@ namespace :thehomesteadgroup do
         special_puts "Listing Updated/Created"
         listing.save
       end
+      listing_ids << listing.id
       
       load_images(listing, image_url_strings) if image_url_strings.count > 0
 
       special_puts "Finished"
       puts "`-------------------"
     end
+    activate_new_listings(customer_id, listing_ids)
+    deactivate_old_listings(customer_id, listing_ids)
     puts "Successfully Imported Data"
     fp.close
   end
