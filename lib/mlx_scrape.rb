@@ -108,26 +108,23 @@ def mlx_import(info)
       ########################## ADDRESS #############################
       address = ""
       for l in $listing_page.body.split("\n")
-        if (l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
+        if (l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/ or
+            l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or 
-            l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
             l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
-            l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
             l =~ /top:120px;height:24px;left:208px;width:400px;font:bold 11pt Tahoma;/ or
             l =~ /top:232px;height:20px;left:200px;width:424px;font:bold 12pt Tahoma;/ or
-            l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/ or
-            l =~ /top:64px;height:18px;left:16px;width:688px;font:bold 10pt Arial/)
+            l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
+            l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
+            l =~ /top:64px;height:18px;left:16px;width:688px;font:bold 10pt Arial/ or
+            l =~ /top:136px;height:20px;left:192px;width:432px;font:bold 12pt Tahoma;/)
               address = l
               break
         end
       end
       address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Address: )/, '')
       new_infos["ad_address"] = address if !address.nil? and !address.empty?
-      #if value_update(listing, "ad_address", address)
-      #  save[:save] = true
-      #  save[:why] << "New Address"
-      #end
 
       ########################## LOCATION ############################
       location = nil
@@ -155,23 +152,35 @@ def mlx_import(info)
         location = location_from_address(address)
       end
       new_infos["ad_location"] = location if !location.nil? and !location.empty?
-      #if value_update(listing, "ad_location", location)
-      #  save[:save] = true
-      #  save[:why] << "New Location"
-      #end
 
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
-        if (l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or 
-           l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
-           l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
-           l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/ or
-           l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/ or
-           l  =~ /top:112px;height:19px;left:574px;width:127px;font:bold 11pt Arial;/)
+        if (
+            l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/ or
+            l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/ or
+            l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
+            l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or
+            l =~ /top:112px;height:19px;left:574px;width:127px;font:bold 11pt Arial;/ or
+            l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
+            l =~ /top:136px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/
+            )
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
           new_infos["ad_price"] = price if !price.nil? and !price.empty?
         end
       }
+
+      ######################### SQUARE FEET ###########################
+      square_feet = ""
+      saw_sqft = false
+      $listing_page.body.split("\n").each{|l|
+        if saw_sqft
+          saw_sqft = false
+          square_feet = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif l =~ /Square Feet:/
+          saw_sqft = true
+        end
+      }
+      new_infos["ad_square_feet"] = square_feet if !square_feet.nil? and !square_feet.empty?
 
       ########################## BEDROOMS ############################
       bedrooms = ""
@@ -185,6 +194,32 @@ def mlx_import(info)
         end
       }
       new_infos["ad_bedrooms"] = bedrooms if !bedrooms.nil? and !bedrooms.empty?
+
+      ####################### FULL BATHROOMS ##########################
+      bathrooms = ""
+      saw_bath = false
+      $listing_page.body.split("\n").each{|l|
+        if saw_bath
+          saw_bath = false
+          bathrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif l =~ /Full Baths:/
+          saw_bath = true
+        end
+      }
+      new_infos["ad_full_bathrooms"] = bathrooms if !bathrooms.nil? and !bathrooms.empty?
+
+      ####################### HALF BATHROOMS ##########################
+      bathrooms = ""
+      saw_bath = false
+      $listing_page.body.split("\n").each{|l|
+        if saw_bath
+          saw_bath = false
+          bathrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif l =~ /Half Baths:/
+          saw_bath = true
+        end
+      }
+      new_infos["ad_half_bathrooms"] = bathrooms if !bathrooms.nil? and !bathrooms.empty?
 
       ########################### COMPLEX ############################
       complex = nil
@@ -203,10 +238,11 @@ def mlx_import(info)
       desc = ""
       for l in $listing_page.body.split("\n")
         if (l =~ /background-color:rgb\(224,224,224\);border-color:rgb\((0,0|128,128),128\);border-style:solid;border-width:1;z-index:1;overflow:hidden;/ or
-            l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ or
+            l =~ /Public remarks:/i or 
             l =~ /top:504px;height:105px;left:24px;width:576px;font:9pt Tahoma;/ or
             l =~ /top:864px;height:112px;left:112px;width:552px;font:10pt Tahoma;/ or
-            l =~ /Public remarks:/i or 
+            l =~ /top:808px;height:112px;left:120px;width:552px;font:10pt Tahoma;/ or
+            l =~ /top:304px;height:128px;left:40px;width:656px;font:bold 10pt Arial;/ or
             l =~ /top:264px;height:112px;left:16px;width:680px;font:10pt Arial;/)
           desc = l
         end
