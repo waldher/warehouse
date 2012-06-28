@@ -54,7 +54,7 @@ class ListingsController < ApplicationController
           :ad_autokeywords => listing.autokeywords,
           :listing_infos => (Hash[CSV.parse(listing.info_keys_array[1..-2]).first.zip CSV.parse(listing.info_values_array[1..-2].gsub("\\\"", "\"\"")).first] rescue {}), 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or "miami"), 
-          :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or "mdc"), 
+          :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or nil), 
           :ad_foreign_id => listing.foreign_id
         }
       end
