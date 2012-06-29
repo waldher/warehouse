@@ -132,31 +132,31 @@ def mlx_import(info)
       new_infos["ad_address"] = address if !address.nil? and !address.empty?
 
       ########################## LOCATION ############################
-      location = nil
+      location_desc = nil
       building = nil
       for l in $listing_page.body.split("\n")
         if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/)
           building = l
           building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
           special_puts "Found Building #{building}, referencing neighborhood"
-          location = building_to_location(building) if !building_to_location(building).nil?
+          location_desc = building_to_location(building) if !building_to_location(building).nil?
           break
         elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
               l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
               l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
               l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial;/)
-          location = l
-          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: ) */, '')
-          special_puts "Found Location #{location}"
+          location_desc = l
+          location_desc = location_desc.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: ) */, '')
+          special_puts "Found Location #{location_desc}"
           break
         else
-          location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
+          location_desc = nil #This is implicit but, I like the clarity of writing it explicitly BBW
         end 
       end
-      if location.nil?
-        location = location_from_address(address)
+      if location_desc.nil?
+        location_desc = location_from_address(address)
       end
-      new_infos["ad_location"] = location if !location.nil? and !location.empty?
+      new_infos["ad_location"] = location_desc if !location_desc.nil? and !location_desc.empty?
 
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
