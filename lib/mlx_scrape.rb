@@ -38,7 +38,7 @@ def mlx_import(info)
     location = Location.find_by_url(data[:location].chomp.strip)
     sublocation = Sublocation.find_by_url(data[:sublocation].chomp.strip)
 
-    external_infos = data[:infos].chomp.strip
+    external_infos = data[:infos]
 
     url = data[:url].chomp.strip
     $page = agent.get(url)
