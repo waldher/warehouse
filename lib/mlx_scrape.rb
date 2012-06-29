@@ -35,9 +35,12 @@ def mlx_import(info)
   active = []
   $page = nil
   for data in info[:data]
-    external_infos = data[:infos] #Hash
-    url = data[:url].chomp.strip
+    location = Location.find_by_subdomain(data[:location].chomp.strip)
+    sublocation = Sublocation.find_by_url_identifier(data[:sublocation].chomp.strip)
 
+    external_infos = data[:infos].chomp.strip
+
+    url = data[:url].chomp.strip
     $page = agent.get(url)
 
     $record_ids = nil
@@ -86,7 +89,7 @@ def mlx_import(info)
       listings = nil
       listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
       if !listings.nil? and listings.count > 1 
-        special_puts "Duplicate Listings Please Check Advo ID #{customer_id} RJ ID #{foreign_id}."
+        special_puts "Duplicate Listings Please Check Leadadvo ID #{customer_id} Foreign ID #{foreign_id}."
         return
       end 
       listing = listings.nil? ? nil : listings[0]
@@ -97,6 +100,8 @@ def mlx_import(info)
         listing = Listing.new
         listing.customer_id = customer_id
         listing.foreign_id = foreign_id
+        listing.location_id = location.id
+        listing.sublocation_id = sublocation.id
       end 
       special_puts pre_message+"#{customer_key}#{ec}"
       special_puts "MLX ID: #{foreign_id}"
@@ -344,7 +349,6 @@ def mlx_import(info)
       else
         status = "Active-Available"
       end
-      #$listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
 
       if (status =="Active-Available" or status == "Active") and !disable?(listing)
         special_puts "Rental Status #{c(green)}Active #{ec}: #{status}"
