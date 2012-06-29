@@ -35,8 +35,8 @@ def mlx_import(info)
   active = []
   $page = nil
   for data in info[:data]
-    location = Location.find_by_subdomain(data[:location].chomp.strip)
-    sublocation = Sublocation.find_by_url_identifier(data[:sublocation].chomp.strip)
+    location = Location.find_by_url(data[:location].chomp.strip)
+    sublocation = Sublocation.find_by_url(data[:sublocation].chomp.strip)
 
     external_infos = data[:infos].chomp.strip
 
