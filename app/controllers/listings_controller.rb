@@ -27,7 +27,7 @@ class ListingsController < ApplicationController
       @listings = Listing.where(:customer_id => @customer.id).where(query).
         select("*,
           array(select key from listing_infos where listing_id = listings.id order by key) as info_keys_array,
-          array(select value from listing_infos where listing_id = listings.id order by key) as info_values_array,
+          array(select replace(value, '\"', '\\\"') from listing_infos where listing_id = listings.id order by key) as info_values_array,
           array(select complete_image_url from listing_images where listing_id = listings.id) as images_array,
           array_to_string(array(SELECT DISTINCT craigslist_keywords.spelling FROM craigslist_keywords WHERE craigslist_keywords.spelling IN (
                   SELECT spelling
