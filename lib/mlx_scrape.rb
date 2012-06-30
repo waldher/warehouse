@@ -35,9 +35,12 @@ def mlx_import(info)
   active = []
   $page = nil
   for data in info[:data]
-    external_infos = data[:infos] #Hash
-    url = data[:url].chomp.strip
+    location = Location.find_by_url(data[:location].chomp.strip)
+    sublocation = Sublocation.find_by_url(data[:sublocation].chomp.strip)
 
+    external_infos = data[:infos]
+
+    url = data[:url].chomp.strip
     $page = agent.get(url)
 
     $record_ids = nil
@@ -86,7 +89,7 @@ def mlx_import(info)
       listings = nil
       listings = Listing.where("customer_id = ? and foreign_id = ?", customer_id, foreign_id)
       if !listings.nil? and listings.count > 1 
-        special_puts "Duplicate Listings Please Check Advo ID #{customer_id} RJ ID #{foreign_id}."
+        special_puts "Duplicate Listings Please Check Leadadvo ID #{customer_id} Foreign ID #{foreign_id}."
         return
       end 
       listing = listings.nil? ? nil : listings[0]
@@ -97,6 +100,8 @@ def mlx_import(info)
         listing = Listing.new
         listing.customer_id = customer_id
         listing.foreign_id = foreign_id
+        listing.location_id = location.id
+        listing.sublocation_id = sublocation.id
       end 
       special_puts pre_message+"#{customer_key}#{ec}"
       special_puts "MLX ID: #{foreign_id}"
@@ -127,31 +132,31 @@ def mlx_import(info)
       new_infos["ad_address"] = address if !address.nil? and !address.empty?
 
       ########################## LOCATION ############################
-      location = nil
+      location_desc = nil
       building = nil
       for l in $listing_page.body.split("\n")
         if l.match(/top:256px;height:18px;left:16px;width:232px;font:10pt/)
           building = l
           building = building.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren; */, '')
           special_puts "Found Building #{building}, referencing neighborhood"
-          location = building_to_location(building) if !building_to_location(building).nil?
+          location_desc = building_to_location(building) if !building_to_location(building).nil?
           break
         elsif(l =~ /text-align:left;vertical-align:top;line-height:120%;color:rgb\(0,0,128\);background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
               l =~ /top:232px;height:20px;left:32px;width:152px;font:bold 12pt Tahoma;/ or
               l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
               l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial;/)
-          location = l
-          location = location.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: ) */, '')
-          special_puts "Found Location #{location}"
+          location_desc = l
+          location_desc = location_desc.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: ) */, '')
+          special_puts "Found Location #{location_desc}"
           break
         else
-          location = nil #This is implicit but, I like the clarity of writing it explicitly BBW
+          location_desc = nil #This is implicit but, I like the clarity of writing it explicitly BBW
         end 
       end
-      if location.nil?
-        location = location_from_address(address)
+      if location_desc.nil?
+        location_desc = location_from_address(address)
       end
-      new_infos["ad_location"] = location if !location.nil? and !location.empty?
+      new_infos["ad_location"] = location_desc if !location_desc.nil? and !location_desc.empty?
 
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
@@ -344,7 +349,6 @@ def mlx_import(info)
       else
         status = "Active-Available"
       end
-      #$listing_page.body.split("\n").each{ |l| temp_active = l if l =~ /top:192px;height:18px;left:72px;width:120px;font:10pt Tahoma;/ or l =~ /top:176px;height:18px;left:80px;width:120px;font:10pt Tahoma;/ or l =~ /top:168px;height:18px;left:80px;width:128px;font:10pt Tahoma;/ }
 
       if (status =="Active-Available" or status == "Active") and !disable?(listing)
         special_puts "Rental Status #{c(green)}Active #{ec}: #{status}"
