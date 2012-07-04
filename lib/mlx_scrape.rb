@@ -110,6 +110,10 @@ def mlx_import(info)
 
       new_infos = {}
       old_infos = listing.infos
+
+      ############################ BODY ##############################
+      new_infos["ad_body"] = $listing_page.body
+
       ########################## ADDRESS #############################
       address = ""
       for l in $listing_page.body.split("\n")
@@ -238,6 +242,19 @@ def mlx_import(info)
         end
       end
       new_infos["ad_complex"] = complex if !complex.nil? and !complex.empty?
+
+      ######################### SUBDIVISION ##########################
+      subdivision = nil
+      saw_subdivision = false
+      for l in $listing_page.body.split("\n")
+        if saw_subdivision
+          saw_subdivision = false
+          subdivision = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<&curren;/,'')
+        elsif l =~ /Subdivision:/
+          saw_subdivision = true
+        end
+      end
+      new_infos["ad_subdivision"] = subdivision if !subdivision.nil? and !subdivision.empty?
 
       ########################## DESCRIPTION #########################
       desc = ""
