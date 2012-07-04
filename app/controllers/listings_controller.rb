@@ -52,7 +52,7 @@ class ListingsController < ApplicationController
           :active => listing.active,
           :ad_image_urls => (CSV.parse(listing.images_array[1..-2]).first rescue []), 
           :ad_autokeywords => listing.autokeywords,
-          :listing_infos => (Hash[CSV.parse_line(listing.info_keys_array[1..-2]).zip(CSV.parse_line(listing.info_values_array[1..-2].gsub("\\\"", "\"\"").gsub(/\\(.)/, '\1')))] rescue {}), 
+          :listing_infos => (Hash[CSV.parse_line(listing.info_keys_array[1..-2]).zip(CSV.parse_line(listing.info_values_array[1..-2].gsub("\\\"", "\"\"").gsub(/\\(.)/, '\1').force_encoding('UTF-8')))] rescue {}), 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or nil), 
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or nil), 
           :ad_foreign_id => listing.foreign_id
