@@ -97,7 +97,7 @@ class Listing < ActiveRecord::Base
   end
 
   def validate_listing_info_title
-    if @infos["ad_title"] == []
+    if @infos["ad_title"].nil? or @infos["ad_title"] == []
       errors[:base] << "Must have at least one title!"
       return  true 
     else
