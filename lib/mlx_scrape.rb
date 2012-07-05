@@ -2,7 +2,6 @@ require 'open-uri'
 require 'mechanize'
 require 'listing_title'
 require 'scrape_utils'
-require 'load_images'
 
 #info is a hash in the form:
 # :data => [{:url=>"scrape_url",:infos=>{}},] # One inner hash per url
