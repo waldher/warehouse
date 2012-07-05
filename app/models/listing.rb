@@ -98,11 +98,11 @@ class Listing < ActiveRecord::Base
   end
 
   def validate_listing_info_title
-    if @infos["ad_title"].nil? or @infos["ad_title"] == []
+    if self.title.nil? or self.title.empty?
       errors[:base] << "Must have at least one title!"
       return  true 
     else
-      for title in @infos["ad_title"]
+      for title in self.title
         if title.length > 70
           errors[:base] << "More than 70 characters are not allowed"
           return true
