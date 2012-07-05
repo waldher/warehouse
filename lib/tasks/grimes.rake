@@ -45,8 +45,6 @@ namespace :grimes do
       end until infos != get_ad_infos(driver)
       sleep(0.3)
       infos = get_ad_infos(driver)
-      puts infos["ad_title"][0]
-      puts infos["ad_title"][0].length
       for key, val in infos
         value_update(listing, key, val)
       end
