@@ -89,10 +89,11 @@ class Listing < ActiveRecord::Base
   def create_infos
     for key, value in @infos
       if(value.kind_of?(Array) || value.kind_of?(Hash))
-        ListingInfo.create(:listing_id => id, :key => key, :value => value.to_json)
+        li=ListingInfo.create(:listing_id => id, :key => key, :value => value.to_json)
       else
-        ListingInfo.create(:listing_id => id, :key => key, :value => value)
+        li=ListingInfo.create(:listing_id => id, :key => key, :value => value)
       end
+      puts li.errors if li.errors and !li.errors.empty?
     end
   end
 
@@ -146,7 +147,7 @@ class Listing < ActiveRecord::Base
           else
             li=ListingInfo.create(:listing_id => id, :key => key, :value => value)
           end
-          #puts li.errors
+          puts li.errors if li.errors and !li.errors.empty?
         end
       end
     end
