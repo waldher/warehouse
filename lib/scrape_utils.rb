@@ -24,7 +24,7 @@ proxy_port = (47001..47020).to_a.sample
 def value_update(listing, key_symbol, val)
   if !val.nil? and !val.empty? and listing.infos[key_symbol].to_s != val.to_s
     print_change(key_symbol, listing.infos[key_symbol], val.to_s)
-    listing.infos[key_symbol] = val.to_s
+    listing.infos[key_symbol] = val
 
     return true
   end

@@ -26,6 +26,7 @@ namespace :grimes do
     for i in (1..total)
       puts ",--"
       foreign_listing = driver.find_element(:xpath, "/html/body/form/div[3]/div[2]/table/tbody/tr/td[2]/div[2]/div/table/tbody/tr[2]/td/div/table/tbody/tr[2]/td/table/tbody/tr/td[2]/select/option[#{i}]")
+      foreign_listing.click
 
       foreign_id = foreign_listing.attribute("value")
       puts "|Foreign ID: #{foreign_id}"
@@ -39,17 +40,18 @@ namespace :grimes do
         listing.save
       end
 
-      foreign_listing.click
-      sleep(0.3)
-      while infos == get_ad_info(driver)
+      begin
         sleep(0.3)
-      end
-      infos = get_ad_info(driver)
+      end until infos != get_ad_infos(driver)
+      sleep(0.3)
+      infos = get_ad_infos(driver)
+      puts infos["ad_title"][0]
+      puts infos["ad_title"][0].length
       for key, val in infos
         value_update(listing, key, val)
       end
       listing.save
-      puts "|#{listing.errors}" if !listing.errors.nil? and !listing.errors.empty?
+      puts "|#{listing.errors}" if !listing.errors.nil? and listing.errors != {}
       active << listing.id
       puts "`--"
     end
@@ -58,7 +60,7 @@ namespace :grimes do
     deactivate_old_listings(customer.id, active)
   end
 
-  def get_ad_info(driver)
+  def get_ad_infos(driver)
     info = {}
     info["ad_price"] = get_element(driver, '//*[@id="divRent"]')
     info["ad_bedrooms"] = get_element(driver, '//*[@id="divBeds"]')

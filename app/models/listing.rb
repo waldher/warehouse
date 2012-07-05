@@ -98,14 +98,30 @@ class Listing < ActiveRecord::Base
   end
 
   def validate_listing_info_title
-    if self.title.nil? or self.title.empty?
+    if @infos["ad_title"].nil? or @infos["ad_title"].empty?
+      errors[:title] = @infos["ad_title"]
+      errors[:title_length] = @infos["ad_title"].length
+      errors[:title_class] = @infos["ad_title"].class
       errors[:base] << "Must have at least one title!"
       return  true 
     else
-      for title in self.title
-        if title.length > 70
+      if @infos["ad_title"].kind_of?(String)
+        if @infos["ad_title"].length > 70
+          errors[:title] = @infos["ad_title"]
+          errors[:title_length] = @infos["ad_title"].length
+          errors[:title_class] = @infos["ad_title"].class
           errors[:base] << "More than 70 characters are not allowed"
           return true
+        end
+      else
+        for title in @infos["ad_title"]
+          if title.length > 70
+            errors[:title] = title
+            errors[:title_length] = title.length
+            errors[:title_class] = @infos["ad_title"].class
+            errors[:base] << "More than 70 characters are not allowed"
+            return true
+          end
         end
       end
     end
