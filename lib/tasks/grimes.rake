@@ -49,6 +49,7 @@ namespace :grimes do
         value_update(listing, key, val)
       end
       listing.save
+      puts "|#{listing.errors}" if !listing.errors.nil? and !listing.errors.empty?
       active << listing.id
       puts "`--"
     end
@@ -64,7 +65,7 @@ namespace :grimes do
     info["ad_address"] = get_element(driver, '//*[@id="divAddress"]')
     info["ad_city"] = get_element(driver, '//*[@id="divCity"]')
     info["ad_state"] = get_element(driver, '//*[@id="divState"]')
-    info["ad_title"] = [get_element(driver, '//*[@id="divHeadline"]')]
+    info["ad_title"] = [get_element(driver, '//*[@id="divHeadline"]')[0..69]]
     info["ad_body"] = get_element(driver, '//*[@id="divHTML"]')
     return info
   end
