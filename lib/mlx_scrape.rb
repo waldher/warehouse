@@ -235,7 +235,7 @@ def mlx_import(info)
       for l in $listing_page.body.split("\n")
         if saw_complex
           saw_complex = false
-          complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<&curren;/,'')
+          complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/,'')
         elsif l =~ /Complex Name:/
           saw_complex = true
         end
@@ -248,7 +248,7 @@ def mlx_import(info)
       for l in $listing_page.body.split("\n")
         if saw_subdivision
           saw_subdivision = false
-          subdivision = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<&curren;/,'')
+          subdivision = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/,'')
         elsif l =~ /Subdivision:/
           saw_subdivision = true
         end
