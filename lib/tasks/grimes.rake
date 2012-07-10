@@ -60,7 +60,7 @@ namespace :grimes do
 
   def get_ad_infos(driver)
     info = {}
-    info["ad_price"] = get_element(driver, '//*[@id="divRent"]').gsub(/[$,]/)
+    info["ad_price"] = get_element(driver, '//*[@id="divRent"]').gsub(/[$,]/,'').sub(".00",'')
     info["ad_bedrooms"] = get_element(driver, '//*[@id="divBeds"]')
     info["ad_address"] = get_element(driver, '//*[@id="divAddress"]')
     info["ad_city"] = get_element(driver, '//*[@id="divCity"]')
