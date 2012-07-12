@@ -44,6 +44,12 @@ class Customer < ActiveRecord::Base
     'Computer Services' => 'cps'
   }
 
+  HOUSING_CRAIGSLIST_TYPES = {
+    'Apartments / Housing' => 'apa',
+    'Rooms / Shared' => 'roo',
+    'Real Estate for Sale' => 'rea'
+  }
+
   def set_locations
     if(self.sublocation)
       sub = self.sublocation

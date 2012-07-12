@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120530062702) do
+ActiveRecord::Schema.define(:version => 20120712121631) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -29,30 +29,6 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
 
   add_index "admins", ["email"], :name => "index_admins_on_email", :unique => true
   add_index "admins", ["reset_password_token"], :name => "index_admins_on_reset_password_token", :unique => true
-
-  create_table "agents", :force => true do |t|
-    t.string   "email",                                 :default => "", :null => false
-    t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
-    t.string   "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                         :default => 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.string   "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.integer  "customer_id",                                           :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "agents", ["confirmation_token"], :name => "index_agents_on_confirmation_token", :unique => true
-  add_index "agents", ["customer_id"], :name => "index_agents_on_customer_id"
-  add_index "agents", ["email"], :name => "index_agents_on_email", :unique => true
-  add_index "agents", ["reset_password_token"], :name => "index_agents_on_reset_password_token", :unique => true
 
   create_table "capabilities", :force => true do |t|
     t.string   "name",       :null => false
@@ -97,7 +73,6 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
     t.string   "setup_nonce"
     t.integer  "location_id"
     t.integer  "sublocation_id"
-    t.string   "import_type"
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"
@@ -129,13 +104,6 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
-
-  create_table "keywords", :force => true do |t|
-    t.string   "keyword"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "ignore",     :default => false
-  end
 
   create_table "listing_images", :force => true do |t|
     t.integer  "listing_id"
@@ -171,6 +139,7 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
     t.integer  "location_id"
     t.integer  "sublocation_id"
     t.integer  "neighborhood_id"
+    t.string   "craigslist_type"
   end
 
   add_index "listings", ["customer_id"], :name => "index_listings_on_customer_id"
@@ -191,29 +160,6 @@ ActiveRecord::Schema.define(:version => 20120530062702) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "queue_items", :force => true do |t|
-    t.integer  "agent_id",   :null => false
-    t.integer  "listing_id", :null => false
-    t.integer  "post_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "queue_lines", :force => true do |t|
-    t.integer  "agent_id",   :null => false
-    t.integer  "listing_id", :null => false
-    t.integer  "post_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "scraped_links", :force => true do |t|
-    t.string  "url"
-    t.boolean "done"
-  end
-
-  add_index "scraped_links", ["url", "done"], :name => "index_scraped_links_on_url_and_done", :unique => true
 
   create_table "sublocations", :force => true do |t|
     t.string  "name",        :null => false

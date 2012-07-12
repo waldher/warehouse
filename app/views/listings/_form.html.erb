@@ -74,32 +74,40 @@
         <%= infos.label :ad_title, "Ad Title" %><br />
         <%= infos.text_field "ad_title[1]", :class=>"title_box_width length_for_title required",:maxlength => 70, :size => 70, :value => titles.try(:shift), :title => " Make your ad titles as eye-catching and appealing to prospective clients as possible" %>
       </span>
-      <span class="field" style="float: right;">
-        <%= infos.label :ad_location, "Location Description" %><br />
-        <%= infos.text_field :ad_location, :class=>"location_box_width", :value => @listing.infos["ad_location"], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
-      </span>
-      <span class="field" style="float: right;">
-        <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
-        <%= f.hidden_field :location_id %>
-        <%= f.hidden_field :sublocation_id %>
-        <select id="listing_location_select">
-          <option value="-1">select location</option>
-          <% for location in Location.all %>
-            <% has_sublocations = !location.sublocations.empty? %>
-            <% if has_sublocations %>
-              <optgroup label="<%= location.name %>">
-            <% else %>
-              <option value="_<%= location.id %>"<%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
-            <% end %>
-              <% for sublocation in location.sublocations %>
-                <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>><%= sublocation.name %></option>
+      <div style="float: right;">
+        <span class="field">
+          <%= infos.label :ad_location, "Location Description" %><br />
+          <%= infos.text_field :ad_location, :class=>"location_box_width", :value => @listing.infos["ad_location"], :title => "This is a descriptive location, ex: the sub-division or neighborhood where the property is located" %>
+        </span>
+        <br />
+        <span class="field">
+          <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
+          <%= f.hidden_field :location_id %>
+          <%= f.hidden_field :sublocation_id %>
+          <select id="listing_location_select">
+            <option value="-1">select location</option>
+            <% for location in Location.all %>
+              <% has_sublocations = !location.sublocations.empty? %>
+              <% if has_sublocations %>
+                <optgroup label="<%= location.name %>">
+              <% else %>
+                <option value="_<%= location.id %>"<%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
               <% end %>
-            <% if has_sublocations %>
-              </optgroup>
+                <% for sublocation in location.sublocations %>
+                  <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>><%= sublocation.name %></option>
+                <% end %>
+              <% if has_sublocations %>
+                </optgroup>
+              <% end %>
             <% end %>
-          <% end %>
-        </select>
-      </span>
+          </select>
+        </span>
+        <br />
+        <span class="field">
+          <%= f.label :craigslist_type %><br />
+          <%= f.select :craigslist_type, Customer::HOUSING_CRAIGSLIST_TYPES, :value => @listing.resolved_craigslist_type %>
+        </span>
+      </div>
       <% if counter.to_i > 0 %>
         <% titles.each_with_index do |title, index| %>
           <span class="field title" style="display:block;">

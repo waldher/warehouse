@@ -72,6 +72,14 @@ class Listing < ActiveRecord::Base
     return []
   end
 
+  def resolved_craigslist_type
+    if craigslist_type
+      return craigslist_type
+    end
+
+    return customer.craigslist_type
+  end
+
   protected
 
   def init_infos

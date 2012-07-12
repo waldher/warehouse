@@ -54,6 +54,7 @@ class ListingsController < ApplicationController
           :ad_autokeywords => listing.autokeywords,
           :listing_infos => (Hash[CSV.parse_line(listing.info_keys_array[1..-2]).zip(CSV.parse_line(listing.info_values_array[1..-2].gsub("\\\"", "\"\"").gsub(/\\(.)/, '\1').force_encoding('UTF-8')))] rescue {}), 
           :location => ((listing.location and listing.location.url) or (listing.customer.location and listing.customer.location.url) or nil), 
+          :craigslist_type => listing.resolved_craigslist_type,
           :sublocation => ((listing.sublocation and listing.sublocation.url) or (listing.customer.sublocation and listing.customer.sublocation.url) or nil), 
           :ad_foreign_id => listing.foreign_id
         }
