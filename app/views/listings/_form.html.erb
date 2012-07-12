@@ -33,6 +33,24 @@
       theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,blockquote,pagebreak"
     });
   });
+  
+  var listing_location_select = function(){
+      if($("#listing_location_select").val()[0] == "_"){
+        $("#listing_location_id").val($("#listing_location_select").val().substr(1));
+        $("#listing_sublocation_id").val("");
+      } else {
+        $("#listing_location_id").val("");
+        $("#listing_sublocation_id").val($("#listing_location_select").val());
+      }
+  };
+
+  $(document).ready(function(){
+    $("#listing_location_select").change(function(){
+      listing_location_select();
+    });
+    
+    listing_location_select();
+  });
 </script>
 
 <%= form_for([@customer, @listing], :html => {:multipart => true}) do |f| %>
@@ -64,13 +82,21 @@
         <%= f.label :ad_sublocation, "Ad Sub-Location" %><br />
         <%= f.hidden_field :location_id %>
         <%= f.hidden_field :sublocation_id %>
-        <select id="customer_select_location">
+        <select id="listing_location_select">
           <option value="-1">select location</option>
           <% for location in Location.all %>
-            <option value="_<%= location.id %>"<%= location.sublocations.empty? ? "" : " disabled" %><%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
+            <% has_sublocations = !location.sublocations.empty? %>
+            <% if has_sublocations %>
+              <optgroup label="<%= location.name %>">
+            <% else %>
+              <option value="_<%= location.id %>"<%= @listing.location_id == location.id ? " selected" : "" %>><%= location.name %></option>
+            <% end %>
               <% for sublocation in location.sublocations %>
-                <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>>&nbsp;&nbsp;&nbsp;&nbsp;<%= sublocation.name %></option>
+                <option value="<%= sublocation.id %>"<%= @listing.sublocation_id == sublocation.id ? " selected" : "" %>><%= sublocation.name %></option>
               <% end %>
+            <% if has_sublocations %>
+              </optgroup>
+            <% end %>
           <% end %>
         </select>
       </span>
