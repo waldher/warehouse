@@ -291,12 +291,15 @@ def mlx_import(info)
       ########################## TITLES ##############################
       titles = []
       if !disable_new_titles
-        (0..2).each{
+        (0..5).each{
           title = ListingTitle.generate(listing)
           if !title.nil? and !title.empty? and title.length > 20
             special_puts "New title generated: #{c(pink)}#{title}#{ec}"
             titles << title
+          else
+            special_puts "New title not accepted: #{c(red)}#{title}#{ec}"
           end
+          break if titles.count >= 3
         }
         new_infos["ad_title"] = titles if !titles.nil? and !titles.empty?
       else
