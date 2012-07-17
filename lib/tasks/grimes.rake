@@ -48,6 +48,7 @@ namespace :grimes do
       for key, val in infos
         value_update(listing, key, val)
       end
+      listing.update_attribute(:foreign_active=>false) if listing.infos["ad_price"].to_i > 2500
       listing.save
       puts "|#{listing.errors}" if !listing.errors.nil? and listing.errors != {}
       active << listing.id
