@@ -291,9 +291,8 @@ def mlx_import(info)
       ########################## TITLES ##############################
       titles = []
       if !disable_new_titles
-        lt = ListingTitle.new
         (0..15).each{
-          title = lt.generate(listing)
+          title = ListingTitle.generate(listing, new_infos)
           if !title.nil? and !title.empty? and title.length > 20
             special_puts "New title generated: #{c(pink)}#{title}#{ec}"
             titles << title

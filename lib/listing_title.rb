@@ -126,23 +126,27 @@ class ListingTitle
                 #"This <adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",  Titles that come from this generally suck. TODO 
                 ]
 
-  def generate(listing)
-    bdr = (listing.infos["ad_bedrooms"] == "0" or listing.infos["ad_bedrooms"].nil?) ? "" : "#{listing.infos["ad_bedrooms"]}#{BR.sample}"
-    loc = (listing.infos["ad_location"] or "")
-    top = ( listing.infos["ad_type"] or 
-            ("townhouse" if (listing.infos["ad_description"] =~ /townhouse/i)) or 
-            ("townhome" if (listing.infos["ad_description"] =~ /townhome/i)) or 
-            ("duplex" if (listing.infos["ad_description"] =~ /duplex/i)) or 
-            ("house" if (listing.infos["ad_description"] =~ /house/i)) or 
-            ((listing.customer.craigslist_type == "apa" ? "apt" : "condo") if (listing.infos["ad_complex"] or 
-                                                                              (listing.infos["ad_address"] =~ /(#|apt|suite|unit| ste )/i) or 
-                                                                              (listing.infos["ad_description"] =~ /(apartment|condo)/i))) or 
+  def self.generate(listing, infos = nil)
+    if infos.nil?
+      infos = listing.infos
+    end
+
+    bdr = (infos["ad_bedrooms"] == "0" or infos["ad_bedrooms"].nil?) ? "" : "#{infos["ad_bedrooms"]}#{BR.sample}"
+    loc = (infos["ad_location"] or "")
+    top = ( infos["ad_type"] or 
+            ("townhouse" if (infos["ad_description"] =~ /townhouse/i)) or 
+            ("townhome" if (infos["ad_description"] =~ /townhome/i)) or 
+            ("duplex" if (infos["ad_description"] =~ /duplex/i)) or 
+            ("house" if (infos["ad_description"] =~ /house/i)) or 
+            ((listing.customer.craigslist_type == "apa" ? "apt" : "condo") if (infos["ad_complex"] or 
+                                                                              (infos["ad_address"] =~ /(#|apt|suite|unit| ste )/i) or 
+                                                                              (infos["ad_description"] =~ /(apartment|condo)/i))) or 
              "")
     adj = ADJECTIVES.sample
 
     amenities_array = []
     for potential_amenity in AMENITIES
-      match = potential_amenity.match(listing.infos["ad_amenities"]) or potential_amenity.match(listing.infos["ad_description"])
+      match = potential_amenity.match(infos["ad_amenities"]) or potential_amenity.match(infos["ad_description"])
       if match
         amenities_array << match[0]
       end
@@ -153,7 +157,7 @@ class ListingTitle
 
     ages_array = []
     for potential_age in AGES
-      match = potential_age.match(listing.infos["ad_description"])
+      match = potential_age.match(infos["ad_description"])
       if match
         ages_array << match[0]
       end
@@ -162,7 +166,7 @@ class ListingTitle
 
     perks_array = []
     for potential_perk in PERKS
-      match = potential_perk.match(listing.infos["ad_description"])
+      match = potential_perk.match(infos["ad_description"])
       if match
         perks_array << match[0]
       end
