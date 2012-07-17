@@ -119,14 +119,14 @@ class ListingTitle
 
   BR = ["br","bed","bd"]
 
-  TEMPLATES = [ "[<til>] <rai> <adj> <bdr> [<age>] <top> In <loc>[<ame>][,<per>]",
-                "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In <loc>, [<til>]",
-                "<adj> <top>, <bdr>[, <ame>] In <loc>[, <per>], <rai>, [<age>][<til>]",
-                "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til>, ]<rai> [<ame>]",
-                "This <adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",
+  TEMPLATES = [ "[<til>] <rai> <adj> <bdr> [<age>] <top> In <loc>[ <ame>][, <per>]",
+                "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In <loc>[, <til>]",
+                "<adj> <top>, <bdr>[, <ame>] In <loc>[, <per>], <rai>[ <age>][ <til>]",
+                "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til> ]<rai>[ <ame>]",
+                #"This <adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",  Titles that come from this generally suck. TODO 
                 ]
 
-  def self.generate(listing)
+  def generate(listing)
     bdr = (listing.infos["ad_bedrooms"] == "0" or listing.infos["ad_bedrooms"].nil?) ? "" : "#{listing.infos["ad_bedrooms"]}#{BR.sample}"
     loc = (listing.infos["ad_location"] or "")
     top = ( listing.infos["ad_type"] or 
@@ -190,6 +190,7 @@ class ListingTitle
 
       prospect.gsub!(/  */, ' ') # Remove double spaces
 
+      prospect.gsub!(/ *\[[, ]*\] */, ' ')
       base_title = prospect.gsub(/ *\[[^\[\]]*\] */, ' ')
 
       if base_title.length > 70
