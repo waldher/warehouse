@@ -168,6 +168,12 @@
             <%= infos.text_field :ad_construction, :value => @listing.infos["ad_construction"] %>
           </span>
         <% end %>
+        <% if @customer.has_capability?("url") %>
+          <span class="field">
+            <%= infos.label :ad_url, "Link URL" %><br />
+            <%= infos.text_field :ad_url, :value => @listing.infos["ad_url"] %>
+          </span>
+        <% end %>
       </div>
     <% end %>
     <div class="field">
