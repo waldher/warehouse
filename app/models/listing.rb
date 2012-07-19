@@ -77,7 +77,7 @@ class Listing < ActiveRecord::Base
       return craigslist_type
     end
 
-    return customer.craigslist_type
+    return (customer and customer.craigslist_type) or nil
   end
 
   protected
