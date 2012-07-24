@@ -34,6 +34,7 @@ def mlx_import(info)
   active = []
   $page = nil
   for data in info[:data]
+    craigslist_type = data[:craigslist_type].chomp.strip
     location = Location.find_by_url(data[:location].chomp.strip)
     sublocation = Sublocation.find_by_url(data[:sublocation].chomp.strip)
 
@@ -99,6 +100,7 @@ def mlx_import(info)
         listing = Listing.new
         listing.customer_id = customer_id
         listing.foreign_id = foreign_id
+        listing.craigslist_type = craigslist_type
         listing.location_id = location.id
         listing.sublocation_id = sublocation.id
       end 
