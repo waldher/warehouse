@@ -76,10 +76,11 @@ def mlx_import(info)
         if saw_foreign
           saw_foreign = false
           foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /REF[ ]*#:/i or l =~ /ML#:/
+        elsif (l =~ /REF#:/i or l =~ /ML#:/) and !(l =~ /&nbsp;/)
           saw_foreign = true
         elsif (
             l =~ /top:78px;height:13px;left:312px;width:96px;font:8pt Tahoma;/ or
+            l =~ /top:176px;height:18px;left:64px;width:96px;font:10pt Tahoma;/ or
             l =~ /top:48px;height:15px;left:648px;width:120px;font:8pt Tahoma;/
             )
           foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').sub(/Ref#:&nbsp; /,'')
@@ -132,13 +133,15 @@ def mlx_import(info)
             l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
             l =~ /top:64px;height:18px;left:16px;width:688px;font:bold 10pt Arial;/ or
             l =~ /top:136px;height:20px;left:192px;width:432px;font:bold 12pt Tahoma;/ or
-            l =~ /top:16px;height:24px;left:336px;width:304px;font:bold 12pt Tahoma;/
+            l =~ /top:16px;height:17px;left:208px;width:416px;font:bold 9pt Tahoma;/ or
+            l =~ /top:16px;height:24px;left:336px;width:304px;font:bold 12pt Tahoma;/ or
+            l =~ /top:16px;height:19px;left:200px;width:432px;font:bold 11pt Tahoma;/
             )
               address = l
               break
         end
       end
-      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Address: )/, '')
+      address = address.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Address: )/, '').gsub(/&nbsp; */,'')
       new_infos["ad_address"] = address if !address.nil? and !address.empty?
 
       ########################## LOCATION ############################
@@ -156,7 +159,7 @@ def mlx_import(info)
               l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
               l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial;/)
           location_desc = l
-          location_desc = location_desc.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: |Subdiv Name[ ]*) */, '')
+          location_desc = location_desc.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: |Subdiv Name[ ]*) */, '').gsub(/&nbsp; */,'')
           special_puts "Found Location #{location_desc}"
           break
         else
@@ -164,7 +167,16 @@ def mlx_import(info)
         end 
       end
       if location_desc.nil?
-        location_desc = location_from_address(address)
+        location_details = nil
+        for l in $listing_page.body.split("\n")
+          if (
+            l =~ /top:16px;height:17px;left:16px;width:168px;font:bold 9pt Tahoma;/ or
+            l =~ /top:16px;height:22px;left:208px;width:120px;font:bold 12pt Tahoma;/
+            )
+            location_details = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
+          end
+        end
+        location_desc = location_from_address(address + ", " + location_details)
       end
       new_infos["ad_location"] = location_desc if !location_desc.nil? and !location_desc.empty?
 
@@ -190,9 +202,11 @@ def mlx_import(info)
             l =~ /top:112px;height:19px;left:574px;width:127px;font:bold 11pt Arial;/ or
             l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
             l =~ /top:16px;height:22px;left:640px;width:128px;font:bold 12pt Tahoma;/ or
+            l =~ /top:16px;height:17px;left:640px;width:128px;font:bold 9pt Tahoma;/ or
+            l =~ /top:16px;height:19px;left:616px;width:152px;font:bold 11pt Tahoma;/ or
             l =~ /top:136px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/
             )
-          price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
+          price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '').sub(/&nbsp; */,'')
           new_infos["ad_price"] = price if !price.nil? and !price.empty?
         end
       }
@@ -256,7 +270,8 @@ def mlx_import(info)
         if saw_complex
           saw_complex = false
           complex = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/,'')
-        elsif l =~ /Complex Name:/
+          #Using this CSS is cheap, should just be pure, but that's too much work
+        elsif l =~ /Complex Name:/ or l =~ /top:176px;height:18px;left:64px;width:96px;font:10pt Tahoma;/
           saw_complex = true
         end
       end
@@ -286,25 +301,125 @@ def mlx_import(info)
       ########################### AMENITIES ##########################
       amenities = ""
       for l in $listing_page.body.split("\n")
-        if (l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
-            l =~ /top:752px;height:32px;left:24px;width:576px;font:10pt Tahoma;/ or
-            l =~ /top:824px;height:32px;left:16px;width:432px;font:10pt Tahoma;/ )
+        if (
+          l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
+          l =~ /top:752px;height:32px;left:24px;width:576px;font:10pt Tahoma;/ or
+          l =~ /top:824px;height:32px;left:16px;width:432px;font:10pt Tahoma;/ or
+          l =~ /top:792px;height:80px;left:520px;width:248px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
           amenities << ',' << l
         end
       end
-      amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
-      saw_amenity = false
+      amenities = amenities.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_amenities"] = amenities if !amenities.nil? and !amenities.empty?
+
+      ########################### VIEW ##########################
+      view = ""
       for l in $listing_page.body.split("\n")
-        if saw_amenity
-          saw_amenity = false
-          amenities << ', ' << l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').gsub(/&curren;/,'')
-        elsif l =~ /Parking Desc:/ or l =~ /Waterfrnt Access/
-          saw_amenity = true
+        if (
+          l =~ /top:592px;height:16px;left:112px;width:288px;font:9pt Tahoma;/ or
+          l =~ /top:648px;height:18px;left:120px;width:280px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          view << l
         end
       end
-      amenities = amenities.split(/ *[\/,] /).reject{|a| a.empty?}.join('||')
+      view = view.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_view"] = view if !view.nil? and !view.empty?
 
-      new_infos["ad_amenities"] = amenities if !amenities.nil? and !amenities.empty?
+      ########################### PARKING ##########################
+      parking = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:664px;height:16px;left:136px;width:264px;font:9pt Tahoma;/ or
+          l =~ /top:696px;height:18px;left:144px;width:256px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          parking << l
+        end
+      end
+      parking = parking.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_parking"] = parking if !parking.nil? and !parking.empty?
+
+      ########################### WATERFRONT ##########################
+      waterfront = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:824px;height:30px;left:160px;width:240px;font:9pt Tahoma;/ or
+          l =~ /top:760px;height:32px;left:160px;width:240px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          waterfront << l
+        end
+      end
+      waterfront = waterfront.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_waterfront"] = waterfront if !waterfront.nil? and !waterfront.empty?
+
+      ########################### SERVICES ##########################
+      services = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:664px;height:64px;left:520px;width:248px;font:10pt Tahoma;/ 
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          services << l
+        end
+      end
+      services = services.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_services"] = services if !services.nil? and !services.empty?
+
+      ########################### EXTERIOR FEAT ##########################
+      exterior = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:648px;height:18px;left:520px;width:248px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          exterior << l
+        end
+      end
+      exterior = exterior.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_exterior"] = exterior if !exterior.nil? and !exterior.empty?
+
+      ########################### INTERIOR FEAT ##########################
+      interior = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:480px;height:48px;left:120px;width:280px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          interior << l
+        end
+      end
+      interior = interior.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_interior"] = interior if !interior.nil? and !interior.empty?
+
+      ########################### FLOORS ##########################
+      floors = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:432px;height:32px;left:120px;width:280px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          floors << l
+        end
+      end
+      floors = floors.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_floors"] = floors if !floors.nil? and !floors.empty?
+
+      ########################### EQUIPMENT ##########################
+      equipment = ""
+      for l in $listing_page.body.split("\n")
+        if (
+          l =~ /top:528px;height:64px;left:120px;width:280px;font:10pt Tahoma;/
+          )
+          l = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+          equipment << l
+        end
+      end
+      equipment = equipment.split(/ *[\/,] */).reject{|a| a.empty? or a =~ /^[A-z0-9]{1,3}$/}.join('||')
+      new_infos["ad_equipment"] = equipment if !equipment.nil? and !equipment.empty?
 
       ########################## TITLES ##############################
       titles = []

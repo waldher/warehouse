@@ -83,7 +83,7 @@ end
 
 def location_from_address(address)
   #Remove Unit and apostrophies.
-  address = address.gsub(/# *[^ ,]*/, '').gsub(/'/,'') + ", FL"
+  address = address.gsub(/# *[^ ,]*/, '').gsub(/'/,'') 
 
   try_again = true
   #This allows for address detection failures to be tried again.
