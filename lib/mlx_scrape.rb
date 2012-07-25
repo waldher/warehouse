@@ -76,10 +76,13 @@ def mlx_import(info)
         if saw_foreign
           saw_foreign = false
           foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /REF #:/ or l =~ /ML#:/
+        elsif l =~ /REF[ ]*#:/i or l =~ /ML#:/
           saw_foreign = true
-        elsif l =~ /top:78px;height:13px;left:312px;width:96px;font:8pt Tahoma;/
-          foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+        elsif (
+            l =~ /top:78px;height:13px;left:312px;width:96px;font:8pt Tahoma;/ or
+            l =~ /top:48px;height:15px;left:648px;width:120px;font:8pt Tahoma;/
+            )
+          foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').sub(/Ref#:&nbsp; /,'')
           break
         end
       }
@@ -119,7 +122,7 @@ def mlx_import(info)
       address = ""
       for l in $listing_page.body.split("\n")
         if (l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/ or
-            l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt/ or 
+            l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt;/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or 
             l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
@@ -127,8 +130,10 @@ def mlx_import(info)
             l =~ /top:232px;height:20px;left:200px;width:424px;font:bold 12pt Tahoma;/ or
             l =~ /top:109px;height:22px;left:209px;width:400px;font:bold 12pt Tahoma;/ or
             l =~ /top:64px;height:16px;left:8px;width:704px;font:bold 10pt Arial;/ or 
-            l =~ /top:64px;height:18px;left:16px;width:688px;font:bold 10pt Arial/ or
-            l =~ /top:136px;height:20px;left:192px;width:432px;font:bold 12pt Tahoma;/)
+            l =~ /top:64px;height:18px;left:16px;width:688px;font:bold 10pt Arial;/ or
+            l =~ /top:136px;height:20px;left:192px;width:432px;font:bold 12pt Tahoma;/ or
+            l =~ /top:16px;height:24px;left:336px;width:304px;font:bold 12pt Tahoma;/
+            )
               address = l
               break
         end
@@ -151,7 +156,7 @@ def mlx_import(info)
               l =~ /top:114px;height:13px;left:300px;width:186px;font:8pt Tahoma;/i or
               l =~ /top:88px;height:16px;left:16px;width:688px;font:bold 10pt Arial;/)
           location_desc = l
-          location_desc = location_desc.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: ) */, '')
+          location_desc = location_desc.gsub(/.*<NOBR> */, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;|Subdivision: |Subdiv Name[ ]*) */, '')
           special_puts "Found Location #{location_desc}"
           break
         else
@@ -163,15 +168,28 @@ def mlx_import(info)
       end
       new_infos["ad_location"] = location_desc if !location_desc.nil? and !location_desc.empty?
 
+      ######################### SUBDIVISION ##########################
+      subdivision = nil
+      saw_subdivision = false
+      for l in $listing_page.body.split("\n")
+        if saw_subdivision
+          saw_subdivision = false
+          subdivision = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/,'')
+        elsif l =~ /Subdivision:/ or l =~ /Subdiv Name/
+          saw_subdivision = true
+        end
+      end
+      new_infos["ad_subdivision"] = subdivision if !subdivision.nil? and !subdivision.empty?
+
       ########################## PRICE ###############################
       $listing_page.body.split("\n").each{|l|
         if (
             l =~ /top:81px;height:26px;left:634px;width:62px;font:8pt Arial;/ or
             l =~ /top:378px;height:13px;left:114px;width:84px;font:8pt Tahoma;/ or
-            l =~ /background-color:rgb\(224,224,224\);z-index:1;overflow:hidden;/ or
             l =~ /top:112px;height:16px;left:568px;width:128px;font:bold 10pt Arial;/ or
             l =~ /top:112px;height:19px;left:574px;width:127px;font:bold 11pt Arial;/ or
             l =~ /top:232px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
+            l =~ /top:16px;height:22px;left:640px;width:128px;font:bold 12pt Tahoma;/ or
             l =~ /top:136px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/
             )
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
@@ -179,14 +197,14 @@ def mlx_import(info)
         end
       }
 
-      ######################### SQUARE FEET ###########################
+      ######################### SQUARE FEET ##########################
       square_feet = ""
       saw_sqft = false
       $listing_page.body.split("\n").each{|l|
         if saw_sqft
           saw_sqft = false
-          square_feet = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Square Feet:/
+          square_feet = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/(&curren;) */, '')
+        elsif l =~ /Square Feet:/ or l =~ /SqFt Liv Area:/
           saw_sqft = true
         end
       }
@@ -198,34 +216,34 @@ def mlx_import(info)
       $listing_page.body.split("\n").each{|l|
         if saw_beds
           saw_beds = false
-          bedrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+          bedrooms = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '')
         elsif l =~ /Bedrooms:/ or l =~ /Beds:/
           saw_beds = true
         end
       }
       new_infos["ad_bedrooms"] = bedrooms if !bedrooms.nil? and !bedrooms.empty?
 
-      ####################### FULL BATHROOMS ##########################
+      ####################### FULL BATHROOMS #########################
       bathrooms = ""
       saw_bath = false
       $listing_page.body.split("\n").each{|l|
         if saw_bath
           saw_bath = false
-          bathrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
+          bathrooms = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '')
         elsif l =~ /Full Baths:/
           saw_bath = true
         end
       }
       new_infos["ad_full_bathrooms"] = bathrooms if !bathrooms.nil? and !bathrooms.empty?
 
-      ####################### HALF BATHROOMS ##########################
+      ####################### HALF BATHROOMS #########################
       bathrooms = ""
       saw_bath = false
       $listing_page.body.split("\n").each{|l|
         if saw_bath
           saw_bath = false
-          bathrooms = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif l =~ /Half Baths:/
+          bathrooms = l.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '')
+        elsif l =~ /Half Baths:*/
           saw_bath = true
         end
       }
@@ -243,19 +261,6 @@ def mlx_import(info)
         end
       end
       new_infos["ad_complex"] = complex if !complex.nil? and !complex.empty?
-
-      ######################### SUBDIVISION ##########################
-      subdivision = nil
-      saw_subdivision = false
-      for l in $listing_page.body.split("\n")
-        if saw_subdivision
-          saw_subdivision = false
-          subdivision = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/&curren;/,'')
-        elsif l =~ /Subdivision:/
-          saw_subdivision = true
-        end
-      end
-      new_infos["ad_subdivision"] = subdivision if !subdivision.nil? and !subdivision.empty?
 
       ########################## DESCRIPTION #########################
       desc = ""
@@ -284,10 +289,21 @@ def mlx_import(info)
         if (l =~ /top:280px;height:16px;left:136px;width:568px;font:bold 10pt Arial;/ or
             l =~ /top:752px;height:32px;left:24px;width:576px;font:10pt Tahoma;/ or
             l =~ /top:824px;height:32px;left:16px;width:432px;font:10pt Tahoma;/ )
-          amenities = l
+          amenities << ',' << l
         end
       end
-      amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').split(/ *[\/,] /).join('||')
+      amenities = amenities.gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/i, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '')
+      saw_amenity = false
+      for l in $listing_page.body.split("\n")
+        if saw_amenity
+          saw_amenity = false
+          amenities << ', ' << l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').gsub(/&curren;/,'')
+        elsif l =~ /Parking Desc:/ or l =~ /Waterfrnt Access/
+          saw_amenity = true
+        end
+      end
+      amenities = amenities.split(/ *[\/,] /).reject{|a| a.empty?}.join('||')
+
       new_infos["ad_amenities"] = amenities if !amenities.nil? and !amenities.empty?
 
       ########################## TITLES ##############################
@@ -312,7 +328,9 @@ def mlx_import(info)
       for l in $listing_page.body.split("\n")
         if (l =~ /Courtesy Of:/ or 
             l =~ /top:444px;height:13px;left:138px;width:234px;font:8pt Tahoma;/ or
-            l =~ /top:920px;height:13px;left:8px;width:464px;font:8pt Arial;/)
+            l =~ /top:920px;height:13px;left:8px;width:464px;font:8pt Arial;/ or
+            l =~ /top:992px;height:13px;left:16px;width:392px;font:7pt Tahoma;/
+            )
           attribution = l.gsub(/.*Courtesy Of: */, '').gsub(/.*<NOBR>/i, '').gsub(/<\/NOBR>.*/, '').gsub(/&nbsp;/, '').gsub(/<span[^>]*>/i, '').gsub(/<\/span>/i, '').strip
           new_infos["ad_attribution"] = attribution if !attribution.nil? and !attribution.empty?
         end
