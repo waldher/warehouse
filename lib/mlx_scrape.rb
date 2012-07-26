@@ -76,7 +76,7 @@ def mlx_import(info)
         if saw_foreign
           saw_foreign = false
           foreign_id = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '')
-        elsif (l =~ /REF#:/i or l =~ /ML#:/) and !(l =~ /&nbsp;/)
+        elsif (l =~ /REF#:/i or l =~ /ML#:/ or l =~ /REF #:/i) and !(l =~ /&nbsp;/)
           saw_foreign = true
         elsif (
             l =~ /top:78px;height:13px;left:312px;width:96px;font:8pt Tahoma;/ or
