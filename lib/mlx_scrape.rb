@@ -123,7 +123,7 @@ def mlx_import(info)
       address = ""
       for l in $listing_page.body.split("\n")
         if (l =~ /top:56px;height:11px;left:89px;width:204px;font:7pt Tahoma;/ or
-            l =~ /top:120px;height:22px;left:192px;width:392px;font:bold 12pt;/ or 
+            l =~ /top:120px;height:22px;left:192px;width:392px;/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or 
             l =~ /top:120px;height:24px;left:192px;width:416px;font:bold 11pt Tahoma;/ or 
             l =~ /top:120px;height:19px;left:192px;width:432px;font:bold 11pt Tahoma;/ or
@@ -204,7 +204,8 @@ def mlx_import(info)
             l =~ /top:16px;height:22px;left:640px;width:128px;font:bold 12pt Tahoma;/ or
             l =~ /top:16px;height:17px;left:640px;width:128px;font:bold 9pt Tahoma;/ or
             l =~ /top:16px;height:19px;left:616px;width:152px;font:bold 11pt Tahoma;/ or
-            l =~ /top:136px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/
+            l =~ /top:136px;height:20px;left:624px;width:128px;font:bold 12pt Tahoma;/ or
+            l =~ /top:120px;height:22px;left:608px;width:152px;font:bold 12pt Tahoma;/
             )
           price = l.gsub(/.*\$ */, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '').sub(/&nbsp; */,'')
           new_infos["ad_price"] = price if !price.nil? and !price.empty?
