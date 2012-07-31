@@ -173,10 +173,10 @@ def mlx_import(info)
             l =~ /top:16px;height:17px;left:16px;width:168px;font:bold 9pt Tahoma;/ or
             l =~ /top:16px;height:22px;left:208px;width:120px;font:bold 12pt Tahoma;/
             )
-            location_details = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '')
+            location_details = l.gsub(/.*<NOBR>/, '').gsub(/<\/NOBR>.*/, '').gsub(/<span[^>]*>/, '').gsub(/<\/span>/, '').gsub(/(&curren;) */, ' ')
           end
         end
-        location_desc = location_from_address(address + ", " + location_details)
+        location_desc = location_from_address(address + ", " + location_details) if location_details 
       end
       new_infos["ad_location"] = location_desc if !location_desc.nil? and !location_desc.empty?
 
