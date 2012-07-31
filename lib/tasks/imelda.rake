@@ -19,7 +19,7 @@ namespace :imelda do
           fields[td.text.gsub(/:.*/,'').downcase] = td.text.gsub(/[^:]*:[^A-Za-z0-9]*/,'').strip
         }
 
-        listing = Listing.where("foreign_id", fields["ml number"]).first
+        listing = Listing.where("foreign_id = ?", fields["ml number"]).first
         if listing.nil?
           listing = Listing.new
           listing.customer_id = customer.id
