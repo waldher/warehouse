@@ -1,6 +1,7 @@
 require 'net/http'
 
 class Scrape
+  attr_accessor :output, :listings_output
   def initialize(import_run)
     @import_run = import_run
     @output = {}
@@ -9,9 +10,9 @@ class Scrape
 
   def save_output
     @import_run.finished = true
-    result_output = Hash.new(@output)
+    result_output = @output.clone
     result_output["listings"] = []
-    @listings_output.each{|l| result_output["listings"] << l }
+    @listings_output.each{|k, l| result_output["listings"] << l }
     @import_run.output = JSON.generate(result_output)
     @import_run.save
   end
@@ -22,7 +23,7 @@ class Scrape
 
   def value_update(listing, key_symbol, val)
     if !val.nil? and !val.empty? and listing.infos[key_symbol].to_s != val.to_s
-      @listings_output[listing]["infos"][key_symbol.to_s] = [listing.infos[key_symbol], val.to_s]
+      @listings_output[listing.foreign_id]["infos"][key_symbol.to_s] = [listing.infos[key_symbol], val.to_s]
       listing.infos[key_symbol] = val
 
       return true
@@ -32,29 +33,29 @@ class Scrape
 
   def disable?(listing)
     if listing.infos["ad_title"].nil? or listing.infos["ad_title"].empty?
-      @listings_output[listing]["disabled"] = "no titles"
+      @listings_output[listing.foreign_id]["disabled"] = "no titles"
       return true
     end
 
     if listing.infos["ad_attribution"].nil? or listing.infos["ad_attribution"].empty?
-      @listings_output[listing]["disabled"] = "no attribution"
+      @listings_output[listing.foreign_id]["disabled"] = "no attribution"
       return true
     end
 
     image_urls = listing.ad_image_urls
     if image_urls.nil? or image_urls.empty?
-      @listings_output[listing]["disabled"] = "no images"
+      @listings_output[listing.foreign_id]["disabled"] = "no images"
       return true
     end 
 
     if listing.ad_image_urls.count < 3 
-      @listings_output[listing]["disabled"] = "too few images"
+      @listings_output[listing.foreign_id]["disabled"] = "too few images"
       return true
     end
 
     #In theory this should never be seen - it is a paperclip related error
     if listing.ad_image_urls.*(",").include?("/images/original/missing.png")
-      @listings_output[listing]["disabled"] = "missing images"
+      @listings_output[listing.foreign_id]["disabled"] = "missing images"
       return true
     end
 

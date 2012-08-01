@@ -1,6 +1,6 @@
 require 'csv'
 require 'open-uri'
-require 'scrape_utils'
+#require 'scrape_utils'
 
 namespace :thehomesteadgroup do
   desc "Import listing"

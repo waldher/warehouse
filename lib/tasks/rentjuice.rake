@@ -2,7 +2,7 @@ require 'open-uri'
 require 'uri'
 require 'rentjuicer'
 require 'listing_title'
-require 'scrape_utils'
+#require 'scrape_utils'
 
 namespace :rentjuicer do
   desc "Import from RentJuicer"

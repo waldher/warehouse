@@ -1,7 +1,7 @@
 require 'selenium-webdriver'
 require 'listing_title'
 require 'uri'
-require 'scrape_utils'
+#require 'scrape_utils'
 
 namespace :scrape do
   desc "scrape NW mls"
