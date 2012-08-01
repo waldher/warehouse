@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120712121631) do
+ActiveRecord::Schema.define(:version => 20120727003800) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(:version => 20120712121631) do
     t.string   "setup_nonce"
     t.integer  "location_id"
     t.integer  "sublocation_id"
+    t.string   "import_type"
   end
 
   add_index "customers", ["key"], :name => "index_customers_on_key"
@@ -104,6 +105,22 @@ ActiveRecord::Schema.define(:version => 20120712121631) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "import_runs", :force => true do |t|
+    t.text     "input"
+    t.text     "output"
+    t.boolean  "finished",   :default => false
+    t.string   "source"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "keywords", :force => true do |t|
+    t.string   "keyword"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "ignore",     :default => false
+  end
 
   create_table "listing_images", :force => true do |t|
     t.integer  "listing_id"
@@ -160,6 +177,13 @@ ActiveRecord::Schema.define(:version => 20120712121631) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "scraped_links", :force => true do |t|
+    t.string  "url"
+    t.boolean "done"
+  end
+
+  add_index "scraped_links", ["url", "done"], :name => "index_scraped_links_on_url_and_done", :unique => true
 
   create_table "sublocations", :force => true do |t|
     t.string  "name",        :null => false

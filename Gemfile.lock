@@ -53,6 +53,8 @@ GEM
     chronic (0.6.4)
     cocaine (0.2.1)
     columnize (0.3.4)
+    delayed_job (3.0.3)
+      activesupport (~> 3.0)
     devise (1.4.9)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.0.3)
@@ -165,6 +167,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
+  delayed_job (~> 3.0)
   devise
   hirb
   jquery-rails

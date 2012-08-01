@@ -11,6 +11,8 @@ gem 'unicorn', '~>4.2.0'
 
 gem 'paperclip', '~>2.5.2'
 
+gem 'delayed_job', '~>3.0'
+
 gem 'jquery-rails'
 
 gem 'devise'
