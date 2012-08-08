@@ -4,6 +4,46 @@ require 'listing_title'
 require 'scrape'
 
 class Mlxchange < Scrape
+  COORDINATES_MAP = {
+    "168,56" => { # 8 Photo View
+      "120,192" => "ad_address",
+      "824,16" => "ad_amenities",
+      "1000,16" => "ad_attribution",
+      "288,120" => "ad_bedrooms",
+      "552,16" => "ad_description",
+      "760,16" => "ad_exterior",
+      "304,120" => "ad_full_bathrooms",
+      "336,120" => "ad_half_bathrooms",
+      "696,16" => "ad_interior",
+      "120,24" => "ad_location",
+      "120,608" => "ad_price",
+      "352,120" => "ad_square_feet",
+      "192,72" => "ad_status",
+      "256,16" => "ad_subdivision",
+      "504,104" => "ad_waterfront",
+    },
+    "176,64" => {
+      "16,200" => "ad_address",
+      "792,520" => "ad_amenities",
+      "992,16" => "ad_attribution",
+      "200,104" => "ad_bedrooms",
+      "176,520" => "ad_complex",
+      "280,16" => "ad_description",
+      "648,520" => "ad_exterior",
+      "528,120" => "ad_equipment",
+      "224,10" => "ad_full_bathrooms",
+      "248,104" => "ad_half_bathrooms",
+      "480,120" => "ad_interior",
+      "16,16" => "ad_location",
+      "632,520" => "ad_pets",
+      "16,616" => "ad_price",
+      "176,328" => "ad_square_feet",
+      "48,240" => "ad_status",
+      "208,328" => "ad_type",
+      "728,144" => "ad_waterfont",
+      "64,496" => "ad_zip",
+    }
+  }
   #info is a hash in the form:
   # :data => [{:url=>"scrape_url",:infos=>{}},] # One inner hash per url
   # :customer_key => 'customer_key'
@@ -65,30 +105,21 @@ class Mlxchange < Scrape
             coordinates[line.gsub(/.*top:([0-9]*)px;[^"]*left:([0-9]*)px;.*/, '\1,\2').strip] = line.gsub(/.*<span[^>]*>(.*)<\/span>.*/, '\1').gsub(/<.?NOBR>/, '').gsub(/&[^;]*;/, '').strip
           end
         }
-
         new_infos = {}
-        new_infos["ad_address"] = coordinates["120,192"]
-        new_infos["ad_amenities"] = coordinates["824,16"]
-        new_infos["ad_attribution"] = coordinates["1000,16"].gsub(/.*Courtesy Of: */, '')
-        new_infos["ad_bedrooms"] = coordinates["288,120"]
-        new_infos["ad_complex"] = coordinates[""]
-        new_infos["ad_description"] = coordinates["552,16"]
-        new_infos["ad_equipment"] = coordinates[""]
-        new_infos["ad_exterior"] = coordinates["760,16"]
-        new_infos["ad_floors"] = coordinates[""]
-        new_infos["ad_full_bathrooms"] = coordinates["304,120"]
-        new_infos["ad_half_bathrooms"] = coordinates["336,120"]
-        new_infos["ad_interior"] = coordinates["696,16"]
-        new_infos["ad_location"] = coordinates["120,24"]
-        new_infos["ad_parking"] = coordinates[""]
-        new_infos["ad_price"] = coordinates["120,608"].gsub(/[.].*/, '').gsub(/[^0-9]/, '')
-        new_infos["ad_services"] = coordinates[""]
-        new_infos["ad_square_feet"] = coordinates["352,120"]
-        new_infos["ad_status"] = coordinates["192,72"]
-        new_infos["ad_subdivision"] = coordinates["256,16"]
-        new_infos["ad_view"] = coordinates[""]
-        new_infos["ad_waterfront"] = coordinates["504,104"]
-        foreign_id = coordinates["168,56"]
+
+        COORDINATES_MAP.each{|foreign_id_coordinates, info_map|
+          next if coordinates[foreign_id_coordinates].nil?
+
+          foreign_id = coordinates[foreign_id_coordinates]
+          info_map.each{|value_coordinates, info_key|
+            new_infos[info_key] = coordinates[value_coordinates]
+          }
+
+          break
+        }
+
+        new_infos["ad_attribution"] = new_infos["ad_attribution"].gsub(/.*Courtesy Of: */, '')
+        new_infos["ad_price"] = new_infos["ad_price"].gsub(/[^0-9]/, '')
         
         new_infos.merge((external_infos or {}))
         new_infos.delete_if{|k,v| v.nil?}
