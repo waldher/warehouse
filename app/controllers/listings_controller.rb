@@ -32,7 +32,7 @@ class ListingsController < ApplicationController
           array_to_string(array(SELECT DISTINCT craigslist_keywords.spelling FROM craigslist_keywords WHERE craigslist_keywords.spelling IN (
                   SELECT spelling
                   FROM words
-                  WHERE definition_id IN (
+                  WHERE ignore is false and definition_id IN (
                       SELECT DISTINCT definition_id
                       FROM words
                       WHERE spelling IN (
