@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120727003800) do
+ActiveRecord::Schema.define(:version => 20120808223760) do
 
   create_table "admins", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
@@ -216,6 +216,7 @@ ActiveRecord::Schema.define(:version => 20120727003800) do
   end
 
   add_index "words", ["definition_id"], :name => "index_words_on_definition_id"
+  add_index "words", ["ignore"], :name => "index_words_on_ignore"
   add_index "words", ["spelling"], :name => "index_words_on_spelling"
 
 end
