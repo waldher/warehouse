@@ -28,7 +28,6 @@ class ListingTitle
                 "Good",
                 "Slick",
                 "Divine",
-                "Majestic",
                 "Enjoyable",
                 "Stunning",
                 "Fabulous",
@@ -36,7 +35,6 @@ class ListingTitle
                 ]
 
   ADVERTISING_STRINGS = [ "Must see!",
-                          "Too good to be true!",
                           "Look here!",
                           "Look no further!",
                           "Your search is over!",
@@ -123,7 +121,6 @@ class ListingTitle
                 "<rai> [<age>] <adj> <top> with <bdr>[, <ame>][, <per>] In <loc>[, <til>]",
                 "<adj> <top>, <bdr>[, <ame>] In <loc>[, <per>], <rai>[ <age>][ <til>]",
                 "<adj> [<age> ] <bdr> <top> in <loc>[, <per>,] [<til> ]<rai>[ <ame>]",
-                #"This <adj> <top> In <loc>[<ame>][, <per>] <bdr>s[, <til>], <rai>",  Titles that come from this generally suck. TODO 
                 ]
 
   def self.generate(listing, infos = nil)
