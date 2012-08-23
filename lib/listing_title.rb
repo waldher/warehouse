@@ -175,7 +175,9 @@ class ListingTitle
     # BEGIN TEMPLATE GENERATION
     templates_list = TEMPLATES
     title = nil
-    while title.nil? and !templates_list.empty?
+    attempts = 0
+    while attempts < 10 and title.nil? and !templates_list.empty?
+      attempts += 1
       template = templates_list.sample
       prospect = String.new(template)
 

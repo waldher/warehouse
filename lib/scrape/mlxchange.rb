@@ -42,6 +42,26 @@ class Mlxchange < Scrape
       "208,328" => "ad_type",
       "728,144" => "ad_waterfont",
       "64,496" => "ad_zip",
+    },
+    "56,391" =>
+    {
+      "56,89" => "ad_address",
+      "792,78" => "ad_amenities",
+      "444,138" => "ad_attribution",
+      "282,114" => "ad_bedrooms",
+      "534,12" => "ad_description",
+      "696,78" => "ad_equipment",
+      "720,78" => "ad_exterior",
+      "294,114" => "ad_full_bathrooms",
+      "306,114" => "ad_half_bathrooms",
+      "672,78" => "ad_interior",
+      "114,300" => "ad_location",
+      "204,450" => "ad_pets",
+      "81,634" => "ad_price",
+      "330,114" => "ad_square_feet",
+      "92,625" => "ad_status",
+      "204,354" => "ad_waterfront",
+      "114,636" => "ad_zip",
     }
   }
   #info is a hash in the form:
@@ -107,6 +127,7 @@ class Mlxchange < Scrape
         }
         new_infos = {}
 
+        foreign_id = nil
         COORDINATES_MAP.each{|foreign_id_coordinates, info_map|
           next if coordinates[foreign_id_coordinates].nil?
 
@@ -118,8 +139,11 @@ class Mlxchange < Scrape
           break
         }
 
-        new_infos["ad_attribution"] = new_infos["ad_attribution"].gsub(/.*Courtesy Of: */, '')
+        new_infos["ad_attribution"] = (new_infos["ad_attribution"] and new_infos["ad_attribution"].gsub(/.*Courtesy Of: */, ''))
         new_infos["ad_price"] = new_infos["ad_price"].gsub(/[^0-9]/, '')
+        if data["include_body"]
+          new_infos["ad_body"] = $listing_page.body
+        end
         
         new_infos.merge((external_infos or {}))
         new_infos.delete_if{|k,v| v.nil?}
@@ -137,16 +161,19 @@ class Mlxchange < Scrape
         @listings_output[foreign_id]["new"] = listing.id.nil?
         @listings_output[foreign_id]["record_id"] = record_id
         @listings_output[foreign_id]["infos"] = {}
-        new_infos.merge(listing.infos).each{|k, v|
-          @listings_output[foreign_id]["infos"][k] = [listing.infos[k], new_infos[k]]
+        new_infos.merge!((data["infos"] or {}))
+        new_infos.each{|k, v|
+          @listings_output[foreign_id]["infos"][k] = [listing.infos[k], v]
         }
 
-        new_infos["ad_title"] = []
-        loop {
-          title = ListingTitle.generate(listing, new_infos)
-          new_infos["ad_title"] << title if !title.nil? and !title.empty? and title.length > 20
-          break if new_infos["ad_title"].size >= 3
-        }
+        if new_infos["ad_title"].nil?
+          new_infos["ad_title"] = []
+          5.times {
+            title = ListingTitle.generate(listing, new_infos)
+            new_infos["ad_title"] << title if !title.nil? and !title.empty? and title.length > 20
+            break if new_infos["ad_title"].size >= 3
+          }
+        end
 
         listing.infos = new_infos
 
@@ -161,7 +188,10 @@ class Mlxchange < Scrape
         images.uniq!
         load_images(listing, images)
 
-        active << listing.id if (!(new_infos["ad_status"] =~ /^Active/).nil?) and !disable?(listing)
+        active << listing.id if (data["force_active"] or
+                                 !(new_infos["ad_status"] =~ /^Active/).nil? or 
+                                 !(new_infos["ad_status"] =~ /^New/).nil? or 
+                                 !(new_infos["ad_status"] =~ /^Price Change/).nil?) and !disable?(listing)
       end
     end
     activate_new_listings(customer_id, active) if activate_new
