@@ -62,6 +62,25 @@ class Mlxchange < Scrape
       "92,625" => "ad_status",
       "204,354" => "ad_waterfront",
       "114,636" => "ad_zip",
+    },
+    "160,64" =>
+    {
+      "120,192" => "ad_address",
+      "752,24" => "ad_amenities",
+      "992,24" => "ad_attribution",
+      "248,128" => "ad_bedrooms",
+      "224,24" => "ad_complex",
+      "480,120" => "ad_cooling",
+      "504,24" => "ad_description",
+      "272,128" => "ad_full_bathrooms",
+      "296,128" => "ad_half_bathrooms",
+      "688,24" => "ad_interior",
+      "120,24" => "ad_location",
+      "896,24" => "ad_maintenance",
+      "120,600" => "ad_price",
+      "320,128" => "ad_square_feet",
+      "176,80" => "ad_status",
+      "456,120" => "ad_waterfront"
     }
   }
   #info is a hash in the form:
