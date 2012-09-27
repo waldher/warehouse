@@ -121,7 +121,7 @@ class Mlxchange < Scrape
       "440,112" => "ad_equipment",
       "360,112" => "ad_interior",
       "760,144" => "ad_waterfont",
-    }
+    },
     "192,128" => {
       "64,24" => "ad_address",
       "688,72" => "ad_amenities",
