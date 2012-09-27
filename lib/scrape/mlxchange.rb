@@ -41,7 +41,7 @@ class Mlxchange < Scrape
       "160,120" => "ad_status",
       "24,16" => "ad_type",
       "576,336" => "ad_waterfont",
-      "88,104" => "ad_zip",
+      "88,104" => "ad_zip_code",
     },
     "168,128" => { # GCR - REA 1
       "48,48" => "ad_address",
@@ -62,7 +62,7 @@ class Mlxchange < Scrape
       "144,128" => "ad_status",
       "8,16" => "ad_type",
       "640,112" => "ad_waterfont",
-      "72,48" => "ad_zip",
+      "72,48" => "ad_zip_code",
     },
     "136,568" => {
       "64,8" => "ad_address",
@@ -98,8 +98,30 @@ class Mlxchange < Scrape
       "48,240" => "ad_status",
       "208,328" => "ad_type",
       "728,144" => "ad_waterfont",
-      "64,496" => "ad_zip",
+      "64,496" => "ad_zip_code",
     },
+    "48,648" => {
+      "16,336" => "ad_address",
+      "992,16" => "ad_attribution",
+      "144,328" => "ad_bedrooms",
+      "112,536" => "ad_subdivision",
+      "224,16" => "ad_description",
+      "160,328" => "ad_full_bathrooms",
+      "176,328" => "ad_half_bathrooms",
+      "16,208" => "ad_location",
+      "344,504" => "ad_pets",
+      "16,640" => "ad_price",
+      "112,328" => "ad_square_feet",
+      "48,288" => "ad_status",
+      "80,288" => "ad_type",
+      "176,536" => "ad_style",
+      "64,288" => "ad_zip_code",
+      "392,504" => "ad_amenities",
+      "512,504" => "ad_exterior",
+      "440,112" => "ad_equipment",
+      "360,112" => "ad_interior",
+      "760,144" => "ad_waterfont",
+    }
     "192,128" => {
       "64,24" => "ad_address",
       "688,72" => "ad_amenities",
@@ -116,10 +138,9 @@ class Mlxchange < Scrape
       "168,128" => "ad_status",
       "232,200" => "ad_type",
       "608,96" => "ad_waterfont",
-      "88,24" => "ad_zip",
-    }
-    "56,391" =>
-    {
+      "88,24" => "ad_zip_code",
+    },
+    "56,391" => {
       "56,89" => "ad_address",
       "792,78" => "ad_amenities",
       "444,138" => "ad_attribution",
@@ -136,10 +157,9 @@ class Mlxchange < Scrape
       "330,114" => "ad_square_feet",
       "92,625" => "ad_status",
       "204,354" => "ad_waterfront",
-      "114,636" => "ad_zip",
+      "114,636" => "ad_zip_code",
     },
-    "160,64" => #RE2 8-photo view
-    {
+    "160,64" => {#RE2 8-photo view 
       "120,192" => "ad_address",
       "752,24" => "ad_amenities",
       "992,24" => "ad_attribution",
@@ -157,8 +177,7 @@ class Mlxchange < Scrape
       "176,80" => "ad_status",
       "456,120" => "ad_waterfront"
     },
-    "152,64" => #RE1 8-photo view
-    {
+    "152,64" => {#RE1 8-photo view
       "120,208" => "ad_address",
       "1000,16" => "ad_attribution",
       "240,128" => "ad_bedrooms",
@@ -238,6 +257,8 @@ class Mlxchange < Scrape
             coordinates[line.gsub(/.*top:([0-9]*)px;[^"]*left:([0-9]*)px;.*/, '\1,\2').strip] = line.gsub(/.*<span[^>]*>(.*)<\/span>.*/, '\1').gsub(/<.?NOBR>/, '').gsub(/&[^;]*;/, '').strip
           end
         }
+        # To view coords in console
+        #coordinates.sort{|x, y| x[0].split(/,/).collect{|x| x.rjust(4)}.join('') <=> y[0].split(/,/).collect{|x| x.rjust(4)}.join('') }.each{|x,y| puts x + " => " + y}
         new_infos = {}
 
         foreign_id = nil
