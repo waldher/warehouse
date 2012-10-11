@@ -41,13 +41,14 @@ class Customer < ActiveRecord::Base
     'Cars & Trucks - By Dealer' => 'ctd',
     'Gigs' => 'ggg',
     'Real Estate for Sale' => 'rea',
-    'Computer Services' => 'cps'
+    'Computer Services' => 'cps',
   }
 
   HOUSING_CRAIGSLIST_TYPES = {
     'Apartments / Housing' => 'apa',
     'Rooms / Shared' => 'roo',
-    'Real Estate for Sale' => 'rea'
+    'Real Estate for Sale' => 'rea',
+    'Sublets & Temporary' => 'sub',
   }
 
   def set_locations
