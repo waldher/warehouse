@@ -67,6 +67,7 @@ class Mlxchange < Scrape
     "136,568" => {
       "64,8" => "ad_address",
       "280,136" => "ad_amenities",
+#      "936,12" => "ad_attribution",
       "920,8" => "ad_attribution",
       "112,152" => "ad_bedrooms",
       "256,16" => "ad_subdivision",
