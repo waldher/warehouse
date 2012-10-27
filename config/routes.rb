@@ -1,11 +1,5 @@
-Marsala::Application.routes.draw do
-
-
-  resources :directories, :only => :none do
-    collection do 
-      get :clicks, :formats => [:json]
-    end
-  end
+Warehouse::Application.routes.draw do
+  resources :import_runs, :only => [:index]
 
   resources :locations do 
     resources :sublocations
@@ -22,17 +16,9 @@ Marsala::Application.routes.draw do
 
   resource :customer_infos
   
-  resources :real_estates
-  
-  resources :realtors, :only => :index 
-
   match "first_login/:setup_nonce" => "session#first_login", :as => "first_login"
   match "login" => "session#login", :as => "login", :protocol => 'http'
   match 'logout' => "session#logout", :as => "logout", :protocol => 'http'
-
-  resources :real_estates do
-    get 'json', :on => :collection
-  end
 
   root :to => 'home#index'
   devise_for :admins

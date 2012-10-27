@@ -4,4 +4,4 @@
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
 
-Marsala::Application.load_tasks
+Warehouse::Application.load_tasks

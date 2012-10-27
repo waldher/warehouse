@@ -1,0 +1,18 @@
+<table>
+  <thead>
+    <tr>
+      <td>Created At</td>
+      <td>Finished</td>
+      <td>Source</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @import_runs.each{|import_run| %>
+      <tr>
+        <td><%= import_run.created_at %></td>
+        <td><%= import_run.finished %></td>
+        <td><%= import_run.source %></td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
