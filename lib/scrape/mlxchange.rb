@@ -204,6 +204,7 @@ class Mlxchange < Scrape
   # :activate_new => bool (activate newly imported listings)
   # :deactivate_old => bool (deactivate old listings)
   def mlx_import
+    spinner = "/-\\|".split(//)
     agent = Mechanize.new
 
     disable_new_titles = @import_run.input_parsed["disable_new_titles"]
@@ -240,6 +241,9 @@ class Mlxchange < Scrape
 
       index = 0
       for record_id in $record_ids
+        print "\b" if index > 0
+        print spinner[index % spinner.count]
+        index += 1
         next if record_id.nil?
         $listing_page = nil
         failed = false
