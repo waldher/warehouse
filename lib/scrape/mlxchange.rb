@@ -241,7 +241,7 @@ class Mlxchange < Scrape
 
       index = 0
       for record_id in $record_ids
-        print "\b" if index > 0
+        print "\r"
         print spinner[index % spinner.count]
         index += 1
         next if record_id.nil?
