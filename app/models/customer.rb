@@ -49,6 +49,7 @@ class Customer < ActiveRecord::Base
     'Rooms / Shared' => 'roo',
     'Real Estate for Sale' => 'rea',
     'Sublets & Temporary' => 'sub',
+    'Office & Commercial' => 'off',
   }
 
   def set_locations
