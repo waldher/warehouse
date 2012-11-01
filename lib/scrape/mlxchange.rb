@@ -67,8 +67,8 @@ class Mlxchange < Scrape
     "136,568" => {
       "64,8" => "ad_address",
       "280,136" => "ad_amenities",
-#      "936,12" => "ad_attribution",
-      "920,8" => "ad_attribution",
+      "936,12" => "ad_attribution",
+#      "920,8" => "ad_attribution",
       "112,152" => "ad_bedrooms",
       "256,16" => "ad_subdivision",
       "304,40" => "ad_description",
@@ -307,10 +307,10 @@ class Mlxchange < Scrape
 
         if new_infos["ad_title"].nil?
           new_infos["ad_title"] = []
-          5.times {
+          10.times {
             title = ListingTitle.generate(listing, new_infos)
             new_infos["ad_title"] << title if !title.nil? and !title.empty? and title.length > 20
-            break if new_infos["ad_title"].size >= 3
+            break if new_infos["ad_title"].size >= 9
           }
         end
 
