@@ -29,3 +29,4 @@ gem 'whenever', :require => false
 
 gem 'selenium-webdriver'
 
+gem 'spreadsheet'
